@@ -1,39 +1,65 @@
 import SwiftUI
 
 struct MainTabView: View {
+    
+    init() { makeTabbarOpaque() }
+    
     var body: some View {
         TabView {
-            Text("Updates")
+            placeholderItemView("Updates")
                 .tabItem {
                     Image(systemName: Tab.updates.icon)
                     Text(Tab.updates.title)
                 }
-            Text("Calls")
+            placeholderItemView("Calls")
                 .tabItem {
                     Image(systemName: Tab.calls.icon)
                     Text(Tab.calls.title)
                 }
-            Text("Communities")
+            placeholderItemView("Communities")
                 .tabItem {
                     Image(systemName: Tab.communities.icon)
                     Text(Tab.communities.title)
                 }
-            Text("Chats")
+            placeholderItemView("Chats")
                 .tabItem {
                     Image(systemName: Tab.chats.icon)
                     Text(Tab.chats.title)
                 }
-            Text("Settings")
+            placeholderItemView("Settings")
                 .tabItem {
                     Image(systemName: Tab.settings.icon)
                     Text(Tab.settings.title)
                 }
         }
     }
+    
+    //  MARK: - Private
+    private func makeTabbarOpaque() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
 }
 
 //  MARK: - MainTabView + Tab
 fileprivate extension MainTabView {
+    
+    private func placeholderItemView(_ title: String) -> some View {
+        ScrollView {
+            VStack {
+                ForEach(0 ..< 12) { _ in
+                    Text(title)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 120)
+                        .background(.green.opacity(0.4))
+                }
+            }
+        }
+    }
+    
     private enum Tab: String {
         case updates, calls, communities, chats, settings
         
