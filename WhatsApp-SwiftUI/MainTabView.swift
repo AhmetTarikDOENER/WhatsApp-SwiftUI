@@ -6,7 +6,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            placeholderItemView("Updates")
+            UpdatesTabScreen()
                 .tabItem {
                     Image(systemName: Tab.updates.icon)
                     Text(Tab.updates.title)
