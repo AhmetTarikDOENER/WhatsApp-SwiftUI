@@ -30,6 +30,7 @@ struct UpdatesTabScreen: View {
         }
     }
     
+    //  MARK: - Private
     private func channelListViewSectionHeader() -> some View {
         HStack {
             Text("Channels")
