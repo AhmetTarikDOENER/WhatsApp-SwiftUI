@@ -12,6 +12,9 @@ struct ChannelTabScreen: View {
                 ForEach(0 ..< 5) { _ in
                     ChannelItemView()
                 }
+                
+                inboxFooterView()
+                    .listRowSeparator(.hidden)
             }
             .navigationTitle("Chats")
             .searchable(text: $searchText)
@@ -83,6 +86,20 @@ private extension ChannelTabScreen {
                 .padding()
                 .foregroundStyle(.gray)
         }
+    }
+    
+    private func inboxFooterView() -> some View {
+        HStack {
+            Image(systemName: "lock.fill")
+            
+            Text("Your personel messages are ")
+            +
+            Text("end-to-end encrypted")
+                .foregroundStyle(.blue)
+        }
+        .foregroundStyle(.gray)
+        .font(.caption)
+        .padding(.horizontal)
     }
 }
 
