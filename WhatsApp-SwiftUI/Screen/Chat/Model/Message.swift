@@ -30,7 +30,8 @@ extension Message {
     static let stubMessages: [Message] = [
         .init(text: "Hey Tim!", direction: .outgoing, type: .text),
         .init(text: "Did you see this photo?", direction: .received, type: .photo),
-        .init(text: "Play out this video", direction: .outgoing, type: .video)
+        .init(text: "Play out this video", direction: .outgoing, type: .video),
+        .init(text: "Listen to this immediately", direction: .received, type: .audio)
     ]
 }
 
@@ -45,5 +46,5 @@ enum MessageDirection {
 
 //  MARK: - MessageType
 enum MessageType {
-    case text, photo, video
+    case text, photo, video, audio
 }

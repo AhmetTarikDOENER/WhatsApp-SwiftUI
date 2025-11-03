@@ -8,6 +8,7 @@ struct ChatroomScreen: View {
                 leadingNavigationBarItem()
                 trailingNavigationBarItemGroup()
             }
+            .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
                 TextInputAreaView()
             }

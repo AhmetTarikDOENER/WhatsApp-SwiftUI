@@ -10,6 +10,7 @@ final class MessageListController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
+        tableView.backgroundColor = .gray.withAlphaComponent(0.3)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
@@ -49,10 +50,10 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
             switch message.type {
             case .text:
                 BubbleTextView(message: message)
-            case .photo:
+            case .photo, .video:
                 BubbleImageView(message: message)
-            case .video:
-                EmptyView()
+            case .audio:
+                BubbleAudioView(message: message)
             }
         }
         return cell
