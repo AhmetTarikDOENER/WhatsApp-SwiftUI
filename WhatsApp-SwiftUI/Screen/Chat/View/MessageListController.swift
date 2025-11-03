@@ -50,7 +50,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
             case .text:
                 BubbleTextView(message: message)
             case .photo:
-                EmptyView()
+                BubbleImageView(message: message)
             case .video:
                 EmptyView()
             }
