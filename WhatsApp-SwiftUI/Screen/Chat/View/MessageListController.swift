@@ -44,15 +44,22 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
-
+        let message = Message.stubMessages[indexPath.row]
         cell.contentConfiguration = UIHostingConfiguration {
-            BubbleTextView(message: .sentPlaceholder)
+            switch message.type {
+            case .text:
+                BubbleTextView(message: message)
+            case .photo:
+                EmptyView()
+            case .video:
+                EmptyView()
+            }
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        12
+        Message.stubMessages.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

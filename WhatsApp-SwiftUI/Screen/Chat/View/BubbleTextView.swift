@@ -9,7 +9,7 @@ struct BubbleTextView: View {
             Text("Hello, Tim! How ya doing?")
                 .padding(10)
                 .background(message.backgroundColor)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .applyTail(message.direction)
             
             timestampTextView()
