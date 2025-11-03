@@ -2,26 +2,15 @@ import SwiftUI
 
 struct ChatroomScreen: View {
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(0 ..< 9) { _ in
-                    Text("PLACEHOLDER")
-                        .font(.largeTitle)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                        .background(.gray.opacity(0.2))
-                }
+        MessageListView()
+            .toolbarVisibility(.hidden, for: .tabBar)
+            .toolbar {
+                leadingNavigationBarItem()
+                trailingNavigationBarItemGroup()
             }
-        }
-        .toolbarVisibility(.hidden, for: .tabBar)
-        .toolbar {
-            leadingNavigationBarItem()
-            trailingNavigationBarItemGroup()
-        }
-        .safeAreaInset(edge: .bottom) {
-            TextInputAreaView()
-        }
+            .safeAreaInset(edge: .bottom) {
+                TextInputAreaView()
+            }
     }
 }
 
