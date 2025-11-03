@@ -7,6 +7,10 @@ struct Message: Identifiable {
     
     var backgroundColor: Color { direction == .outgoing ? .bubbleGreen : .bubbleWhite }
     
+    var alignment: Alignment { direction == .received ? .leading : .trailing }
+    
+    var horizontalAlignment: HorizontalAlignment { direction == .received ? .leading : .trailing }
+    
     static let sentPlaceholder = Message(text: "Awesome idea!", direction: .outgoing)
     static let receivedPlaceholder = Message(text: "Hey Tim, How are you doing?", direction: .received)
 }

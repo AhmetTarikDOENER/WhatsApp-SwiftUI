@@ -9,7 +9,10 @@ struct MessageListView: UIViewControllerRepresentable {
         return messageListController
     }
     
-    func updateUIViewController(_ uiViewController: MessageListController, context: Context) { }
+    func updateUIViewController(
+        _ uiViewController: MessageListController,
+        context: Context
+    ) { }
 }
 
 #Preview {
