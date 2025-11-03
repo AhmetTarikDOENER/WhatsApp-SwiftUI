@@ -43,12 +43,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = .gray.withAlphaComponent(0.2)
         cell.contentConfiguration = UIHostingConfiguration {
-            Text("PLACEHOLDER")
-                .font(.largeTitle)
-                .bold()
-                .frame(maxWidth: .infinity)
-                .frame(height: 200)
-                .background(.gray.opacity(0.2))
+            BubbleTextView(message: .sentPlaceholder)
         }
         return cell
     }

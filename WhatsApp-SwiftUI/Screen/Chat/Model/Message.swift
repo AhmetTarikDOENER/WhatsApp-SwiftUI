@@ -1,9 +1,14 @@
-import Foundation
+import SwiftUI
 
 struct Message: Identifiable {
     let id = UUID().uuidString
     let text: String
     let direction: MessageDirection
+    
+    var backgroundColor: Color { direction == .outgoing ? .bubbleGreen : .bubbleWhite }
+    
+    static let sentPlaceholder = Message(text: "Awesome idea!", direction: .outgoing)
+    static let receivedPlaceholder = Message(text: "Hey Tim, How are you doing?", direction: .received)
 }
 
 //  MARK: - MessageDirection
