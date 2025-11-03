@@ -10,7 +10,11 @@ struct ChannelTabScreen: View {
                 archieveButton()
                 
                 ForEach(0 ..< 5) { _ in
-                    ChannelItemView()
+                    NavigationLink {
+                        ChatroomScreen()
+                    } label: {
+                        ChannelItemView()
+                    }
                 }
                 
                 inboxFooterView()

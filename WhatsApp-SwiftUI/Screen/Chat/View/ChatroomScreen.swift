@@ -13,10 +13,14 @@ struct ChatroomScreen: View {
                         .background(.gray.opacity(0.2))
                 }
             }
-            .toolbar {
-                leadingNavigationBarItem()
-                trailingNavigationBarItemGroup()
-            }
+        }
+        .toolbarVisibility(.hidden, for: .tabBar)
+        .toolbar {
+            leadingNavigationBarItem()
+            trailingNavigationBarItemGroup()
+        }
+        .safeAreaInset(edge: .bottom) {
+            TextInputAreaView()
         }
     }
 }
