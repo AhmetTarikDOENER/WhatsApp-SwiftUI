@@ -2,7 +2,9 @@ import SwiftUI
 
 struct SignUpScreen: View {
     
+    //  MARK: - Properties
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var authViewModel: AuthenticationViewModel
     
     var body: some View {
         VStack {
@@ -10,19 +12,20 @@ struct SignUpScreen: View {
             
             AuthenticationLogoView()
             
-            AuthenticationTextField(text: .constant(""), type: .email)
+            AuthenticationTextField(text: $authViewModel.email, type: .email)
             
             let userNameInputType = AuthenticationTextField.InputType.custom(
                 "Username",
                 iconName: "at"
             )
-            AuthenticationTextField(text: .constant(""), type: userNameInputType)
+            AuthenticationTextField(text: $authViewModel.username, type: userNameInputType)
             
-            AuthenticationTextField(text: .constant(""), type: .password)
+            AuthenticationTextField(text: $authViewModel.password, type: .password)
             
             AuthenticationButton(title: "Create an Account") {
                 
             }
+            .disabled(authViewModel.disableSignUpButton)
             
             Spacer()
             
@@ -41,6 +44,7 @@ struct SignUpScreen: View {
         .navigationBarBackButtonHidden()
     }
     
+    //  MARK: - Private
     private func backButton() -> some View {
         Button {
             dismiss()
@@ -59,5 +63,5 @@ struct SignUpScreen: View {
 }
 
 #Preview {
-    SignUpScreen()
+    SignUpScreen(authViewModel: .init())
 }
