@@ -6,13 +6,34 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		45ACB5582EBA123800EA827F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB5572EBA123800EA827F /* FirebaseAuth */; };
+		45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB5592EBA123800EA827F /* FirebaseDatabase */; };
+		45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB55B2EBA123800EA827F /* FirebaseMessaging */; };
+		45ACB55E2EBA123800EA827F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB55D2EBA123800EA827F /* FirebaseStorage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4510B7ED2EB75FAF009A5AC1 /* WhatsApp-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WhatsApp-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		45ACB5712EBA254900EA827F /* Secrets.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.template; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		45ACB5732EBA29EC00EA827F /* Exceptions for "WhatsApp-SwiftUI" folder in "WhatsApp-SwiftUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4510B7EC2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4510B7EF2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				45ACB5732EBA29EC00EA827F /* Exceptions for "WhatsApp-SwiftUI" folder in "WhatsApp-SwiftUI" target */,
+			);
 			path = "WhatsApp-SwiftUI";
 			sourceTree = "<group>";
 		};
@@ -23,6 +44,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */,
+				45ACB55E2EBA123800EA827F /* FirebaseStorage in Frameworks */,
+				45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */,
+				45ACB5582EBA123800EA827F /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -34,6 +59,7 @@
 			children = (
 				4510B7EF2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */,
 				4510B7EE2EB75FAF009A5AC1 /* Products */,
+				45ACB5712EBA254900EA827F /* Secrets.xcconfig.template */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,6 +91,10 @@
 			);
 			name = "WhatsApp-SwiftUI";
 			packageProductDependencies = (
+				45ACB5572EBA123800EA827F /* FirebaseAuth */,
+				45ACB5592EBA123800EA827F /* FirebaseDatabase */,
+				45ACB55B2EBA123800EA827F /* FirebaseMessaging */,
+				45ACB55D2EBA123800EA827F /* FirebaseStorage */,
 			);
 			productName = "WhatsApp-SwiftUI";
 			productReference = 4510B7ED2EB75FAF009A5AC1 /* WhatsApp-SwiftUI.app */;
@@ -94,6 +124,9 @@
 			);
 			mainGroup = 4510B7E42EB75FAF009A5AC1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4510B7EE2EB75FAF009A5AC1 /* Products */;
 			projectDirPath = "";
@@ -248,6 +281,8 @@
 		};
 		4510B7F92EB75FB1009A5AC1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 4510B7EF2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */;
+			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -256,6 +291,7 @@
 				DEVELOPMENT_TEAM = N2G2NDDG29;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WhatsApp-SwiftUI/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -280,6 +316,8 @@
 		};
 		4510B7FA2EB75FB1009A5AC1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 4510B7EF2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */;
+			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -288,6 +326,7 @@
 				DEVELOPMENT_TEAM = N2G2NDDG29;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WhatsApp-SwiftUI/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -332,6 +371,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		45ACB5572EBA123800EA827F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		45ACB5592EBA123800EA827F /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		45ACB55B2EBA123800EA827F /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		45ACB55D2EBA123800EA827F /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4510B7E52EB75FAF009A5AC1 /* Project object */;
 }

@@ -1,0 +1,10 @@
+# Xcode Configuration Files with Secrets
+Secrets.xcconfig
+
+# Firebase
+GoogleService-Info.plist
+
+# Xcode User Settings
+*.xcuserstate
+*.xcuserdatad
+xcuserdata/
