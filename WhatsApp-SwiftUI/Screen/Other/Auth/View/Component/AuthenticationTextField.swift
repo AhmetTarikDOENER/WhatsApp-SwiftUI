@@ -15,6 +15,7 @@ struct AuthenticationTextField: View {
             switch type {
             case .password: SecureField(type.placeholder, text: $text)
             default: TextField(type.placeholder, text: $text)
+                    .keyboardType(type.keyboardType)
             }
         }
         .foregroundStyle(.white)
