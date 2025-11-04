@@ -8,7 +8,8 @@ struct LoginScreen: View {
                 
                 AuthenticationLogoView()
                 
-                
+                AuthenticationTextField(text: .constant(""), type: .email)
+                AuthenticationTextField(text: .constant(""), type: .password)
                 
                 Spacer()
             }
