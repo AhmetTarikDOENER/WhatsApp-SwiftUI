@@ -7,6 +7,7 @@ final class AuthenticationViewModel: ObservableObject {
     @Published var password = ""
     @Published var username = ""
     @Published var isLoading = false
+    @Published var errorState: (showError: Bool, errorMessage: String) = (false, "Opps...Something went wrong!")
     
     var disableLoginButton: Bool {
         email.isEmpty || password.isEmpty || isLoading
@@ -14,5 +15,18 @@ final class AuthenticationViewModel: ObservableObject {
     
     var disableSignUpButton: Bool {
         disableLoginButton || username.isEmpty
+    }
+    
+    //  MARK: - Internal
+    @MainActor
+    func handleSignUp() async {
+        isLoading = true
+        do {
+            try await AuthenticationService.shared.createAccount(for: username, with: email, and: password)
+        } catch {
+            errorState.errorMessage = "Failed to create an account: \(error.localizedDescription)"
+            errorState.showError = true
+            isLoading = false
+        }
     }
 }
