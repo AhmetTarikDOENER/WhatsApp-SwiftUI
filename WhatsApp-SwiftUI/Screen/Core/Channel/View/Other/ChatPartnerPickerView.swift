@@ -5,7 +5,7 @@ struct ChatPartnerPickerView: View {
         NavigationStack {
             List {
                 ForEach(ChatPartnerPickerOptions.allCases) { option in
-                    Label(option.title, systemImage: option.iconName)
+                    HeaderRowView(option: option)
                 }
             }
             .navigationTitle("New Chat")
@@ -28,6 +28,35 @@ fileprivate enum ChatPartnerPickerOptions: String, CaseIterable, Identifiable {
         case .newGroup: return "person.2.fill"
         case .newContact: return "person.fill.badge.plus"
         case .newCommunity: return "person.3.fill"
+        }
+    }
+}
+
+//  MARK: - ChatPartnerPickerView+
+extension ChatPartnerPickerView {
+    
+    private struct HeaderRowView: View {
+        
+        let option: ChatPartnerPickerOptions
+        
+        var body: some View {
+            Button {
+                
+            } label: {
+                rowActionButton()
+            }
+        }
+        
+        private func rowActionButton() -> some View {
+            HStack {
+                Image(systemName: option.iconName)
+                    .font(.footnote)
+                    .frame(width: 40, height: 40)
+                    .background(Color(.systemGray6))
+                    .clipShape(Circle())
+                
+                Text(option.title)
+            }
         }
     }
 }
