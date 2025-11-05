@@ -23,6 +23,7 @@ protocol AuthenticationProtocol {
 enum AuthenticationError: Error {
     case accountCreationFailure(_ description: String)
     case savingUserInfoToDatabaseFailure(_ description: String)
+    case loginWithEmailFailure(_ description: String)
 }
 
 //  MARK: - AuthenticationError+LocalizedDescription
@@ -31,6 +32,7 @@ extension AuthenticationError: LocalizedError {
         switch self {
         case .accountCreationFailure(let description): return description
         case .savingUserInfoToDatabaseFailure(let description): return description
+        case .loginWithEmailFailure(let description): return description
         }
     }
 }
@@ -45,7 +47,14 @@ final class AuthenticationService: AuthenticationProtocol {
     
     //  MARK: - Internal
     func login(with email: String, and password: String) async throws {
-        
+        do {
+            let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+            fetchCurrentUserInfo()
+            print("✅ AuthenticationService -> Successfully signed in with email: \(authResult.user.email ?? "")")
+        } catch {
+            print("❌ AuthenticationService -> Failed to sign into the account with email: \(email)")
+            throw AuthenticationError.loginWithEmailFailure(error.localizedDescription)
+        }
     }
     
     func autoLogin() async {

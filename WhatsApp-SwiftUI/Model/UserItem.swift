@@ -19,6 +19,8 @@ extension UserItem {
         self.bio = dictionary[.bio] as? String? ?? nil
         self.profilImageUrl = dictionary[.profilImageUrl] as? String? ?? nil
     }
+    
+    static let placeholder = UserItem(uid: "1", username: "timcook", email: "apple@apple.com")
 }
 
 //  MARK: - String+Extension
