@@ -4,6 +4,7 @@ struct ChatPartnerPickerView: View {
     
     //  MARK: - Property
     @State private var searchText = ""
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -25,6 +26,33 @@ struct ChatPartnerPickerView: View {
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, prompt: "Search name or number")
+            .toolbar {
+                trailingNavigationBarItem()
+            }
+        }
+    }
+}
+
+//  MARK: - ChatPartnerPickerView
+extension ChatPartnerPickerView {
+    @ToolbarContentBuilder
+    private func trailingNavigationBarItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            cancelButton()
+        }
+    }
+    
+    private func cancelButton() -> some View {
+        Button {
+            dismiss()
+        } label: {
+            Image(systemName: "xmark")
+                .font(.footnote)
+                .bold()
+                .foregroundStyle(.gray)
+                .padding(8)
+                .background(Color(.systemGray5))
+                .clipShape(Circle())
         }
     }
 }
@@ -47,7 +75,7 @@ fileprivate enum ChatPartnerPickerOptions: String, CaseIterable, Identifiable {
     }
 }
 
-//  MARK: - ChatPartnerPickerView+
+//  MARK: - ChatPartnerPickerView+HeaderRowView
 extension ChatPartnerPickerView {
     
     private struct HeaderRowView: View {
