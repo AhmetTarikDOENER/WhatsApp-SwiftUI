@@ -5,12 +5,16 @@ struct ChatPartnerPickerView: View {
     //  MARK: - Property
     @State private var searchText = ""
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = ChatPartnerPickerViewModel()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.navigationStack) {
             List {
                 ForEach(ChatPartnerPickerOptions.allCases) { option in
                     HeaderRowView(option: option)
+                        .onTapGesture {
+                            viewModel.navigationStack.append(.addGroupChatMember)
+                        }
                 }
                 
                 Section {
@@ -25,10 +29,28 @@ struct ChatPartnerPickerView: View {
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search name or number")
+            .navigationDestination(for: ChannelCreationRoute.self) { route in
+                destinationView(for: route)
+            }
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search name or number"
+            )
             .toolbar {
                 trailingNavigationBarItem()
             }
+        }
+    }
+}
+
+extension ChatPartnerPickerView {
+    private func destinationView(for route: ChannelCreationRoute) -> some View {
+        switch route {
+        case .addGroupChatMember:
+            Text("Add Group Chat Partners")
+        case .setupGroupChat:
+            Text("Setup Group Chat")
         }
     }
 }
