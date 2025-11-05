@@ -1,15 +1,30 @@
 import SwiftUI
 
 struct ChatPartnerPickerView: View {
+    
+    //  MARK: - Property
+    @State private var searchText = ""
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(ChatPartnerPickerOptions.allCases) { option in
                     HeaderRowView(option: option)
                 }
+                
+                Section {
+                    ForEach(0 ..< 11) { _ in
+                        ChatPartnerRowView(user: .placeholder)
+                    }
+                } header: {
+                    Text("Contacts on WhatsApp")
+                        .textCase(nil)
+                        .bold()
+                }
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search name or number")
         }
     }
 }
