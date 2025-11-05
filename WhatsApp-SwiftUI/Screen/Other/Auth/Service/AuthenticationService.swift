@@ -64,13 +64,19 @@ final class AuthenticationService: AuthenticationProtocol {
             self.authState.send(.loggedIn(newUser))
             try await saveUserInfoToDatabase(user: newUser)
         } catch {
-            print("🔒 AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
+            print("❌ AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
             throw AuthenticationError.accountCreationFailure(error.localizedDescription)
         }
     }
     
     func logOut() async throws {
-        
+        do {
+            try Auth.auth().signOut()
+            authState.send(.loggedOut)
+            print("✅ AuthenticationService -> Successfully logged out")
+        } catch {
+            print("❌ AuthenticationService -> Failed to log out  current user: \(error.localizedDescription)")
+        }
     }
     
     //  MARK: - Private
