@@ -22,6 +22,7 @@ struct AddGroupChatPartnerView: View {
                 }
             }
         }
+        .animation(.easeInOut, value: viewModel.showSelectedUsers)
         .searchable(
             text: $searchText,
             placement: .navigationBarDrawer(displayMode: .always),
@@ -34,8 +35,11 @@ struct AddGroupChatPartnerView: View {
         ChatPartnerRowView(user: .placeholder) {
             Spacer()
             
-            Image(systemName: "circle")
-                .foregroundStyle(Color(.systemGray4))
+            let isSelected = viewModel.isUserSelected(user)
+            let imageName = isSelected ? "checkmark.circle.fill" : "circle"
+            let foregroundStyle = isSelected ? Color.blue : Color(.systemGray4)
+            Image(systemName: imageName)
+                .foregroundStyle(foregroundStyle)
                 .imageScale(.large)
         }
     }
