@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
 
     //  MARK: - Properties
@@ -18,7 +19,6 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     //  MARK: - Internal
-    @MainActor
     func handleSignUp() async {
         isLoading = true
         do {

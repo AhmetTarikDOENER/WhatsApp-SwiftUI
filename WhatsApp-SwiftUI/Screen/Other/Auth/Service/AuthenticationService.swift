@@ -5,7 +5,7 @@ import FirebaseDatabase
 
 //  MARK: - AuthState
 enum AuthState {
-    case pending, loggedIn, loggedOut
+    case pending, loggedIn(UserItem), loggedOut
 }
 
 //  MARK: - AuthenticationProtocol
@@ -39,7 +39,7 @@ extension AuthenticationError: LocalizedError {
 final class AuthenticationService: AuthenticationProtocol {
     
     static let shared: AuthenticationProtocol = AuthenticationService()
-    private init() {  }
+    private init() { Task { await autoLogin() } }
     
     var authState = CurrentValueSubject<AuthState, Never>(.pending)
     
@@ -49,7 +49,11 @@ final class AuthenticationService: AuthenticationProtocol {
     }
     
     func autoLogin() async {
-        
+        if Auth.auth().currentUser == nil {
+            authState.send(.loggedOut)
+        } else {
+            fetchCurrentUserInfo()
+        }
     }
     
     func createAccount(for username: String, with email: String, and password: String) async throws {
@@ -57,6 +61,7 @@ final class AuthenticationService: AuthenticationProtocol {
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
             let uid = authResult.user.uid
             let newUser = UserItem(uid: uid, username: username, email: email)
+            self.authState.send(.loggedIn(newUser))
             try await saveUserInfoToDatabase(user: newUser)
         } catch {
             print("🔒 AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
@@ -66,6 +71,21 @@ final class AuthenticationService: AuthenticationProtocol {
     
     func logOut() async throws {
         
+    }
+    
+    //  MARK: - Private
+    private func fetchCurrentUserInfo() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("users")
+            .child(currentUid)
+            .observe(.value) { [weak self] snapshot in
+                guard let userDictionary = snapshot.value as? [String: Any] else { return }
+                let loggedInUser = UserItem(dictionary: userDictionary)
+                self?.authState.send(.loggedIn(loggedInUser))
+                print("✅ AuthenticationService -> Successfully fetched current user \(loggedInUser.username) info from database")
+            } withCancel: { error in
+                print("❌ AuthenticationService -> Failed to get current user info from database: \(error.localizedDescription)")
+            }
     }
 }
 
@@ -80,7 +100,7 @@ extension AuthenticationService {
                 .child(user.uid)
                 .setValue(userDictionary)
         } catch {
-            print("🔒 AuthenticationService -> Failed to save user info to database: \(error.localizedDescription)")
+            print("❌ AuthenticationService -> Failed to save user info to database: \(error.localizedDescription)")
             throw AuthenticationError.savingUserInfoToDatabaseFailure(error.localizedDescription)
         }
     }
