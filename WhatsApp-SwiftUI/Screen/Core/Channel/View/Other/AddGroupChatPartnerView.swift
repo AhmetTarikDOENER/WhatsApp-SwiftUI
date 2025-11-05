@@ -4,13 +4,18 @@ struct AddGroupChatPartnerView: View {
     
     //  MARK: - Property
     @State private var searchText = ""
+    @ObservedObject var viewModel: ChatPartnerPickerViewModel
     
     var body: some View {
         List {
+            if viewModel.showSelectedUsers {
+                Text("Users selected")
+            }
+            
             Section {
-                ForEach(0 ..< 11) { _ in
+                ForEach([UserItem.placeholder]) { user in
                     Button {
-                        print("Selected")
+                        viewModel.handleUserSelection(user)
                     } label: {
                         chatPartnerRowView(user: .placeholder)
                     }
@@ -38,6 +43,6 @@ struct AddGroupChatPartnerView: View {
 
 #Preview {
     NavigationStack {
-        AddGroupChatPartnerView()
+        AddGroupChatPartnerView(viewModel: .init())
     }
 }

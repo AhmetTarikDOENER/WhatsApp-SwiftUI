@@ -45,10 +45,11 @@ struct ChatPartnerPickerView: View {
 }
 
 extension ChatPartnerPickerView {
+    @ViewBuilder
     private func destinationView(for route: ChannelCreationRoute) -> some View {
         switch route {
         case .addGroupChatMember:
-            Text("Add Group Chat Partners")
+            AddGroupChatPartnerView(viewModel: viewModel)
         case .setupGroupChat:
             Text("Setup Group Chat")
         }
