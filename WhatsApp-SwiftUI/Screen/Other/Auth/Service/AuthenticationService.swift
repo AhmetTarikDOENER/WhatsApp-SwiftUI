@@ -19,6 +19,22 @@ protocol AuthenticationProtocol {
     func logOut() async throws
 }
 
+//  MARK: - AuthenticationError
+enum AuthenticationError: Error {
+    case accountCreationFailure(_ description: String)
+    case savingUserInfoToDatabaseFailure(_ description: String)
+}
+
+//  MARK: - AuthenticationError+LocalizedDescription
+extension AuthenticationError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .accountCreationFailure(let description): return description
+        case .savingUserInfoToDatabaseFailure(let description): return description
+        }
+    }
+}
+
 //  MARK: - AuthenticationService
 final class AuthenticationService: AuthenticationProtocol {
     
@@ -37,10 +53,15 @@ final class AuthenticationService: AuthenticationProtocol {
     }
     
     func createAccount(for username: String, with email: String, and password: String) async throws {
-        let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-        let uid = authResult.user.uid
-        let newUser = UserItem(uid: uid, username: username, email: email)
-        try await saveUserInfoToDatabase(user: newUser)
+        do {
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            let uid = authResult.user.uid
+            let newUser = UserItem(uid: uid, username: username, email: email)
+            try await saveUserInfoToDatabase(user: newUser)
+        } catch {
+            print("🔒 AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
+            throw AuthenticationError.accountCreationFailure(error.localizedDescription)
+        }
     }
     
     func logOut() async throws {
@@ -48,13 +69,19 @@ final class AuthenticationService: AuthenticationProtocol {
     }
 }
 
+//  MARK: - AuthenticationService+Extension
 extension AuthenticationService {
     private func saveUserInfoToDatabase(user: UserItem) async throws {
-        let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
-        
-        try await Database.database().reference()
-            .child("users")
-            .child(user.uid)
-            .setValue(userDictionary)
+        do {
+            let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
+            
+            try await Database.database().reference()
+                .child("users")
+                .child(user.uid)
+                .setValue(userDictionary)
+        } catch {
+            print("🔒 AuthenticationService -> Failed to save user info to database: \(error.localizedDescription)")
+            throw AuthenticationError.savingUserInfoToDatabaseFailure(error.localizedDescription)
+        }
     }
 }

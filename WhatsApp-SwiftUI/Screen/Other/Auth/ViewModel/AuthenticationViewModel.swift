@@ -24,7 +24,7 @@ final class AuthenticationViewModel: ObservableObject {
         do {
             try await AuthenticationService.shared.createAccount(for: username, with: email, and: password)
         } catch {
-            errorState.errorMessage = "Failed to create an account: \(error.localizedDescription)"
+            errorState.errorMessage = "Failed to create an account:\n \(error.localizedDescription)"
             errorState.showError = true
             isLoading = false
         }
