@@ -37,6 +37,7 @@ struct SettingsTabScreen: View {
     }
 }
 
+//  MARK: - SettingsTabScreen
 extension SettingsTabScreen {
     @ToolbarContentBuilder
     private func leadingNavigationBarItem() -> some ToolbarContent {

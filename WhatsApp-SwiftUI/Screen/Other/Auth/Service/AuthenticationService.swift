@@ -82,8 +82,7 @@ final class AuthenticationService: AuthenticationProtocol {
     //  MARK: - Private
     private func fetchCurrentUserInfo() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("users")
-            .child(currentUid)
+        FirebaseConstants.UserReference.child(currentUid)
             .observe(.value) { [weak self] snapshot in
                 guard let userDictionary = snapshot.value as? [String: Any] else { return }
                 let loggedInUser = UserItem(dictionary: userDictionary)
@@ -99,10 +98,9 @@ final class AuthenticationService: AuthenticationProtocol {
 extension AuthenticationService {
     private func saveUserInfoToDatabase(user: UserItem) async throws {
         do {
-            let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
+            let userDictionary: [String: Any] = [.uid: user.uid, .username: user.username, .email: user.email]
             
-            try await Database.database().reference()
-                .child("users")
+            try await FirebaseConstants.UserReference
                 .child(user.uid)
                 .setValue(userDictionary)
         } catch {
