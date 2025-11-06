@@ -72,7 +72,7 @@ private extension GroupChatPartnerPickerView {
     private func trailingNavigationBarItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("Next") {
-                
+                viewModel.navigationStack.append(.setupGroupChat)
             }
             .bold()
             .disabled(viewModel.disableNextButton)

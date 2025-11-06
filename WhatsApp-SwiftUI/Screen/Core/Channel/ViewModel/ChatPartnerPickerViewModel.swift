@@ -2,7 +2,7 @@ import Foundation
 
 //  MARK: - ChannelCreationRoute
 enum ChannelCreationRoute {
-    case addGroupChatMember
+    case groupChatPartnerPicker
     case setupGroupChat
 }
 
