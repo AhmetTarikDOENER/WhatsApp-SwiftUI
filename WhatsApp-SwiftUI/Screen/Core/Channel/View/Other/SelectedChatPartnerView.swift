@@ -1,10 +1,14 @@
 import SwiftUI
 
 struct SelectedChatPartnerView: View {
+    
+    //  MARK: - Property
+    let users: [UserItem]
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(UserItem.placeholders) { user in
+                ForEach(users) { user in
                     chatPartnerView(user)
                 }
             }
@@ -41,5 +45,5 @@ struct SelectedChatPartnerView: View {
 }
 
 #Preview {
-    SelectedChatPartnerView()
+    SelectedChatPartnerView(users: UserItem.placeholders)
 }
