@@ -6,6 +6,11 @@ enum ChannelCreationRoute {
     case setupGroupChat
 }
 
+//  MARK: - ChannelConstants
+enum ChannelConstants {
+    static let maxGroupParticipantCount = 12
+}
+
 //  MARK: - ChatPartnerPickerViewModel
 final class ChatPartnerPickerViewModel: ObservableObject {
     
@@ -15,6 +20,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     
     var showSelectedUsers: Bool {
         !selectedChatPartners.isEmpty
+    }
+    
+    var disableNextButton: Bool {
+        selectedChatPartners.isEmpty
     }
     
     //  MARK: - Internal

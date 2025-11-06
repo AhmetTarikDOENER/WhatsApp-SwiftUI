@@ -30,6 +30,10 @@ struct GroupChatPartnerPickerView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Search name or number"
         )
+        .toolbar {
+            principleNavigationBarItem()
+            trailingNavigationBarItem()
+        }
     }
     
     //  MARK: - Private
@@ -43,6 +47,35 @@ struct GroupChatPartnerPickerView: View {
             Image(systemName: imageName)
                 .foregroundStyle(foregroundStyle)
                 .imageScale(.large)
+        }
+    }
+}
+
+//  MARK: - GroupChatPartnerPickerView
+private extension GroupChatPartnerPickerView {
+    @ToolbarContentBuilder
+    private func principleNavigationBarItem() -> some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            VStack {
+                Text("Add Participant")
+                    .bold()
+                
+                let count = viewModel.selectedChatPartners.count
+                Text("\(count)/\(ChannelConstants.maxGroupParticipantCount)")
+                    .foregroundStyle(.gray)
+                    .font(.footnote)
+            }
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private func trailingNavigationBarItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Next") {
+                
+            }
+            .bold()
+            .disabled(viewModel.disableNextButton)
         }
     }
 }
