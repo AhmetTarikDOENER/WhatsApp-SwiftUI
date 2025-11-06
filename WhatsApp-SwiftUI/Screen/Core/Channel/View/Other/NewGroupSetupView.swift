@@ -27,6 +27,10 @@ struct NewGroupSetupView: View {
             }
             .listRowBackground(Color.clear)
         }
+        .navigationTitle("New Group")
+        .toolbar {
+            trailingNavigationBarItem()
+        }
     }
     
     //  MARK: - Private
@@ -43,8 +47,21 @@ struct NewGroupSetupView: View {
             )
         }
     }
+    
+    @ToolbarContentBuilder
+    private func trailingNavigationBarItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Create") {
+                
+            }
+            .bold()
+            .disabled(viewModel.disableNextButton)
+        }
+    }
 }
 
 #Preview {
-    NewGroupSetupView(viewModel: .init())
+    NavigationStack {
+        NewGroupSetupView(viewModel: .init())
+    }
 }
