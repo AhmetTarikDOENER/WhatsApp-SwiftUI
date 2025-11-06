@@ -9,7 +9,9 @@ struct GroupChatPartnerPickerView: View {
     var body: some View {
         List {
             if viewModel.showSelectedUsers {
-                SelectedChatPartnerView(users: viewModel.selectedChatPartners)
+                SelectedChatPartnerView(users: viewModel.selectedChatPartners) { user in
+                    viewModel.handleUserSelection(user)
+                }
             }
             
             Section {

@@ -4,6 +4,7 @@ struct SelectedChatPartnerView: View {
     
     //  MARK: - Property
     let users: [UserItem]
+    let onTapHandler: (_ user: UserItem) -> Void
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -22,16 +23,16 @@ struct SelectedChatPartnerView: View {
                 .fill(Color(.systemGray4))
                 .frame(width: 60, height: 60)
                 .overlay(alignment: .topTrailing) {
-                    cancelButton()
+                    cancelButton(user)
                 }
             
             Text(user.username)
         }
     }
     
-    private func cancelButton() -> some View {
+    private func cancelButton(_ user: UserItem) -> some View {
         Button {
-            
+            onTapHandler(user)
         } label: {
             Image(systemName: "xmark")
                 .imageScale(.small)
@@ -45,5 +46,7 @@ struct SelectedChatPartnerView: View {
 }
 
 #Preview {
-    SelectedChatPartnerView(users: UserItem.placeholders)
+    SelectedChatPartnerView(users: UserItem.placeholders) { user in
+        
+    }
 }
