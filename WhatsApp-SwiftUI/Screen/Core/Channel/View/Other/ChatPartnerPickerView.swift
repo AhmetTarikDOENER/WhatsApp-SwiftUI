@@ -49,7 +49,7 @@ extension ChatPartnerPickerView {
     private func destinationView(for route: ChannelCreationRoute) -> some View {
         switch route {
         case .addGroupChatMember:
-            AddGroupChatPartnerView(viewModel: viewModel)
+            GroupChatPartnerPickerView(viewModel: viewModel)
         case .setupGroupChat:
             Text("Setup Group Chat")
         }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AddGroupChatPartnerView: View {
+struct GroupChatPartnerPickerView: View {
     
     //  MARK: - Property
     @State private var searchText = ""
@@ -9,15 +9,15 @@ struct AddGroupChatPartnerView: View {
     var body: some View {
         List {
             if viewModel.showSelectedUsers {
-                Text("Users selected")
+                SelectedChatPartnerView()
             }
             
             Section {
-                ForEach([UserItem.placeholder]) { user in
+                ForEach(UserItem.placeholders) { user in
                     Button {
                         viewModel.handleUserSelection(user)
                     } label: {
-                        chatPartnerRowView(user: .placeholder)
+                        chatPartnerRowView(user: user)
                     }
                 }
             }
@@ -32,7 +32,7 @@ struct AddGroupChatPartnerView: View {
     
     //  MARK: - Private
     private func chatPartnerRowView(user: UserItem) -> some View {
-        ChatPartnerRowView(user: .placeholder) {
+        ChatPartnerRowView(user: user) {
             Spacer()
             
             let isSelected = viewModel.isUserSelected(user)
@@ -47,6 +47,6 @@ struct AddGroupChatPartnerView: View {
 
 #Preview {
     NavigationStack {
-        AddGroupChatPartnerView(viewModel: .init())
+        GroupChatPartnerPickerView(viewModel: .init())
     }
 }

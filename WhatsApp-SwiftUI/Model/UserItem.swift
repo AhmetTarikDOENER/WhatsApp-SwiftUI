@@ -21,6 +21,16 @@ extension UserItem {
     }
     
     static let placeholder = UserItem(uid: "1", username: "timcook", email: "apple@apple.com")
+    static let placeholders: [UserItem] = [
+        .init(uid: "1", username: "timcook1", email: "apple1@apple.com"),
+        .init(uid: "2", username: "timcook2", email: "apple2@apple.com"),
+        .init(uid: "3", username: "timcook3", email: "apple3@apple.com"),
+        .init(uid: "4", username: "timcook4", email: "apple4@apple.com"),
+        .init(uid: "5", username: "timcook5", email: "apple5@apple.com"),
+        .init(uid: "6", username: "timcook6", email: "apple6@apple.com"),
+        .init(uid: "7", username: "timcook7", email: "apple7@apple.com"),
+        .init(uid: "8", username: "timcook8", email: "apple8@apple.com")
+    ]
 }
 
 //  MARK: - String+Extension
