@@ -13,16 +13,5 @@ final class RootScreenViewModel: ObservableObject {
             .sink { [weak self] authState in
                 self?.authState = authState
             }
-        
-        AuthenticationService.testAccounts.forEach { email in
-            registerTestAccount(with: email)
-        }
-    }
-    
-    private func registerTestAccount(with email: String) {
-        Task {
-            let username = email.replacingOccurrences(of: "@gmail.com", with: "")
-            try? await AuthenticationService.shared.createAccount(for: username, with: email, and: "testUserPassword")
-        }
     }
 }
