@@ -12,11 +12,14 @@ enum ChannelConstants {
 }
 
 //  MARK: - ChatPartnerPickerViewModel
+@MainActor
 final class ChatPartnerPickerViewModel: ObservableObject {
     
     //  MARK: - Properties
     @Published var navigationStack = [ChannelCreationRoute]()
     @Published var selectedChatPartners = [UserItem]()
+    @Published private(set) var users: [UserItem] = []
+    private var currentCursor: String?
     
     var showSelectedUsers: Bool {
         !selectedChatPartners.isEmpty
@@ -25,6 +28,9 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     var disableNextButton: Bool {
         selectedChatPartners.isEmpty
     }
+    
+    //  MARK: - Init
+    init() { Task { await fetchUsers() } }
     
     //  MARK: - Internal
     func handleUserSelection(_ user: UserItem) {
@@ -39,5 +45,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func isUserSelected(_ user: UserItem) -> Bool {
         let isSelected = selectedChatPartners.contains { $0.uid == user.uid }
         return isSelected
+    }
+    
+    func fetchUsers() async {
+        do {
+            let userNode = try await UserService.paginateUsers(currentCursor: currentCursor, pageSize: 5)
+            self.users = userNode.users
+            self.currentCursor = userNode.currentCursor
+        } catch {
+            print("❌ ChatPartnerPickerViewModel -> Failed to fetch users: \(error.localizedDescription)")
+        }
     }
 }

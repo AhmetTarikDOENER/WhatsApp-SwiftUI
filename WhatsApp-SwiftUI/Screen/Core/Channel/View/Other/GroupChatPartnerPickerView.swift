@@ -15,7 +15,7 @@ struct GroupChatPartnerPickerView: View {
             }
             
             Section {
-                ForEach(UserItem.placeholders) { user in
+                ForEach(viewModel.users) { user in
                     Button {
                         viewModel.handleUserSelection(user)
                     } label: {

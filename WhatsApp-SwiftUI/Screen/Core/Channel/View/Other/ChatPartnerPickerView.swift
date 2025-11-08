@@ -18,8 +18,8 @@ struct ChatPartnerPickerView: View {
                 }
                 
                 Section {
-                    ForEach(0 ..< 11) { _ in
-                        ChatPartnerRowView(user: .placeholder)
+                    ForEach(viewModel.users) { user in
+                        ChatPartnerRowView(user: user)
                     }
                 } header: {
                     Text("Contacts on WhatsApp")
