@@ -22,6 +22,26 @@ struct UserService {
             
             return .emptyNode
         } else {
+            let mainSnapshot = try await FirebaseConstants.UserReference
+                .queryOrderedByKey()
+                .queryEnding(atValue: currentCursor)
+                .queryLimited(toLast: pageSize + 1)
+                .getData()
+            
+            guard let first = mainSnapshot.children.allObjects.first as? DataSnapshot,
+                  let allObjects = mainSnapshot.children.allObjects as? [DataSnapshot] else { return .emptyNode }
+            
+            let users: [UserItem] = allObjects.compactMap { userSnapshot in
+                let userDictionary = userSnapshot.value as? [String: Any] ?? [:]
+                return UserItem(dictionary: userDictionary)
+            }
+            
+            if users.count == mainSnapshot.childrenCount {
+                let filteredUsers = users.filter { $0.uid != currentCursor }
+                let userNode = UserNode(users: filteredUsers, currentCursor: first.key)
+                return userNode
+            }
+            
             return .emptyNode
         }
     }

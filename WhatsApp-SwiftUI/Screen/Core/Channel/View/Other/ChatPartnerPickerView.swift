@@ -26,6 +26,10 @@ struct ChatPartnerPickerView: View {
                         .textCase(nil)
                         .bold()
                 }
+                
+                if viewModel.isPaginatable {
+                    loadMoreUsersView()
+                }
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
@@ -41,6 +45,15 @@ struct ChatPartnerPickerView: View {
                 trailingNavigationBarItem()
             }
         }
+    }
+    
+    private func loadMoreUsersView() -> some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+            .task {
+                await viewModel.fetchUsers()
+            }
     }
 }
 

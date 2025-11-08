@@ -29,6 +29,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         selectedChatPartners.isEmpty
     }
     
+    var isPaginatable: Bool {
+        !users.isEmpty
+    }
+    
     //  MARK: - Init
     init() { Task { await fetchUsers() } }
     
@@ -50,7 +54,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func fetchUsers() async {
         do {
             let userNode = try await UserService.paginateUsers(currentCursor: currentCursor, pageSize: 5)
-            self.users = userNode.users
+            self.users.append(contentsOf: userNode.users)
             self.currentCursor = userNode.currentCursor
         } catch {
             print("❌ ChatPartnerPickerViewModel -> Failed to fetch users: \(error.localizedDescription)")

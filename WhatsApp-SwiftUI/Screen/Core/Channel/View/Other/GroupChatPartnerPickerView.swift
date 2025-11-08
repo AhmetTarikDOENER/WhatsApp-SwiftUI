@@ -23,6 +23,10 @@ struct GroupChatPartnerPickerView: View {
                     }
                 }
             }
+            
+            if viewModel.isPaginatable {
+                loadMoreUsersView()
+            }
         }
         .animation(.easeInOut, value: viewModel.showSelectedUsers)
         .searchable(
@@ -48,6 +52,15 @@ struct GroupChatPartnerPickerView: View {
                 .foregroundStyle(foregroundStyle)
                 .imageScale(.large)
         }
+    }
+    
+    private func loadMoreUsersView() -> some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .background(Color.clear)
+            .task {
+                await viewModel.fetchUsers()
+            }
     }
 }
 
