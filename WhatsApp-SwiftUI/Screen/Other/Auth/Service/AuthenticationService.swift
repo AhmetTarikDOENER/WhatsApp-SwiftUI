@@ -118,3 +118,42 @@ extension AuthenticationService {
         }
     }
 }
+
+extension AuthenticationService {
+    static let testAccounts: [String] = [
+        "testUser3@gmail.com",
+        "testUser4@gmail.com",
+        "testUser5@gmail.com",
+        "testUser6@gmail.com",
+        "testUser7@gmail.com",
+        "testUser8@gmail.com",
+        "testUser9@gmail.com",
+        "testUser10@gmail.com",
+        "testUser11@gmail.com",
+        "testUser12@gmail.com",
+        "testUser13@gmail.com",
+        "testUser14@gmail.com",
+        "testUser15@gmail.com",
+        "testUser16@gmail.com",
+        "testUser17@gmail.com",
+        "testUser18@gmail.com",
+        "testUser19@gmail.com",
+        "testUser20@gmail.com",
+        "testUser21@gmail.com",
+        "testUser22@gmail.com",
+        "testUser23@gmail.com",
+        "testUser24@gmail.com",
+        "testUser25@gmail.com",
+        "testUser26@gmail.com",
+        "testUser27@gmail.com",
+        "testUser28@gmail.com",
+        "testUser29@gmail.com",
+        "testUser30@gmail.com",
+        "testUser31@gmail.com",
+        "testUser32@gmail.com",
+        "testUser33@gmail.com",
+        "testUser34@gmail.com",
+        "testUser35@gmail.com",
+        "testUser36@gmail.com"
+    ]
+}
