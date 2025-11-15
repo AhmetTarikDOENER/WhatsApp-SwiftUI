@@ -6,6 +6,7 @@ struct ChatPartnerPickerView: View {
     @State private var searchText = ""
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ChatPartnerPickerViewModel()
+    var onCreate: (_ newChannel: Channel) -> Void
     
     var body: some View {
         NavigationStack(path: $viewModel.navigationStack) {
@@ -20,6 +21,9 @@ struct ChatPartnerPickerView: View {
                 Section {
                     ForEach(viewModel.users) { user in
                         ChatPartnerRowView(user: user)
+                            .onTapGesture {
+                                onCreate(.placeholder)
+                            }
                     }
                 } header: {
                     Text("Contacts on WhatsApp")
@@ -142,5 +146,7 @@ extension ChatPartnerPickerView {
 }
 
 #Preview {
-    ChatPartnerPickerView()
+    ChatPartnerPickerView { channel in
+        
+    }
 }

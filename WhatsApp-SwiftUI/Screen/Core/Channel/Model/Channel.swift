@@ -14,3 +14,18 @@ struct Channel: Identifiable {
     
     var isGroupChat: Bool { membersCount > 2 }
 }
+
+extension Channel {
+    static let placeholder = Channel(
+        id: "1",
+        name: "Placeholder Channel",
+        lastMessage: "Hey, How'ya doing?",
+        creationDate: Date(),
+        lastMessageTimestamp: Date(),
+        membersCount: 2,
+        adminUids: [],
+        membersUids: [],
+        members: [],
+        thumbnailUrl: nil
+    )
+}
