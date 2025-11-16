@@ -35,16 +35,8 @@ extension Message {
     ]
 }
 
-//  MARK: - MessageDirection
-enum MessageDirection {
-    case outgoing, received
-    
-    static var random: MessageDirection {
-        return [.outgoing, .received].randomElement() ?? .outgoing
-    }
-}
-
-//  MARK: - MessageType
-enum MessageType {
-    case text, photo, video, audio
+extension String {
+    static let `type` = "type"
+    static let timestamp = "timestamp"
+    static let ownerUid = "ownerUid"
 }

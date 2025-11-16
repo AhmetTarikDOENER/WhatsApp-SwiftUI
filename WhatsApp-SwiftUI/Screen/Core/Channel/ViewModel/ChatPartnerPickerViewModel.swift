@@ -89,9 +89,11 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         var membersUids = selectedChatPartners.compactMap { $0.uid }
         membersUids.append(currentUid)
         
+        let newChannelBroadcast = AdminMessageType.channelCreation.rawValue
+        
         var channelDictionary: [String: Any] = [
             .id: channelId,
-            .lastMessage: "",
+            .lastMessage: newChannelBroadcast,
             .creationDate: timestamp,
             .lastMessageTimestamp: timestamp,
             .membersUids: membersUids,
@@ -104,7 +106,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             channelDictionary[.name] = channelName
         }
  
+        let messageDictionary: [String: Any] = [
+            .type: newChannelBroadcast,
+            .timestamp: timestamp,
+            .ownerUid: currentUid
+        ]
+        
         FirebaseConstants.ChannelsReference.child(channelId).setValue(channelDictionary)
+        FirebaseConstants.MessagesReference.child(channelId).child(messageId).setValue(messageDictionary)
+        
         membersUids.forEach { userId in
             FirebaseConstants.UserChannelsReference.child(userId).child(channelId).setValue(true)
         }
