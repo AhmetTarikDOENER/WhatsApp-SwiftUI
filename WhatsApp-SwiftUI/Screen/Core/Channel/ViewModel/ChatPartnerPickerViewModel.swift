@@ -96,7 +96,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             .lastMessageTimestamp: timestamp,
             .membersUids: membersUids,
             .membersCount: membersUids.count,
-            .adminUids: [currentUid]
+            .adminUids: [currentUid],
+            .createdBy: currentUid
         ]
         
         if let channelName = channelName, !channelName.isEmptyOrWhitespace {
@@ -117,5 +118,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         var newChannel = Channel(channelDictionary)
         newChannel.members = selectedChatPartners
         return .success(newChannel)
+    }
+    
+    func createGroupChannel(_ groupName: String?, completion: @escaping (_ newChannel: Channel) -> Void) {
+        let channelResult = createChannel(groupName)
+        switch channelResult {
+        case .success(let channel):
+            completion(channel)
+        case .failure(let error):
+            print("❌ ChatPartnerPickerViewModel -> Failed to create group channel: \(error.localizedDescription)")
+        }
     }
 }

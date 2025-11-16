@@ -12,6 +12,7 @@ struct Channel: Identifiable {
     var membersUids: [String]
     var members: [UserItem]
     var thumbnailUrl: String?
+    let createdBy: String
     
     var isGroupChat: Bool { membersCount > 2 }
     
@@ -45,9 +46,10 @@ extension Channel {
         
         self.membersCount = dictionary[.membersCount] as? UInt ?? 0
         self.adminUids = dictionary[.adminUids] as? [String] ?? []
-        self.thumbnailUrl = dictionary[.thumbnailUrl] as? String ?? nil
+        self.thumbnailUrl = dictionary[.thumbnailUrl] as? String? ?? nil
         self.membersUids = dictionary[.membersUids] as? [String] ?? []
         self.members = dictionary[.members] as? [UserItem] ?? []
+        self.createdBy = dictionary[.createdBy] as? String ?? ""
     }
 }
 
@@ -62,7 +64,8 @@ extension Channel {
         adminUids: [],
         membersUids: [],
         members: [],
-        thumbnailUrl: nil
+        thumbnailUrl: nil,
+        createdBy: ""
     )
 }
 
@@ -77,4 +80,5 @@ extension String {
     static let membersUids = "membersUids"
     static let thumbnailUrl = "thumbnailUrl"
     static let members = "members"
+    static let createdBy = "createdBy"
 }
