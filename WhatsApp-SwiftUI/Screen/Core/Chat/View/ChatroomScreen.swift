@@ -27,7 +27,7 @@ extension ChatroomScreen {
                 Circle()
                     .frame(width: 35, height: 35)
                 
-                Text("Tim Cook")
+                Text(channel.title)
                     .bold()
             }
         }

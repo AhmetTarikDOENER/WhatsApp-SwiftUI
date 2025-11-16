@@ -114,7 +114,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             FirebaseConstants.UserDirectChannels.child(chatPartner.uid).child(currentUid).setValue([channelId: true])
         }
         
-        let newChannel = Channel(channelDictionary)
+        var newChannel = Channel(channelDictionary)
+        newChannel.members = selectedChatPartners
         return .success(newChannel)
     }
 }
