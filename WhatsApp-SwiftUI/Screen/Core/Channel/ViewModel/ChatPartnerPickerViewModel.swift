@@ -12,6 +12,11 @@ enum ChannelConstants {
     static let maxGroupParticipantCount = 12
 }
 
+enum ChannelCreationError: Error {
+    case noChatPartner
+    case failedToCreateUniqueIds
+}
+
 //  MARK: - ChatPartnerPickerViewModel
 @MainActor
 final class ChatPartnerPickerViewModel: ObservableObject {
@@ -64,5 +69,43 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         } catch {
             print("❌ ChatPartnerPickerViewModel -> Failed to fetch users: \(error.localizedDescription)")
         }
+    }
+    
+    //  MARK: - Private
+    func createChannel(_ channelName: String?) -> Result<Channel, Error> {
+        guard !selectedChatPartners.isEmpty else { return .failure(ChannelCreationError.noChatPartner)}
+        guard let channelId = FirebaseConstants.ChannelsReference.childByAutoId().key,
+              let currentUid = Auth.auth().currentUser?.uid,
+              let messageId = FirebaseConstants.MessagesReference.childByAutoId().key else {
+            return .failure(ChannelCreationError.failedToCreateUniqueIds)
+        }
+        
+        let timestamp = Date().timeIntervalSince1970
+        
+        var membersUids = selectedChatPartners.compactMap { $0.uid }
+        membersUids.append(currentUid)
+        
+        var channelDictionary: [String: Any] = [
+            .id: channelId,
+            .lastMessage: "",
+            .creationDate: timestamp,
+            .lastMessageTimestamp: timestamp,
+            .membersUids: membersUids,
+            .membersCount: membersUids.count,
+            .adminUids: [currentUid]
+        ]
+        
+        if let channelName = channelName, !channelName.isEmptyOrWhitespace {
+            channelDictionary[.name] = channelName
+        }
+ 
+        FirebaseConstants.ChannelsReference.child(channelId).setValue(channelDictionary)
+        membersUids.forEach { userId in
+            FirebaseConstants.UserChannelsReference.child(userId).child(channelId).setValue(true)
+            FirebaseConstants.UserDirectChannels.child(userId).child(channelId).setValue(true)
+        }
+        
+        let newChannel = Channel(channelDictionary)
+        return .success(newChannel)
     }
 }
