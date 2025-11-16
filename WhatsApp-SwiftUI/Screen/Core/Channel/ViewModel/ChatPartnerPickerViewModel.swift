@@ -25,6 +25,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     @Published var navigationStack = [ChannelCreationRoute]()
     @Published var selectedChatPartners = [UserItem]()
     @Published private(set) var users: [UserItem] = []
+    @Published var errorState: (showError: Bool, errorMessage: String) = (false, "Oh no! Something went wrong.")
     private var currentCursor: String?
     
     var showSelectedUsers: Bool {
@@ -52,6 +53,11 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             guard let index = selectedChatPartners.firstIndex(where: { $0.uid == user.uid }) else { return }
             selectedChatPartners.remove(at: index)
         } else {
+            guard selectedChatPartners.count < ChannelConstants.maxGroupParticipantCount else {
+                errorState.errorMessage = "Sorry, you can only invite up to \(ChannelConstants.maxGroupParticipantCount) people to a group chat."
+                errorState.showError = true
+                return
+            }
             selectedChatPartners.append(user)
         }
     }

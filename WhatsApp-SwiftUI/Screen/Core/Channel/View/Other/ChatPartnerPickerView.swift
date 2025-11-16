@@ -48,6 +48,12 @@ struct ChatPartnerPickerView: View {
             .toolbar {
                 trailingNavigationBarItem()
             }
+            .alert(isPresented: $viewModel.errorState.showError) {
+                Alert(
+                    title: Text(viewModel.errorState.errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
             .onAppear {
                 viewModel.deselectAllChatPartners()
             }
