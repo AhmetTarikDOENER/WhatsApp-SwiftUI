@@ -55,6 +55,9 @@ struct ChatPartnerPickerView: View {
             .toolbar {
                 trailingNavigationBarItem()
             }
+            .onAppear {
+                viewModel.deselectAllChatPartners()
+            }
         }
     }
     

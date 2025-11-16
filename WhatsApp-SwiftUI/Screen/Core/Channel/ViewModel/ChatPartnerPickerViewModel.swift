@@ -139,4 +139,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             print("❌ ChatPartnerPickerViewModel -> Failed to create group channel: \(error.localizedDescription)")
         }
     }
+    
+    func deselectAllChatPartners() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            self.selectedChatPartners.removeAll()
+        }
+    }
 }
