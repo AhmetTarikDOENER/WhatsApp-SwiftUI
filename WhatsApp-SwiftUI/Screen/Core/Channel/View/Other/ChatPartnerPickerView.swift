@@ -22,14 +22,7 @@ struct ChatPartnerPickerView: View {
                     ForEach(viewModel.users) { user in
                         ChatPartnerRowView(user: user)
                             .onTapGesture {
-                                viewModel.selectedChatPartners.append(user)
-                                let channelResult = viewModel.createChannel(nil)
-                                switch channelResult {
-                                case .success(let channel):
-                                    onCreate(channel)
-                                case .failure(let error):
-                                    print("❌ ChatPartnerPickerView -> Failed to create channel: \(error.localizedDescription)")
-                                }
+                                viewModel.createDirectChannel(user, completion: onCreate)
                             }
                     }
                 } header: {

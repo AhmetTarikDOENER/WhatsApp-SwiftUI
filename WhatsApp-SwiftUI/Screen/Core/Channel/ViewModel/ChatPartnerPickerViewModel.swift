@@ -76,7 +76,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     }
     
     //  MARK: - Private
-    func createChannel(_ channelName: String?) -> Result<Channel, Error> {
+    private func createChannel(_ channelName: String?) -> Result<Channel, Error> {
         guard !selectedChatPartners.isEmpty else { return .failure(ChannelCreationError.noChatPartner)}
         guard let channelId = FirebaseConstants.ChannelsReference.childByAutoId().key,
               let currentUid = Auth.auth().currentUser?.uid,
@@ -143,6 +143,17 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func deselectAllChatPartners() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             self.selectedChatPartners.removeAll()
+        }
+    }
+    
+    func createDirectChannel(_ chatPartner: UserItem, completion: @escaping (_ newChannel: Channel) -> Void) {
+        selectedChatPartners.append(chatPartner)
+        let channelResult = createChannel(nil)
+        switch channelResult {
+        case .success(let channel):
+            completion(channel)
+        case .failure(let error):
+            print("❌ ChatPartnerPickerViewModel -> Failed to create a direct channel: \(error.localizedDescription)")
         }
     }
 }
