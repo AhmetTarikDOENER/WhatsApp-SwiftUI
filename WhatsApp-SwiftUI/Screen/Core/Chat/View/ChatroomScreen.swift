@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ChatroomScreen: View {
+    
+    let channel: Channel
+    
     var body: some View {
         MessageListView()
             .toolbarVisibility(.hidden, for: .tabBar)
@@ -50,6 +53,6 @@ extension ChatroomScreen {
 
 #Preview {
     NavigationStack {
-        ChatroomScreen()
+        ChatroomScreen(channel: .placeholder)
     }
 }
