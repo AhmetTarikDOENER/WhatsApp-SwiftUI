@@ -10,11 +10,11 @@ struct ChannelTabScreen: View {
             List {
                 archieveButton()
                 
-                ForEach(0 ..< 5) { _ in
+                ForEach(viewModel.channels) { channel in
                     NavigationLink {
-                        ChatroomScreen(channel: .placeholder)
+                        ChatroomScreen(channel: channel)
                     } label: {
-                        ChannelItemView()
+                        ChannelItemView(channel: channel)
                     }
                 }
                 

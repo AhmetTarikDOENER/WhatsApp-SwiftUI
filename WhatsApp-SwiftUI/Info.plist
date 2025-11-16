@@ -12,5 +12,7 @@
 	<string>$(FIREBASE_PROJECT_ID)</string>
 	<key>FIREBASE_STORAGE_BUCKET</key>
 	<string>$(FIREBASE_STORAGE_BUCKET)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>

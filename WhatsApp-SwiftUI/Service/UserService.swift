@@ -33,6 +33,22 @@ struct UserService {
         
         return .emptyNode
     }
+    
+    static func getUsers(with uids: [String], completion: @escaping (UserNode) -> Void) {
+        var users = [UserItem]()
+        for uid in uids {
+            let query = FirebaseConstants.UserReference.child(uid)
+            query.observeSingleEvent(of: .value) { snapshot in
+                guard let user = try? snapshot.data(as: UserItem.self) else { return }
+                users.append(user)
+                if users.count == uids.count {
+                    completion(UserNode(users: users))
+                }
+            } withCancel: { error in
+                completion(.emptyNode)
+            }
+        }
+    }
 }
 
 //  MARK: - UserNode

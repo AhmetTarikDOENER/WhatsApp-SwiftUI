@@ -157,7 +157,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         selectedChatPartners.append(chatPartner)
         Task {
             /// If direct channel already exists, get the channel
-            if let channelId = await isDirectChannelExists(with: chatPartner.uid) {
+            if let channelId = await existingDirectChannel(with: chatPartner.uid) {
                 let snapshot = try await FirebaseConstants.ChannelsReference.child(channelId).getData()
                 var channelDictionary = snapshot.value as! [String: Any]
                 var directChannel = Channel(channelDictionary)
@@ -184,7 +184,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     }
     
     typealias ExistedChannelID = String
-    private func isDirectChannelExists(with chatPartnerId: String) async -> ExistedChannelID? {
+    private func existingDirectChannel(with chatPartnerId: String) async -> ExistedChannelID? {
         guard let currentUid = Auth.auth().currentUser?.uid,
               let snapshot = try? await FirebaseConstants.UserDirectChannels.child(currentUid).child(chatPartnerId).getData(),
               snapshot.exists() else { return nil }
