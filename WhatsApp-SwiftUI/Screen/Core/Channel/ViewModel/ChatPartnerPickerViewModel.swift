@@ -47,17 +47,18 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     //  MARK: - Init
     init() { Task { await fetchUsers() } }
     
-    //  MARK: - Internal
+    //  MARK: - Internal & Private
     func handleUserSelection(_ user: UserItem) {
         if isUserSelected(user) {
             guard let index = selectedChatPartners.firstIndex(where: { $0.uid == user.uid }) else { return }
             selectedChatPartners.remove(at: index)
         } else {
             guard selectedChatPartners.count < ChannelConstants.maxGroupParticipantCount else {
-                errorState.errorMessage = "Sorry, you can only invite up to \(ChannelConstants.maxGroupParticipantCount) people to a group chat."
-                errorState.showError = true
+                let errorMessage = "Sorry, you can only invite up to \(ChannelConstants.maxGroupParticipantCount) people to a group chat."
+                showError(errorMessage)
                 return
             }
+            
             selectedChatPartners.append(user)
         }
     }
@@ -81,7 +82,6 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         }
     }
     
-    //  MARK: - Private
     private func createChannel(_ channelName: String?) -> Result<Channel, Error> {
         guard !selectedChatPartners.isEmpty else { return .failure(ChannelCreationError.noChatPartner)}
         guard let channelId = FirebaseConstants.ChannelsReference.childByAutoId().key,
@@ -142,6 +142,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         case .success(let channel):
             completion(channel)
         case .failure(let error):
+            showError("Sorry, could not create a group channel. Please try again later.")
             print("❌ ChatPartnerPickerViewModel -> Failed to create group channel: \(error.localizedDescription)")
         }
     }
@@ -159,7 +160,13 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         case .success(let channel):
             completion(channel)
         case .failure(let error):
+            showError("Sorry, could not create a direct channel. Please try again later.")
             print("❌ ChatPartnerPickerViewModel -> Failed to create a direct channel: \(error.localizedDescription)")
         }
+    }
+    
+    private func showError(_ errorMessage: String) {
+        errorState.errorMessage = errorMessage
+        errorState.showError = true
     }
 }
