@@ -155,18 +155,43 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     
     func createDirectChannel(_ chatPartner: UserItem, completion: @escaping (_ newChannel: Channel) -> Void) {
         selectedChatPartners.append(chatPartner)
-        let channelResult = createChannel(nil)
-        switch channelResult {
-        case .success(let channel):
-            completion(channel)
-        case .failure(let error):
-            showError("Sorry, could not create a direct channel. Please try again later.")
-            print("❌ ChatPartnerPickerViewModel -> Failed to create a direct channel: \(error.localizedDescription)")
+        Task {
+            /// If direct channel already exists, get the channel
+            if let channelId = await isDirectChannelExists(with: chatPartner.uid) {
+                let snapshot = try await FirebaseConstants.ChannelsReference.child(channelId).getData()
+                var channelDictionary = snapshot.value as! [String: Any]
+                var directChannel = Channel(channelDictionary)
+                directChannel.members = selectedChatPartners
+                completion(directChannel)
+                print("♦️ ChatPartnerPickerViewModel -> Direct Channel already exists, fetched from db.")
+            } else {
+                /// Create a new direct channel with the user.
+                let channelResult = createChannel(nil)
+                switch channelResult {
+                case .success(let channel):
+                    completion(channel)
+                case .failure(let error):
+                    showError("Sorry, could not create a direct channel. Please try again later.")
+                    print("❌ ChatPartnerPickerViewModel -> Failed to create a direct channel: \(error.localizedDescription)")
+                }
+            }
         }
     }
     
     private func showError(_ errorMessage: String) {
         errorState.errorMessage = errorMessage
         errorState.showError = true
+    }
+    
+    typealias ExistedChannelID = String
+    private func isDirectChannelExists(with chatPartnerId: String) async -> ExistedChannelID? {
+        guard let currentUid = Auth.auth().currentUser?.uid,
+              let snapshot = try? await FirebaseConstants.UserDirectChannels.child(currentUid).child(chatPartnerId).getData(),
+              snapshot.exists() else { return nil }
+        
+        let directMessageDictionary = snapshot.value as! [String: Bool]
+        let channelId = directMessageDictionary.compactMap { $0.key }.first
+        
+        return channelId
     }
 }
