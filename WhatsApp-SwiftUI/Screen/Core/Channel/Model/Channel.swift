@@ -32,7 +32,7 @@ struct Channel: Identifiable {
     }
     
     private var groupMembersNames: String {
-        let membersCount = membersExcludingMe.count
+        let membersCount = membersCount - 1
         let fullNames: [String] = membersExcludingMe.map { $0.username }
         
         if membersCount == 2 {
