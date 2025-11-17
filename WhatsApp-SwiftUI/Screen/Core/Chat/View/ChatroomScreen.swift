@@ -3,6 +3,7 @@ import SwiftUI
 struct ChatroomScreen: View {
     
     let channel: Channel
+    @StateObject private var viewModel = ChatroomViewModel()
     
     var body: some View {
         MessageListView()
@@ -13,7 +14,9 @@ struct ChatroomScreen: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
-                TextInputAreaView()
+                TextInputAreaView(textMessage: $viewModel.textMessage) {
+                    viewModel.sendMessage()
+                }
             }
     }
 }

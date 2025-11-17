@@ -60,5 +60,6 @@ final class ChannelTabViewModel: ObservableObject {
     
     private func reloadChannelData() {
         self.channels = Array(channelDictionary.values)
+        self.channels.sort { $0.lastMessageTimestamp > $1.lastMessageTimestamp }
     }
 }
