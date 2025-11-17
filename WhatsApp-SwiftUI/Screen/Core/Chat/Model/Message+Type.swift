@@ -19,4 +19,13 @@ enum MessageDirection {
 //  MARK: - MessageType
 enum MessageType {
     case text, photo, video, audio
+    
+    var title: String {
+        switch self {
+        case .text: return "text"
+        case .photo: return "photo"
+        case .video: return "video"
+        case .audio: return "audio"
+        }
+    }
 }

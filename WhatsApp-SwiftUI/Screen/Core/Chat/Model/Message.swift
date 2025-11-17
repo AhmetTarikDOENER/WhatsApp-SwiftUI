@@ -39,4 +39,5 @@ extension String {
     static let `type` = "type"
     static let timestamp = "timestamp"
     static let ownerUid = "ownerUid"
+    static let text = "text"
 }

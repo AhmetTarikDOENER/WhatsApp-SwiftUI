@@ -2,8 +2,15 @@ import SwiftUI
 
 struct ChatroomScreen: View {
     
+    //  MARK: - Properties
+    @StateObject private var viewModel: ChatroomViewModel
     let channel: Channel
-    @StateObject private var viewModel = ChatroomViewModel()
+    
+    //  MARK: - Init
+    init(channel: Channel) {
+        self.channel = channel
+        _viewModel = StateObject(wrappedValue: ChatroomViewModel(channel))
+    }
     
     var body: some View {
         MessageListView()
