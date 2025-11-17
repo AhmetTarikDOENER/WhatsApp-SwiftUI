@@ -40,7 +40,7 @@ final class ChannelTabViewModel: ObservableObject {
             self?.getChannelMembers(channel) { members in
                 channel.members = members
                 self?.channels.append(channel)
-                print("Channel Name: \(channel.title)")
+                print("⭐️ ChannelTabViewModel -> Appended channel with title: \(channel.title)")
             }
         } withCancel: { error in
             print("❌ ChannelTabViewModel -> Failed to get the channel for id: \(error.localizedDescription)")
@@ -48,7 +48,9 @@ final class ChannelTabViewModel: ObservableObject {
     }
     
     private func getChannelMembers(_ channel: Channel, completion: @escaping (_ members: [UserItem]) -> Void) {
-        UserService.getUsers(with: channel.membersUids) { userNode in
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        let channelMembersUids = Array(channel.membersUids.filter { $0 != currentUid }.prefix(2))
+        UserService.getUsers(with: channelMembersUids) { userNode in
             completion(userNode.users)
         }
     }
