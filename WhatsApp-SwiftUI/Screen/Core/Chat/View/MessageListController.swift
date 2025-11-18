@@ -1,11 +1,13 @@
 import UIKit
 import SwiftUI
+import Combine
 
 final class MessageListController: UIViewController {
     
     //  MARK: - Properties
     private let cellIdentifier = "MessageListControllerCell"
     private let viewModel: ChatroomViewModel
+    private var subscriptions = Set<AnyCancellable>()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -18,7 +20,7 @@ final class MessageListController: UIViewController {
         return tableView
     }()
     
-    //  MARK: - Init
+    //  MARK: - Init & Deinit
     init(_ viewModel: ChatroomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -28,10 +30,16 @@ final class MessageListController: UIViewController {
         fatalError()
     }
     
+    deinit {
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
+    }
+    
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupMessageListeners()
     }
     
     //  MARK: - Private
@@ -47,6 +55,14 @@ final class MessageListController: UIViewController {
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
     }
+    
+    private func setupMessageListeners() {
+        viewModel.$messages
+            .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }.store(in: &subscriptions)
+    }
 }
 
 //  MARK: - MessageListController+UITableViewDelegate,UITableViewDataSource
@@ -56,7 +72,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
-        let message = Message.stubMessages[indexPath.row]
+        let message = viewModel.messages[indexPath.row]
         cell.contentConfiguration = UIHostingConfiguration {
             switch message.type {
             case .text:
@@ -71,7 +87,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        Message.stubMessages.count
+        viewModel.messages.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
