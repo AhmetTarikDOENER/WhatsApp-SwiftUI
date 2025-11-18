@@ -31,12 +31,19 @@ final class ChatroomViewModel: ObservableObject {
     
     private func listenAuthstate() {
         AuthenticationService.shared.authState.receive(on: DispatchQueue.main)
-            .sink { authState in
+            .sink { [weak self] authState in
                 switch authState {
                 case .loggedIn(let loggedInUser):
-                    self.currentUser = loggedInUser
+                    self?.currentUser = loggedInUser
+                    self?.getMessages()
                 default: break
                 }
             }.store(in: &subscription)
+    }
+    
+    private func getMessages() {
+        MessageService.getMessages(for: channel) { messages in
+            
+        }
     }
 }

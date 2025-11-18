@@ -27,4 +27,19 @@ struct MessageService {
         
         onComplete()
     }
+    
+    static func getMessages(
+        for channel: Channel,
+        completion: @escaping ([Message]) -> Void
+    ) {
+        FirebaseConstants.MessagesReference.child(channel.id).observe(.value) { snapshot in
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            dictionary.forEach { key, value in
+                let messageDictionary = value as? [String: Any] ?? [:]
+                print("MessageDic: \(messageDictionary)")
+            }
+        } withCancel: { error in
+            print("❌ MessageService -> Failed to get messages for channel: \(error.localizedDescription)")
+        }
+    }
 }
