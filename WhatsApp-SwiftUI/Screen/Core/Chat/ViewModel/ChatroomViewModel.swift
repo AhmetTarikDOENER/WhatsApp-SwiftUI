@@ -5,7 +5,8 @@ final class ChatroomViewModel: ObservableObject {
     
     //  MARK: - Properties
     @Published var textMessage = ""
-    @Published var currentUser: UserItem?
+    @Published var messages: [Message] = []
+    private var currentUser: UserItem?
     private var subscription = Set<AnyCancellable>()
     private let channel: Channel
     
@@ -42,8 +43,9 @@ final class ChatroomViewModel: ObservableObject {
     }
     
     private func getMessages() {
-        MessageService.getMessages(for: channel) { messages in
-            
+        MessageService.getMessages(for: channel) { [weak self] messages in
+            self?.messages = messages
+            print(messages.map({ $0.text }))
         }
     }
 }
