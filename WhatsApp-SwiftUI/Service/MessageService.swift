@@ -36,6 +36,7 @@ struct MessageService {
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             dictionary.forEach { key, value in
                 let messageDictionary = value as? [String: Any] ?? [:]
+                let message = Message(id: key, dictionary: messageDictionary)
                 print("MessageDic: \(messageDictionary)")
             }
         } withCancel: { error in
