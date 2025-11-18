@@ -13,7 +13,7 @@ struct ChatroomScreen: View {
     }
     
     var body: some View {
-        MessageListView()
+        MessageListView(viewModel)
             .toolbarVisibility(.hidden, for: .tabBar)
             .toolbar {
                 leadingNavigationBarItem()

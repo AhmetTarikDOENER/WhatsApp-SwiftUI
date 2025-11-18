@@ -5,6 +5,8 @@ final class MessageListController: UIViewController {
     
     //  MARK: - Properties
     private let cellIdentifier = "MessageListControllerCell"
+    private let viewModel: ChatroomViewModel
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -16,6 +18,15 @@ final class MessageListController: UIViewController {
         return tableView
     }()
     
+    //  MARK: - Init
+    init(_ viewModel: ChatroomViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
     
     //  MARK: - Lifecycle
     override func viewDidLoad() {
@@ -69,5 +80,5 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
 }
 
 #Preview {
-    MessageListView()
+    MessageListView(.init(.placeholder))
 }
