@@ -96,7 +96,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
             case .admin(let adminType):
                 switch adminType {
                 case .channelCreation:
-                    Text("Channel was created")
+                    ChannelCreationTextView()
                 default:
                     Text("Admin Text")
                 }
