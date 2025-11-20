@@ -6,6 +6,7 @@ struct Message: Identifiable {
     let text: String
     let type: MessageType
     let senderUid: String
+    let timestamp: Date
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -22,21 +23,23 @@ extension Message {
         id: UUID().uuidString,
         text: "Awesome idea!",
         type: .text,
-        senderUid: "1"
+        senderUid: "1",
+        timestamp: Date()
     )
     
     static let receivedPlaceholder = Message(
         id: UUID().uuidString,
         text: "Hey Tim, How are you today?",
         type: .text,
-        senderUid: "2"
+        senderUid: "2",
+        timestamp: Date()
     )
     
     static let stubMessages: [Message] = [
-        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3"),
-        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4"),
-        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5"),
-        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6")
+        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3", timestamp: Date()),
+        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4", timestamp: Date()),
+        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5", timestamp: Date()),
+        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6", timestamp: Date())
     ]
 }
 
@@ -47,6 +50,8 @@ extension Message {
         let type = dictionary[.type] as? String ?? "text"
         self.type = MessageType(type)
         self.senderUid = dictionary[.ownerUid] as? String ?? ""
+        let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
+        self.timestamp = Date(timeIntervalSince1970: timeInterval)
     }
 }
 

@@ -39,7 +39,10 @@ struct MessageService {
                 let messageDictionary = value as? [String: Any] ?? [:]
                 let message = Message(id: key, dictionary: messageDictionary)
                 messages.append(message)
-                completion(messages)
+                if messages.count == snapshot.childrenCount {
+                    messages.sort { $0.timestamp < $1.timestamp }
+                    completion(messages)
+                }
             }
         } withCancel: { error in
             print("❌ MessageService -> Failed to get messages for channel: \(error.localizedDescription)")

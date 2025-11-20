@@ -14,10 +14,17 @@ final class MessageListController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .gray.withAlphaComponent(0.3)
+        tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
+    }()
+    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: .chatbackground)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
     }()
     
     //  MARK: - Init & Deinit
@@ -38,15 +45,20 @@ final class MessageListController: UIViewController {
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .clear
         setupViews()
         setupMessageListeners()
     }
     
     //  MARK: - Private
     private func setupViews() {
-        view.addSubview(tableView)
+        view.addSubviews(backgroundImageView, tableView)
         
         NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -97,4 +109,5 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
 
 #Preview {
     MessageListView(.init(.placeholder))
+        .ignoresSafeArea()
 }
