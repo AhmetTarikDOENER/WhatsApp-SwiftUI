@@ -11,7 +11,7 @@ struct Channel: Identifiable {
     var adminUids: [String]
     var membersUids: [String]
     var members: [UserItem]
-    var thumbnailUrl: String?
+    private var thumbnailUrl: String?
     let createdBy: String
     
     var isGroupChat: Bool { membersCount > 2 }
@@ -48,6 +48,14 @@ struct Channel: Identifiable {
     var isCreatedByMe: Bool { createdBy == Auth.auth().currentUser?.uid ?? "" }
     
     var creatorName: String { members.first { $0.uid == createdBy }?.username ?? "Someone" }
+    
+    var profileImageUrl: String? {
+        if let thumbnailUrl = thumbnailUrl { return thumbnailUrl }
+        
+        if isGroupChat == false { return membersExcludingMe.first?.profilImageUrl }
+        
+        return nil
+    }
 }
 
 extension Channel {

@@ -73,6 +73,15 @@ extension CircularProfileImageView {
     }
 }
 
+//  MARK: - CircularProfileImageView+Init
+extension CircularProfileImageView {
+    init(_ channel: Channel, size: ImageSize) {
+        self.profileImageUrl = channel.profileImageUrl
+        self.size = size
+        self.fallbackImage = FallbackImage(for: channel.membersCount)
+    }
+}
+
 #Preview {
     CircularProfileImageView(size: .custom(64))
 }
