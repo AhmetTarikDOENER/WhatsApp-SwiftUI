@@ -49,7 +49,7 @@ struct Channel: Identifiable {
     
     var creatorName: String { members.first { $0.uid == createdBy }?.username ?? "Someone" }
     
-    var profileImageUrl: String? {
+    var circularProfileImageUrl: String? {
         if let thumbnailUrl = thumbnailUrl { return thumbnailUrl }
         
         if isGroupChat == false { return membersExcludingMe.first?.profilImageUrl }
