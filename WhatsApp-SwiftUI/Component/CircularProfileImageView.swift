@@ -49,12 +49,12 @@ extension CircularProfileImageView {
         
         var dimension: CGFloat {
             switch self {
-            case .mini: return 24
-            case .xSmall: return 34
-            case .small: return 44
-            case .medium: return 54
-            case .large: return 64
-            case .xLarge: return 74
+            case .mini: return 35
+            case .xSmall: return 45
+            case .small: return 55
+            case .medium: return 65
+            case .large: return 75
+            case .xLarge: return 85
             case .custom(let size): return size
             }
         }

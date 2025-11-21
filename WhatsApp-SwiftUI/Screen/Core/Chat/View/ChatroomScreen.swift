@@ -34,10 +34,9 @@ extension ChatroomScreen {
     private func leadingNavigationBarItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             HStack {
-                Circle()
-                    .frame(width: 35, height: 35)
+                CircularProfileImageView(channel, size: .mini)
                 
-                Text(channel.title)
+                Text(truncatedChannelTitle)
                     .bold()
             }
         }
@@ -58,6 +57,14 @@ extension ChatroomScreen {
                 Image(systemName: "phone")
             }
         }
+    }
+    
+    private var truncatedChannelTitle: String {
+        let maxChar = 25
+        let trailingChars = channel.title.count > maxChar ? "..." : ""
+        let title = String(channel.title.prefix(maxChar) + trailingChars)
+        
+        return title
     }
 }
 
