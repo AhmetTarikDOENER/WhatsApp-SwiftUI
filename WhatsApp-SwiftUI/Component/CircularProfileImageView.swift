@@ -3,9 +3,17 @@ import Kingfisher
 
 struct CircularProfileImageView: View {
     
-    //  MARK: - Property
+    //  MARK: - Properties
     let profileImageUrl: String?
     let size: ImageSize
+    let fallbackImage: FallbackImage
+    
+    //  MARK: - Init
+    init(_ profileImageUrl: String? = nil, size: ImageSize) {
+        self.profileImageUrl = profileImageUrl
+        self.size = size
+        self.fallbackImage = .directChatIcon
+    }
     
     var body: some View {
         if let profileImageUrl {
@@ -22,7 +30,7 @@ struct CircularProfileImageView: View {
     
     //  MARK: - Private
     private func placeholderImageView() -> some View {
-        Image(systemName: "person.circle.fill")
+        Image(systemName: fallbackImage.rawValue)
             .resizable()
             .scaledToFit()
             .imageScale(.large)
@@ -33,7 +41,7 @@ struct CircularProfileImageView: View {
     }
 }
 
-//  MARK: - CircularProfileImageView+ImageSize
+//  MARK: - CircularProfileImageView+ImageSize+FallbackImage
 extension CircularProfileImageView {
     enum ImageSize {
         case mini, xSmall, small, medium, large, xLarge
@@ -51,8 +59,20 @@ extension CircularProfileImageView {
             }
         }
     }
+    
+    enum FallbackImage: String {
+        case directChatIcon = "person.circle.fill"
+        case groupChatIcon = "person.2.circle.fill"
+        
+        init(for membersCount: Int) {
+            switch membersCount {
+            case 2: self = .directChatIcon
+            default: self = .groupChatIcon
+            }
+        }
+    }
 }
 
 #Preview {
-    CircularProfileImageView(profileImageUrl: nil, size: .custom(64))
+    CircularProfileImageView(size: .custom(64))
 }
