@@ -18,4 +18,12 @@ extension Date {
             return dateFormatter.string(from: self)
         }
     }
+    
+    var timeRepresentation: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+        let formattedTime = dateFormatter.string(from: self)
+        
+        return formattedTime
+    }
 }
