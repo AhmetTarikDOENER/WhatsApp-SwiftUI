@@ -2,17 +2,18 @@ import SwiftUI
 
 struct ChannelTabScreen: View {
     
+    //  MARK: - Properties
     @State private var searchText = ""
     @StateObject private var viewModel = ChannelTabViewModel()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.navigationRoutes) {
             List {
                 archieveButton()
                 
                 ForEach(viewModel.channels) { channel in
-                    NavigationLink {
-                        ChatroomScreen(channel: channel)
+                    Button {
+                        viewModel.navigationRoutes.append(.chatRoom(channel))
                     } label: {
                         ChannelItemView(channel: channel)
                     }
@@ -28,6 +29,9 @@ struct ChannelTabScreen: View {
                 leadingNavigationBarItem()
                 trailingNavigationBarItemGroup()
             }
+            .navigationDestination(for: ChannelTabRoutes.self) { route in
+                destinationView(for: route)
+            }
             .sheet(isPresented: $viewModel.showChatPartnerPickerView) {
                 ChatPartnerPickerView(onCreate: viewModel.onNewChannelCreation)
             }
@@ -42,6 +46,15 @@ struct ChannelTabScreen: View {
 
 //  MARK: - ChannelTabScreen+Extension
 private extension ChannelTabScreen {
+    
+    @ViewBuilder
+    private func destinationView(for route: ChannelTabRoutes) -> some View {
+        switch route {
+        case .chatRoom(let channel):
+            ChatroomScreen(channel: channel)
+        }
+    }
+    
     @ToolbarContentBuilder
     private func leadingNavigationBarItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {

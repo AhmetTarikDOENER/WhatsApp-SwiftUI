@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseAuth
 
-struct Channel: Identifiable {
+struct Channel: Identifiable, Hashable {
     var id: String
     var name: String?
     var lastMessage: String

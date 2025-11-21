@@ -1,6 +1,11 @@
 import Foundation
 import FirebaseAuth
 
+//  MARK: - ChannelTabRoutes
+enum ChannelTabRoutes: Hashable {
+    case chatRoom(_ channel: Channel)
+}
+
 final class ChannelTabViewModel: ObservableObject {
     
     //  MARK: - Properties
@@ -10,6 +15,7 @@ final class ChannelTabViewModel: ObservableObject {
     @Published var channels = [Channel]()
     typealias ChannelID = String
     @Published var channelDictionary: [ChannelID: Channel] = [:]
+    @Published var navigationRoutes = [ChannelTabRoutes]()
     
     init() {
         fetchCurrentUserChannels()
