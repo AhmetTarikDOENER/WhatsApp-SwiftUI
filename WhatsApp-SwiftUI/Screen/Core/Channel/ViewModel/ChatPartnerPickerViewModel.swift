@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseAuth
+import Combine
 
 //  MARK: - ChannelCreationRoute
 enum ChannelCreationRoute {
@@ -27,6 +28,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     @Published private(set) var users: [UserItem] = []
     @Published var errorState: (showError: Bool, errorMessage: String) = (false, "Oh no! Something went wrong.")
     private var currentCursor: String?
+    private var currentUser: UserItem?
+    private var subscription: AnyCancellable?
     
     var showSelectedUsers: Bool {
         !selectedChatPartners.isEmpty
@@ -44,8 +47,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         selectedChatPartners.count == 1
     }
     
-    //  MARK: - Init
-    init() { Task { await fetchUsers() } }
+    //  MARK: - Init & Deinit
+    init() {
+        listenForAuthState()
+    }
+    
+    deinit {
+        subscription?.cancel()
+        subscription = nil
+    }
     
     //  MARK: - Internal & Private
     func handleUserSelection(_ user: UserItem) {
@@ -80,6 +90,18 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         } catch {
             print("❌ ChatPartnerPickerViewModel -> Failed to fetch users: \(error.localizedDescription)")
         }
+    }
+    
+    private func listenForAuthState() {
+        subscription = AuthenticationService.shared.authState.receive(on: DispatchQueue.main)
+            .sink { [weak self] authState in
+                switch authState {
+                case .loggedIn(let loggedInUser):
+                    self?.currentUser = loggedInUser
+                    Task { await self?.fetchUsers() }
+                default: break
+                }
+            }
     }
     
     private func createChannel(_ channelName: String?) -> Result<Channel, Error> {
@@ -133,6 +155,9 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         
         var newChannel = Channel(channelDictionary)
         newChannel.members = selectedChatPartners
+        if let currentUser {
+            newChannel.members.append(currentUser)
+        }
         return .success(newChannel)
     }
     
@@ -162,6 +187,9 @@ final class ChatPartnerPickerViewModel: ObservableObject {
                 var channelDictionary = snapshot.value as! [String: Any]
                 var directChannel = Channel(channelDictionary)
                 directChannel.members = selectedChatPartners
+                if let currentUser {
+                    directChannel.members.append(currentUser)
+                }
                 completion(directChannel)
                 print("♦️ ChatPartnerPickerViewModel -> Direct Channel already exists, fetched from db.")
             } else {
