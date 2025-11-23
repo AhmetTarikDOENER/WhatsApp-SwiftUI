@@ -7,6 +7,7 @@ struct Message: Identifiable {
     let type: MessageType
     let senderUid: String
     let timestamp: Date
+    let isGroupChat: Bool
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -15,6 +16,8 @@ struct Message: Identifiable {
     var alignment: Alignment { direction == .received ? .leading : .trailing }
     
     var horizontalAlignment: HorizontalAlignment { direction == .received ? .leading : .trailing }
+    
+    var showGroupChatPartnerProfileImage: Bool { isGroupChat && direction == .received }
 }
 
 //  MARK: - Stub Message
@@ -24,7 +27,8 @@ extension Message {
         text: "Awesome idea!",
         type: .text,
         senderUid: "1",
-        timestamp: Date()
+        timestamp: Date(),
+        isGroupChat: true
     )
     
     static let receivedPlaceholder = Message(
@@ -32,19 +36,20 @@ extension Message {
         text: "Hey Tim, How are you today?",
         type: .text,
         senderUid: "2",
-        timestamp: Date()
+        timestamp: Date(),
+        isGroupChat: false
     )
     
     static let stubMessages: [Message] = [
-        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6", timestamp: Date())
+        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3", timestamp: Date(), isGroupChat: true),
+        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4", timestamp: Date(), isGroupChat: false),
+        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5", timestamp: Date(), isGroupChat: false),
+        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6", timestamp: Date(), isGroupChat: true)
     ]
 }
 
 extension Message {
-    init(id: String, dictionary: [String: Any]) {
+    init(id: String, dictionary: [String: Any], isGroupChat: Bool) {
         self.id = id
         self.text = dictionary[.text] as? String ?? ""
         let type = dictionary[.type] as? String ?? "text"
@@ -52,6 +57,7 @@ extension Message {
         self.senderUid = dictionary[.ownerUid] as? String ?? ""
         let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
+        self.isGroupChat = isGroupChat
     }
 }
 

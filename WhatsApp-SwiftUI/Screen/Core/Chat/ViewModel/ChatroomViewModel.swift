@@ -63,7 +63,6 @@ final class ChatroomViewModel: ObservableObject {
         UserService.getUsers(with: memberUidsToFetch) { [weak self] userNode in
             guard let self else { return }
             self.channel.members.append(contentsOf: userNode.users)
-            print(channel.members.map({ $0.username }))
             self.getMessages()
         }
     }

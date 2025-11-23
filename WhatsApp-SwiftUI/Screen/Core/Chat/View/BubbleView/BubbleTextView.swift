@@ -5,7 +5,10 @@ struct BubbleTextView: View {
     let message: Message
     
     var body: some View {
-        VStack(alignment: message.horizontalAlignment, spacing: 3) {
+        HStack(alignment: .bottom, spacing: 4) {
+            if message.showGroupChatPartnerProfileImage {
+                CircularProfileImageView(size: .mini)
+            }
             Text(message.text)
                 .padding(10)
                 .background(message.backgroundColor)
