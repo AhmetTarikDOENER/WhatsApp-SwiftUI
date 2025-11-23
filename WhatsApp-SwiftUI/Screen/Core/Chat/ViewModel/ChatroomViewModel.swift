@@ -33,10 +33,16 @@ final class ChatroomViewModel: ObservableObject {
     private func listenAuthstate() {
         AuthenticationService.shared.authState.receive(on: DispatchQueue.main)
             .sink { [weak self] authState in
+                guard let self else { return }
                 switch authState {
                 case .loggedIn(let loggedInUser):
-                    self?.currentUser = loggedInUser
-                    self?.getAllChannelMembers()
+                    self.currentUser = loggedInUser
+                    
+                    if self.channel.allMembersFetched {
+                        self.getMessages()
+                    } else {
+                        self.getAllChannelMembers()
+                    }
                 default: break
                 }
             }.store(in: &subscription)
@@ -59,7 +65,6 @@ final class ChatroomViewModel: ObservableObject {
             self.channel.members.append(contentsOf: userNode.users)
             self.channel.members.append(currentUser)
             self.getMessages()
-            print("\(channel.members.map({ $0.username }))")
         }
     }
 }

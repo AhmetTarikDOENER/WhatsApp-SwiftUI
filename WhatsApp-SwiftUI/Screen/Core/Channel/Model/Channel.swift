@@ -56,6 +56,8 @@ struct Channel: Identifiable, Hashable {
         
         return nil
     }
+    
+    var allMembersFetched: Bool { members.count == membersCount }
 }
 
 extension Channel {

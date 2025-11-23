@@ -16,8 +16,10 @@ final class ChannelTabViewModel: ObservableObject {
     typealias ChannelID = String
     @Published var channelDictionary: [ChannelID: Channel] = [:]
     @Published var navigationRoutes = [ChannelTabRoutes]()
+    private let currentUser: UserItem
     
-    init() {
+    init(_ currentUser: UserItem) {
+        self.currentUser = currentUser
         fetchCurrentUserChannels()
     }
     
@@ -43,12 +45,15 @@ final class ChannelTabViewModel: ObservableObject {
     
     private func getChannel(with channelId: String) {
         FirebaseConstants.ChannelsReference.child(channelId).observe(.value) { [weak self] snapshot in
-            guard let channelDictionary = snapshot.value as? [String: Any] else { return }
+            guard let channelDictionary = snapshot.value as? [String: Any], let self = self else { return }
             var channel = Channel(channelDictionary)
-            self?.getChannelMembers(channel) { members in
+            self.getChannelMembers(channel) { members in
                 channel.members = members
-                self?.channelDictionary[channelId] = channel
-                self?.reloadChannelData()
+                if !channel.isGroupChat {
+                    channel.members.append(self.currentUser)
+                }
+                self.channelDictionary[channelId] = channel
+                self.reloadChannelData()
                 print("⭐️ ChannelTabViewModel -> Appended channel with title: \(channel.title)")
             }
         } withCancel: { error in
