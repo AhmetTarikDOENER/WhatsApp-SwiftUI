@@ -10,6 +10,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var messages: [Message] = []
     @Published var showPhotoPickerView = false
     @Published var photoPickerItems: [PhotosPickerItem] = []
+    @Published var selectedPhotos: [UIImage] = []
     private var currentUser: UserItem?
     private var subscription = Set<AnyCancellable>()
     private(set) var channel: Channel
