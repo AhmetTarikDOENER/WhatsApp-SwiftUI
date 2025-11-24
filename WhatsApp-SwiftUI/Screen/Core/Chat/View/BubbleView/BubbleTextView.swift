@@ -7,15 +7,22 @@ struct BubbleTextView: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
             if message.showGroupChatPartnerProfileImage {
-                CircularProfileImageView(size: .mini)
+                CircularProfileImageView(message.sender?.profileImageUrl, size: .mini)
             }
+            
+            if message.direction == .outgoing {
+                timestampTextView()
+            }
+            
             Text(message.text)
                 .padding(10)
                 .background(message.backgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .applyTail(message.direction)
             
-            timestampTextView()
+            if message.direction == .received {
+                timestampTextView()
+            }
         }
         .shadow(
             color: Color(.systemGray3).opacity(0.1),
@@ -24,25 +31,15 @@ struct BubbleTextView: View {
             y: 20
         )
         .frame(maxWidth: .infinity, alignment: message.alignment)
-        .padding(.leading, message.direction == .received ? 5 : 100)
-        .padding(.trailing, message.direction == .received ? 100 : 5)
+        .padding(.leading, message.leadingPadding)
+        .padding(.trailing, message.trailingPadding)
     }
     
     //  MARK: - Private
     private func timestampTextView() -> some View {
-        HStack {
-            Text(message.timestamp.timeRepresentation)
-                .font(.system(size: 13))
-                .foregroundStyle(.gray)
-            
-            if message.direction == .outgoing {
-                Image(.seen)
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 15, height: 15)
-                    .foregroundStyle(Color(.systemBlue))
-            }
-        }
+        Text(message.timestamp.timeRepresentation)
+            .font(.system(size: 13))
+            .foregroundStyle(.gray)
     }
 }
 

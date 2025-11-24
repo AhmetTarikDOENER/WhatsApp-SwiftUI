@@ -8,6 +8,7 @@ struct Message: Identifiable {
     let senderUid: String
     let timestamp: Date
     let isGroupChat: Bool
+    var sender: UserItem?
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -18,6 +19,12 @@ struct Message: Identifiable {
     var horizontalAlignment: HorizontalAlignment { direction == .received ? .leading : .trailing }
     
     var showGroupChatPartnerProfileImage: Bool { isGroupChat && direction == .received }
+    
+    let horizontalPadding: CGFloat = 25
+    
+    var leadingPadding: CGFloat { direction == .received ? 0 :  horizontalPadding }
+    
+    var trailingPadding: CGFloat { direction == .received ? horizontalPadding : 0 }
 }
 
 //  MARK: - Stub Message

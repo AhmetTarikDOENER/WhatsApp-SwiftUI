@@ -15,7 +15,7 @@ struct ChatPartnerRowView<Content: View>: View {
     
     var body: some View {
         HStack {
-            CircularProfileImageView(user.profilImageUrl, size: .small)
+            CircularProfileImageView(user.profileImageUrl, size: .small)
             
             VStack(alignment: .leading) {
                 Text(user.username)

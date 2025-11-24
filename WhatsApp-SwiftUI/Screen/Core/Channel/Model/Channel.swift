@@ -52,7 +52,7 @@ struct Channel: Identifiable, Hashable {
     var circularProfileImageUrl: String? {
         if let thumbnailUrl = thumbnailUrl { return thumbnailUrl }
         
-        if isGroupChat == false { return membersExcludingMe.first?.profilImageUrl }
+        if isGroupChat == false { return membersExcludingMe.first?.profileImageUrl }
         
         return nil
     }
