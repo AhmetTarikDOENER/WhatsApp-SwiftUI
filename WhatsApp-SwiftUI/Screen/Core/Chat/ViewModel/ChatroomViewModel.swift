@@ -94,7 +94,9 @@ final class ChatroomViewModel: ObservableObject {
     private func parsePhotoPickerItems(_ photoPickerItems: [PhotosPickerItem]) async {
         for photoItem in photoPickerItems {
             if photoItem.isVideo {
-                
+                if let video = try? await photoItem.loadTransferable(type: VideoPickerTransferable.self) {
+                    
+                }
             } else {
                 guard let data = try? await photoItem.loadTransferable(type: Data.self),
                       let uiImage = UIImage(data: data) else { return }
