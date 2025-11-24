@@ -73,4 +73,13 @@ final class ChatroomViewModel: ObservableObject {
             self.getMessages()
         }
     }
+    
+    func handleTextInputArea(_ action: TextInputAreaView.UserAction) {
+        switch action {
+        case .presentPhotoPicker:
+            showPhotoPickerView = true
+        case .sendMessage:
+            sendMessage()
+        }
+    }
 }

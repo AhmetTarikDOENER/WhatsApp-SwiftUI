@@ -41,8 +41,8 @@ struct ChatroomScreen: View {
                 Divider()
             }
             
-            TextInputAreaView(textMessage: $viewModel.textMessage) {
-                viewModel.sendMessage()
+            TextInputAreaView(textMessage: $viewModel.textMessage) { action in
+                viewModel.handleTextInputArea(action)
             }
         }
     }
