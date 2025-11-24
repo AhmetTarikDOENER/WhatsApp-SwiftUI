@@ -10,7 +10,7 @@ struct MediaAttachmentsPreview: View {
             HStack {
                 audioAttachmentPreview()
                 ForEach(selectedPhotos, id: \.self) { image in
-                    thumbnailImageView()
+                    thumbnailImageView(image)
                 }
             }
         }
@@ -20,11 +20,11 @@ struct MediaAttachmentsPreview: View {
     }
     
     //  MARK: - Private
-    private func thumbnailImageView() -> some View {
+    private func thumbnailImageView(_ image: UIImage) -> some View {
         Button {
             
         } label: {
-            Image(.stubImage0)
+            Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
                 .frame(

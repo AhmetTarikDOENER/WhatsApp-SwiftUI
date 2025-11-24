@@ -26,7 +26,8 @@ struct ChatroomScreen: View {
             }
             .photosPicker(
                 isPresented: $viewModel.showPhotoPickerView,
-                selection: $viewModel.photoPickerItems
+                selection: $viewModel.photoPickerItems,
+                maxSelectionCount: 6
             )
     }
     

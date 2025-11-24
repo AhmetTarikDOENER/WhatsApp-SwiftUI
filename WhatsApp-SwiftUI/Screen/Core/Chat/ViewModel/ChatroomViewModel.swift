@@ -12,7 +12,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var photoPickerItems: [PhotosPickerItem] = []
     @Published var selectedPhotos: [UIImage] = []
     private var currentUser: UserItem?
-    private var subscription = Set<AnyCancellable>()
+    private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
     
     var showPhotoPickerPreview: Bool { !photoPickerItems.isEmpty }
@@ -21,11 +21,12 @@ final class ChatroomViewModel: ObservableObject {
     init(_ channel: Channel) {
         self.channel = channel
         listenAuthstate()
+        onPhotoPickerSelection()
     }
     
     deinit {
-        subscription.forEach { $0.cancel() }
-        subscription.removeAll()
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
         currentUser = nil
     }
     
@@ -52,7 +53,7 @@ final class ChatroomViewModel: ObservableObject {
                     }
                 default: break
                 }
-            }.store(in: &subscription)
+            }.store(in: &subscriptions)
     }
     
     private func getMessages() {
@@ -80,6 +81,21 @@ final class ChatroomViewModel: ObservableObject {
             showPhotoPickerView = true
         case .sendMessage:
             sendMessage()
+        }
+    }
+    
+    private func onPhotoPickerSelection() {
+        $photoPickerItems.sink { [weak self] photoItems in
+            guard let self else { return }
+            Task { await self.parsePhotoPickerItems(photoItems) }
+        }.store(in: &subscriptions)
+    }
+    
+    private func parsePhotoPickerItems(_ photoPickerItems: [PhotosPickerItem]) async {
+        for photoItem in photoPickerItems {
+            guard let data = try? await photoItem.loadTransferable(type: Data.self),
+                  let uiImage = UIImage(data: data) else { return }
+            self.selectedPhotos.insert(uiImage, at: 0)
         }
     }
 }
