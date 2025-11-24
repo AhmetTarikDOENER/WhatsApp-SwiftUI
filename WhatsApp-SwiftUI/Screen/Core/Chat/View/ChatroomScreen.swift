@@ -37,7 +37,7 @@ struct ChatroomScreen: View {
             Divider()
             
             if viewModel.showPhotoPickerPreview {
-                MediaAttachmentsPreview(selectedPhotos: viewModel.selectedPhotos)
+                MediaAttachmentsPreview(mediaAttachments: viewModel.mediaAttachments)
                 
                 Divider()
             }

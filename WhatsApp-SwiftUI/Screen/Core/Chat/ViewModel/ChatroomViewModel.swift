@@ -94,8 +94,10 @@ final class ChatroomViewModel: ObservableObject {
     private func parsePhotoPickerItems(_ photoPickerItems: [PhotosPickerItem]) async {
         for photoItem in photoPickerItems {
             if photoItem.isVideo {
-                if let video = try? await photoItem.loadTransferable(type: VideoPickerTransferable.self) {
-                    
+                if let video = try? await photoItem.loadTransferable(type: VideoPickerTransferable.self),
+                   let thumbnailImage = try? await video.url.generateVideoThumbnail() {
+                    let videoAttachments = MediaAttachments(id: UUID().uuidString, type: .video(thumbnailImage, video.url))
+                    self.mediaAttachments.insert(videoAttachments, at: 0)
                 }
             } else {
                 guard let data = try? await photoItem.loadTransferable(type: Data.self),
