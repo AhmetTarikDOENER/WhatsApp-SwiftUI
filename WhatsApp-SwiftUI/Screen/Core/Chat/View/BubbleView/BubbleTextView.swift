@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BubbleTextView: View {
     
+    //  MARK: - Property
     let message: Message
     
     var body: some View {
