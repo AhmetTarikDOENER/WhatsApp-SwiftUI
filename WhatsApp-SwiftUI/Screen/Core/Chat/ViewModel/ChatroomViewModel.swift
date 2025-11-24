@@ -1,14 +1,20 @@
 import Foundation
 import Combine
+import PhotosUI
+import SwiftUI
 
 final class ChatroomViewModel: ObservableObject {
     
     //  MARK: - Properties
     @Published var textMessage = ""
     @Published var messages: [Message] = []
+    @Published var showPhotoPickerView = false
+    @Published var photoPickerItems: [PhotosPickerItem] = []
     private var currentUser: UserItem?
     private var subscription = Set<AnyCancellable>()
     private(set) var channel: Channel
+    
+    var showPhotoPickerPreview: Bool { !photoPickerItems.isEmpty }
     
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {

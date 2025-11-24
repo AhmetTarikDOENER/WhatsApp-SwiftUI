@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ChatroomScreen: View {
     
@@ -23,6 +24,10 @@ struct ChatroomScreen: View {
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
             }
+            .photosPicker(
+                isPresented: $viewModel.showPhotoPickerView,
+                selection: $viewModel.photoPickerItems
+            )
     }
     
     //  MARK: - Private
@@ -30,9 +35,11 @@ struct ChatroomScreen: View {
         VStack(spacing: 0) {
             Divider()
             
-            MediaAttachmentsPreview()
-            
-            Divider()
+            if viewModel.showPhotoPickerPreview {
+                MediaAttachmentsPreview()
+                
+                Divider()
+            }
             
             TextInputAreaView(textMessage: $viewModel.textMessage) {
                 viewModel.sendMessage()
