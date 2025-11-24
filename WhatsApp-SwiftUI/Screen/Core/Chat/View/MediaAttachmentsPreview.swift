@@ -3,14 +3,14 @@ import SwiftUI
 struct MediaAttachmentsPreview: View {
     
     //  MARK: - Property
-    let selectedPhotos: [UIImage]
+    let mediaAttachments: [MediaAttachments]
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 audioAttachmentPreview()
-                ForEach(selectedPhotos, id: \.self) { image in
-                    thumbnailImageView(image)
+                ForEach(mediaAttachments) { attachment in
+                    thumbnailImageView(attachment)
                 }
             }
         }
@@ -20,11 +20,11 @@ struct MediaAttachmentsPreview: View {
     }
     
     //  MARK: - Private
-    private func thumbnailImageView(_ image: UIImage) -> some View {
+    private func thumbnailImageView(_ attachment: MediaAttachments) -> some View {
         Button {
             
         } label: {
-            Image(uiImage: image)
+            Image(uiImage: attachment.thumbnail)
                 .resizable()
                 .scaledToFill()
                 .frame(
@@ -113,5 +113,5 @@ extension MediaAttachmentsPreview {
 }
 
 #Preview {
-    MediaAttachmentsPreview(selectedPhotos: [])
+    MediaAttachmentsPreview(mediaAttachments: [])
 }

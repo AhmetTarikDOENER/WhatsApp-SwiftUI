@@ -17,3 +17,24 @@ struct VideoPickerTransferable: Transferable {
         }
     }
 }
+
+//  MARK: - MediaAttachments
+struct MediaAttachments: Identifiable {
+    let id: String
+    let type: MediaAttachmentsType
+    
+    var thumbnail: UIImage {
+        switch type {
+        case .photo(let thumbnail): return thumbnail
+        case .video(let thumbnail, _): return thumbnail
+        case .audio: return UIImage()
+        }
+    }
+}
+
+//  MARK: - MediaAttachmentsType
+enum MediaAttachmentsType {
+    case photo(_ thumbnailImage: UIImage)
+    case video(_ thumbnailImage: UIImage, _ url: URL)
+    case audio
+}

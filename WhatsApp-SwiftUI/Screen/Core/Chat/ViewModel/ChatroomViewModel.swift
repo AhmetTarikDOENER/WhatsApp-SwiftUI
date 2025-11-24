@@ -10,12 +10,12 @@ final class ChatroomViewModel: ObservableObject {
     @Published var messages: [Message] = []
     @Published var showPhotoPickerView = false
     @Published var photoPickerItems: [PhotosPickerItem] = []
-    @Published var selectedPhotos: [UIImage] = []
+    @Published var mediaAttachments: [MediaAttachments] = []
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
     
-    var showPhotoPickerPreview: Bool { !photoPickerItems.isEmpty }
+    var showPhotoPickerPreview: Bool { !mediaAttachments.isEmpty }
     
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {
@@ -99,8 +99,9 @@ final class ChatroomViewModel: ObservableObject {
                 }
             } else {
                 guard let data = try? await photoItem.loadTransferable(type: Data.self),
-                      let uiImage = UIImage(data: data) else { return }
-                self.selectedPhotos.insert(uiImage, at: 0)
+                      let thumbnailImage = UIImage(data: data) else { return }
+                let photoAttachments = MediaAttachments(id: UUID().uuidString, type: .photo(thumbnailImage))
+                self.mediaAttachments.insert(photoAttachments, at: 0)
             }
         }
     }
