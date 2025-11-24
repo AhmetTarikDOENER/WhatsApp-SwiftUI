@@ -13,6 +13,7 @@ struct MediaAttachmentsPreview: View {
                     thumbnailImageView(attachment)
                 }
             }
+            .padding(.horizontal)
         }
         .frame(height: Constants.attachmentListHeight)
         .frame(maxWidth: .infinity)
@@ -38,6 +39,7 @@ struct MediaAttachmentsPreview: View {
                 }
                 .overlay(alignment: .center) {
                     playButton("play.fill")
+                        .opacity(attachment.type == .video(UIImage(), .stubURL) ? 1 : 0)
                 }
         }
     }

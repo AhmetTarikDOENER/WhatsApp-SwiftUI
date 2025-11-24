@@ -3,6 +3,7 @@ import Combine
 import PhotosUI
 import SwiftUI
 
+@MainActor
 final class ChatroomViewModel: ObservableObject {
     
     //  MARK: - Properties
