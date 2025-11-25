@@ -26,4 +26,11 @@ extension Date {
         
         return formattedTime
     }
+    
+    func toString(format: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        
+        return dateFormatter.string(from: self)
+    }
 }
