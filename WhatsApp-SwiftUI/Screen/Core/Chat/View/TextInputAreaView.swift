@@ -4,9 +4,10 @@ struct TextInputAreaView: View {
     
     @Binding var textMessage: String
     @State private var isRecording = false
+    @State private var isPulsing = false
     let actionHandler: (_ action: UserAction) -> Void
     
-    private var disableSendButton: Bool { textMessage.isEmptyOrWhitespace }
+    private var disableSendButton: Bool { textMessage.isEmptyOrWhitespace || isRecording }
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -28,6 +29,7 @@ struct TextInputAreaView: View {
         .padding(.horizontal, 8)
         .padding(.top, 12)
         .background(.whatsAppWhite)
+        .animation(.spring, value: isRecording)
     }
     
     //  MARK: - Private
@@ -42,14 +44,18 @@ struct TextInputAreaView: View {
     
     private func audioRecorderButton() -> some View {
         Button {
+            actionHandler(.recordAudio)
             isRecording.toggle()
+            withAnimation(.easeInOut(duration: 1.35).repeatForever()) {
+                isPulsing.toggle()
+            }
         } label: {
-            Image(systemName: "mic.fill")
+            Image(systemName: isRecording ? "square.fill" : "mic.fill")
                 .fontWeight(.heavy)
                 .imageScale(.small)
                 .foregroundStyle(.white)
                 .padding(6)
-                .background(.blue)
+                .background(isRecording ? .red : .blue)
                 .clipShape(Circle())
                 .padding(.horizontal, 3)
         }
@@ -91,6 +97,7 @@ struct TextInputAreaView: View {
             Image(systemName: "circle.fill")
                 .foregroundStyle(.red)
                 .font(.caption)
+                .scaleEffect(isPulsing ? 1.75 : 1.0)
             
             Text("Recording Audio")
                 .font(.callout)
@@ -119,6 +126,7 @@ extension TextInputAreaView {
     enum UserAction {
         case presentPhotoPicker
         case sendMessage
+        case recordAudio
     }
 }
 
