@@ -21,8 +21,10 @@ struct ChatroomScreen: View {
                 trailingNavigationBarItemGroup()
             }
             .navigationBarTitleDisplayMode(.inline)
+            .ignoresSafeArea(edges: .bottom)
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
+                    .background(.whatsAppWhite)
             }
             .photosPicker(
                 isPresented: $viewModel.showPhotoPickerView,
@@ -37,6 +39,7 @@ struct ChatroomScreen: View {
                     }
                 }
             }
+            .animation(.easeInOut, value: viewModel.showPhotoPickerPreview)
     }
     
     //  MARK: - Private
