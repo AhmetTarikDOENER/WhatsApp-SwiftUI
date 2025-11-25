@@ -114,7 +114,7 @@ extension MediaAttachmentsPreview {
     }
     
     enum UserAction {
-        case play(_ item: MediaAttachments)
+        case play(_ attachment: MediaAttachments)
     }
 }
 
