@@ -12,6 +12,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var showPhotoPickerView = false
     @Published var photoPickerItems: [PhotosPickerItem] = []
     @Published var mediaAttachments: [MediaAttachments] = []
+    @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
@@ -106,6 +107,25 @@ final class ChatroomViewModel: ObservableObject {
                 let photoAttachments = MediaAttachments(id: UUID().uuidString, type: .photo(thumbnailImage))
                 self.mediaAttachments.insert(photoAttachments, at: 0)
             }
+        }
+    }
+    
+    func dismissMediaPlayer() {
+        videoPlayerState.player?.replaceCurrentItem(with: nil)
+        videoPlayerState.player = nil
+        videoPlayerState.show = false
+    }
+    
+    private func showMediaPlayer(_ fileURL: URL) {
+        videoPlayerState.show = true
+        videoPlayerState.player = AVPlayer(url: fileURL)
+    }
+    
+    func handleMediaAttachmentPreview(_ action: MediaAttachmentsPreview.UserAction) {
+        switch action {
+        case .play(let attachment):
+            guard let fileURL = attachment.fileURL else { return }
+            showMediaPlayer(fileURL)
         }
     }
 }

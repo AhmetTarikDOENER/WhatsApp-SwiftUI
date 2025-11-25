@@ -4,11 +4,11 @@ struct MediaAttachmentsPreview: View {
     
     //  MARK: - Property
     let mediaAttachments: [MediaAttachments]
+    let actionHandler: (_ action: UserAction) -> Void
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                audioAttachmentPreview()
                 ForEach(mediaAttachments) { attachment in
                     thumbnailImageView(attachment)
                 }
@@ -38,7 +38,7 @@ struct MediaAttachmentsPreview: View {
                     cancelButton()
                 }
                 .overlay(alignment: .center) {
-                    playButton("play.fill")
+                    playButton("play.fill", attachment: attachment)
                         .opacity(attachment.type == .video(UIImage(), .stubURL) ? 1 : 0)
                 }
         }
@@ -61,9 +61,9 @@ struct MediaAttachmentsPreview: View {
         }
     }
     
-    private func playButton(_ systemName: String) -> some View {
+    private func playButton(_ systemName: String, attachment: MediaAttachments) -> some View {
         Button {
-            
+            actionHandler(.play(attachment))
         } label: {
             Image(systemName: systemName)
                 .scaledToFit()
@@ -78,14 +78,14 @@ struct MediaAttachmentsPreview: View {
         }
     }
     
-    private func audioAttachmentPreview() -> some View {
+    private func audioAttachmentPreview(attachment: MediaAttachments) -> some View {
         ZStack {
             LinearGradient(
                 colors: [.green, .green.opacity(0.7), .teal],
                 startPoint: .topLeading,
                 endPoint: .bottom
             )
-            playButton("mic.fill")
+            playButton("mic.fill", attachment: attachment)
                 .padding(.bottom, 12)
         }
         .frame(width: Constants.attachmentImageDimension * 1.75, height: Constants.attachmentImageDimension)
@@ -106,14 +106,20 @@ struct MediaAttachmentsPreview: View {
     }
 }
 
-//  MARK: - MediaAttachmentsPreview+Constants
+//  MARK: - MediaAttachmentsPreview+Constants+UserAction
 extension MediaAttachmentsPreview {
     enum Constants {
         static let attachmentListHeight: CGFloat = 100
         static let attachmentImageDimension: CGFloat = 80
     }
+    
+    enum UserAction {
+        case play(_ item: MediaAttachments)
+    }
 }
 
 #Preview {
-    MediaAttachmentsPreview(mediaAttachments: [])
+    MediaAttachmentsPreview(mediaAttachments: []) { action in
+        
+    }
 }

@@ -30,6 +30,14 @@ struct MediaAttachments: Identifiable {
         case .audio: return UIImage()
         }
     }
+    
+    var fileURL: URL? {
+        switch type {
+        case .photo: return nil
+        case .video(_, let fileURL): return fileURL
+        case .audio: return nil
+        }
+    }
 }
 
 //  MARK: - MediaAttachmentsType

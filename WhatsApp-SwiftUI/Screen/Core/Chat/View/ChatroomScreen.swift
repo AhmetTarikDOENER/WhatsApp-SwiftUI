@@ -29,6 +29,13 @@ struct ChatroomScreen: View {
                 selection: $viewModel.photoPickerItems,
                 maxSelectionCount: 6
             )
+            .fullScreenCover(isPresented: $viewModel.videoPlayerState.show) {
+                if let player = viewModel.videoPlayerState.player {
+                    MediaPlayerView(player: player) {
+                        viewModel.dismissMediaPlayer()
+                    }
+                }
+            }
     }
     
     //  MARK: - Private
@@ -37,7 +44,9 @@ struct ChatroomScreen: View {
             Divider()
             
             if viewModel.showPhotoPickerPreview {
-                MediaAttachmentsPreview(mediaAttachments: viewModel.mediaAttachments)
+                MediaAttachmentsPreview(mediaAttachments: viewModel.mediaAttachments) { action in
+                    viewModel.handleMediaAttachmentPreview(action)
+                }
                 
                 Divider()
             }
