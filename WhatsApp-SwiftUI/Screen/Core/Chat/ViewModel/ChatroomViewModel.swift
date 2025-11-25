@@ -98,14 +98,16 @@ final class ChatroomViewModel: ObservableObject {
         for photoItem in photoPickerItems {
             if photoItem.isVideo {
                 if let video = try? await photoItem.loadTransferable(type: VideoPickerTransferable.self),
-                   let thumbnailImage = try? await video.url.generateVideoThumbnail() {
-                    let videoAttachments = MediaAttachments(id: UUID().uuidString, type: .video(thumbnailImage, video.url))
+                   let thumbnailImage = try? await video.url.generateVideoThumbnail(),
+                   let itemIdentifier = photoItem.itemIdentifier {
+                    let videoAttachments = MediaAttachments(id: itemIdentifier, type: .video(thumbnailImage, video.url))
                     self.mediaAttachments.insert(videoAttachments, at: 0)
                 }
             } else {
                 guard let data = try? await photoItem.loadTransferable(type: Data.self),
-                      let thumbnailImage = UIImage(data: data) else { return }
-                let photoAttachments = MediaAttachments(id: UUID().uuidString, type: .photo(thumbnailImage))
+                      let thumbnailImage = UIImage(data: data),
+                      let itemIdentifier = photoItem.itemIdentifier else { return }
+                let photoAttachments = MediaAttachments(id: itemIdentifier, type: .photo(thumbnailImage))
                 self.mediaAttachments.insert(photoAttachments, at: 0)
             }
         }
@@ -127,6 +129,15 @@ final class ChatroomViewModel: ObservableObject {
         case .play(let attachment):
             guard let fileURL = attachment.fileURL else { return }
             showMediaPlayer(fileURL)
+        case .remove(let attachment):
+            remove(attachment)
         }
+    }
+    
+    private func remove(_ attachment: MediaAttachments) {
+        guard let attachmentIndex = mediaAttachments.firstIndex(where: { $0.id == attachment.id }) else { return }
+        mediaAttachments.remove(at: attachmentIndex)
+        guard let photoPickerIndex = photoPickerItems.firstIndex(where: { $0.itemIdentifier == attachment.id }) else { return }
+        photoPickerItems.remove(at: photoPickerIndex)
     }
 }

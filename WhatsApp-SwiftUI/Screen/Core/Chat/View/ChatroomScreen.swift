@@ -27,7 +27,8 @@ struct ChatroomScreen: View {
             .photosPicker(
                 isPresented: $viewModel.showPhotoPickerView,
                 selection: $viewModel.photoPickerItems,
-                maxSelectionCount: 6
+                maxSelectionCount: 6,
+                photoLibrary: .shared()
             )
             .fullScreenCover(isPresented: $viewModel.videoPlayerState.show) {
                 if let player = viewModel.videoPlayerState.player {

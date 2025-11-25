@@ -35,7 +35,7 @@ struct MediaAttachmentsPreview: View {
                 .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
                 .clipped()
                 .overlay(alignment: .topTrailing) {
-                    cancelButton()
+                    cancelButton(attachment)
                 }
                 .overlay(alignment: .center) {
                     playButton("play.fill", attachment: attachment)
@@ -44,9 +44,9 @@ struct MediaAttachmentsPreview: View {
         }
     }
     
-    private func cancelButton() -> some View {
+    private func cancelButton(_ attachment: MediaAttachments) -> some View {
         Button {
-            
+            actionHandler(.remove(attachment))
         } label: {
             Image(systemName: "xmark")
                 .scaledToFit()
@@ -92,7 +92,7 @@ struct MediaAttachmentsPreview: View {
         .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
         .clipped()
         .overlay(alignment: .topTrailing) {
-            cancelButton()
+            cancelButton(attachment)
         }
         .overlay(alignment: .bottomLeading) {
             Text("test.mp3")
@@ -115,6 +115,7 @@ extension MediaAttachmentsPreview {
     
     enum UserAction {
         case play(_ attachment: MediaAttachments)
+        case remove(_ attachment: MediaAttachments)
     }
 }
 
