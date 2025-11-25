@@ -5,7 +5,7 @@ import Combine
 final class AudioRecorderService {
     
     private var audioRecorder: AVAudioRecorder?
-    private var isRecording = false
+    private(set) var isRecording = false
     private var startingTime: Date?
     private var timer: AnyCancellable?
     private var elapsedTime: TimeInterval = 0
