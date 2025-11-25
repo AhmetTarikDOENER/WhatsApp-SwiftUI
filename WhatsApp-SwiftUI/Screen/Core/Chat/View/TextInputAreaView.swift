@@ -3,6 +3,7 @@ import SwiftUI
 struct TextInputAreaView: View {
     
     @Binding var textMessage: String
+    @State private var isRecording = false
     let actionHandler: (_ action: UserAction) -> Void
     
     private var disableSendButton: Bool { textMessage.isEmptyOrWhitespace }
@@ -12,7 +13,13 @@ struct TextInputAreaView: View {
             imagePickerButton()
                 .padding(3)
             audioRecorderButton()
-            messageTextField()
+            
+            if isRecording {
+                audioRecordingIndicatorView()
+            } else {
+                messageTextField()
+            }
+            
             sendMessageButton()
                 .disabled(disableSendButton)
                 .grayscale(disableSendButton ? 0.8 : 0)
@@ -35,7 +42,7 @@ struct TextInputAreaView: View {
     
     private func audioRecorderButton() -> some View {
         Button {
-            
+            isRecording.toggle()
         } label: {
             Image(systemName: "mic.fill")
                 .fontWeight(.heavy)
@@ -77,6 +84,33 @@ struct TextInputAreaView: View {
                 .clipShape(Circle())
                 .padding(.horizontal, 3)
         }
+    }
+    
+    private func audioRecordingIndicatorView() -> some View {
+        HStack {
+            Image(systemName: "circle.fill")
+                .foregroundStyle(.red)
+                .font(.caption)
+            
+            Text("Recording Audio")
+                .font(.callout)
+                .lineLimit(1)
+            
+            Spacer()
+            
+            Text("00:30")
+                .font(.callout)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 30)
+        .frame(maxWidth: .infinity)
+        .clipShape(Capsule())
+        .background(
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.blue.opacity(0.1))
+        )
+        .overlay { textViewBorder() }
     }
 }
 

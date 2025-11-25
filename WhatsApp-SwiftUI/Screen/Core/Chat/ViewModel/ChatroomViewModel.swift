@@ -17,7 +17,7 @@ final class ChatroomViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
     
-    var showPhotoPickerPreview: Bool { !mediaAttachments.isEmpty }
+    var showPhotoPickerPreview: Bool { !mediaAttachments.isEmpty || !photoPickerItems.isEmpty }
     
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {
