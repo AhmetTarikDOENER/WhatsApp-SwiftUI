@@ -43,8 +43,23 @@ final class AudioRecorderService {
         }
     }
     
-    func stopRecording() {
+    func stopRecording(completion: ((_ audioURL: URL?, _ audioDuration: TimeInterval) -> Void)? = nil) {
+        guard isRecording else { return }
+        let audioDuration = elapsedTime
+
+        audioRecorder?.stop()
+        isRecording = false
+        timer?.cancel()
+        elapsedTime = 0
         
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setActive(false)
+            guard let audioURL = audioRecorder?.url else { return }
+            completion?(audioURL, audioDuration)
+        } catch {
+            print("❌ AudioRecorderService -> Failed to teardown AVAudioSession")
+        }
     }
     
     private func startTimer() {
@@ -54,5 +69,28 @@ final class AudioRecorderService {
                 guard let startingTime = self?.startingTime else { return }
                 self?.elapsedTime = Date().timeIntervalSince(startingTime)
             }
+    }
+    
+    func tearDown() {
+        let fileManager = FileManager.default
+        let folder = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let folderContens = try! fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)
+        deleteRecordings(folderContens)
+        print("✅ AudioRecorderService -> AudioRecorderService was successfully teared down")
+    }
+    
+    private func deleteRecordings(_ urls: [URL]) {
+        for url in urls {
+            deleteRecording(at: url)
+        }
+    }
+    
+    private func deleteRecording(at fileURL: URL) {
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+            print("✅ AudioRecorderService -> Audio file was successfully deleted")
+        } catch {
+            print("❌ AudioRecorderService -> Failed to delete file")
+        }
     }
 }
