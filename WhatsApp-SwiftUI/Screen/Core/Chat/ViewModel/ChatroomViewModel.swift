@@ -103,7 +103,7 @@ final class ChatroomViewModel: ObservableObject {
     private func createAudioAttachment(from audioURL: URL?, _ audioDuration: TimeInterval) {
         guard let audioURL else { return }
         let id = UUID().uuidString
-        let audioAttachment = MediaAttachments(id: id, type: .audio)
+        let audioAttachment = MediaAttachments(id: id, type: .audio(audioURL, audioDuration))
         mediaAttachments.insert(audioAttachment, at: 0)
     }
     
