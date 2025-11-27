@@ -10,7 +10,11 @@ struct MediaAttachmentsPreview: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(mediaAttachments) { attachment in
-                    thumbnailImageView(attachment)
+                    if attachment.type == .audio {
+                        audioAttachmentPreview(attachment: attachment)
+                    } else {
+                        thumbnailImageView(attachment)
+                    }
                 }
             }
             .padding(.horizontal)

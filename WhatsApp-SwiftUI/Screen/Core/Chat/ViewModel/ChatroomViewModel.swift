@@ -93,11 +93,18 @@ final class ChatroomViewModel: ObservableObject {
     private func toggleAudioRecorder() {
         if audioRecorderService.isRecording {
             audioRecorderService.stopRecording { [weak self] audioURL, audioDuration in
-                
+                self?.createAudioAttachment(from: audioURL, audioDuration)
             }
         } else {
             audioRecorderService.startRecording()
         }
+    }
+    
+    private func createAudioAttachment(from audioURL: URL?, _ audioDuration: TimeInterval) {
+        guard let audioURL else { return }
+        let id = UUID().uuidString
+        let audioAttachment = MediaAttachments(id: id, type: .audio)
+        mediaAttachments.insert(audioAttachment, at: 0)
     }
     
     private func onPhotoPickerSelection() {

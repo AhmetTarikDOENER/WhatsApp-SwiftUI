@@ -10,6 +10,8 @@ final class AudioRecorderService {
     private var timer: AnyCancellable?
     private var elapsedTime: TimeInterval = 0
     
+    deinit { tearDown() }
+    
     /// Setup audio session + define where to store + settings + start recording
     func startRecording() {
         let session = AVAudioSession.sharedInstance()
@@ -26,7 +28,7 @@ final class AudioRecorderService {
         let audioFileURL = docPath.appendingPathComponent(audioFileName)
         
         let settings = [
-            AVFormatIDKey: Int(kAudioFileMPEG4Type),
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
