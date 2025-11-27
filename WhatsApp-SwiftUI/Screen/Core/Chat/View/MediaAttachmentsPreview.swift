@@ -99,7 +99,7 @@ struct MediaAttachmentsPreview: View {
             cancelButton(attachment)
         }
         .overlay(alignment: .bottomLeading) {
-            Text("test.mp3")
+            Text(attachment.fileURL?.absoluteString ?? "Unknown")
                 .lineLimit(1)
                 .font(.caption)
                 .padding(2)

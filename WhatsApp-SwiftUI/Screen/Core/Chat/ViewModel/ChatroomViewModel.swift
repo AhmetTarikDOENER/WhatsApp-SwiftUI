@@ -152,6 +152,10 @@ final class ChatroomViewModel: ObservableObject {
             showMediaPlayer(fileURL)
         case .remove(let attachment):
             remove(attachment)
+            guard let fileURL = attachment.fileURL else { return }
+            if attachment.type == .audio(.stubURL, 0) {
+                audioRecorderService.deleteRecording(at: fileURL)
+            }
         }
     }
     
