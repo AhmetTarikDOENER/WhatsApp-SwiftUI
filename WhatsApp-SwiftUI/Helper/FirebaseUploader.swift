@@ -4,6 +4,7 @@ import FirebaseStorage
 //  MARK: - FirebaseUploaderError
 enum FirebaseUploaderError: Error {
     case uploadImageFailure(_ description: String)
+    case uploadFileFailure(_ description: String)
 }
 
 //  MARK: - FirebaseUploaderError+LocalizedDescription
@@ -11,6 +12,7 @@ extension FirebaseUploaderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .uploadImageFailure(let description): return description
+        case .uploadFileFailure(let description): return description
         }
     }
 }
@@ -21,6 +23,7 @@ typealias ProgressHandler = (Double) -> Void
 //  MARK: - FirebaseUploader
 struct FirebaseUploader {
     
+    /// For uploading the image datas.
     static func uploadImage(
         _ image: UIImage,
         for uploadType: UploadType,
@@ -33,6 +36,31 @@ struct FirebaseUploader {
             if let error = error {
                 print("❌ FirebaseUploader -> Failed to upload image to the FirebaseStorage")
                 completion(.failure(FirebaseUploaderError.uploadImageFailure(error.localizedDescription)))
+                return
+            }
+            
+            storageReference.downloadURL(completion: completion)
+        }
+        
+        uploadTask.observe(.progress) { snapshot in
+            guard let progress = snapshot.progress else { return }
+            let percentage = Double(progress.completedUnitCount / progress.totalUnitCount)
+            progressHandler(percentage)
+        }
+    }
+    
+    /// For uploading the video and audio files.
+    static func uploadFile(
+        for uploadType: UploadType,
+        fileURL: URL,
+        completion: @escaping UploadCompletion,
+        progressHandler: @escaping ProgressHandler
+    ) {
+        let storageReference = uploadType.filePath
+        let uploadTask = storageReference.putFile(from: fileURL) { _, error in
+            if let error = error {
+                print("❌ FirebaseUploader -> Failed to upload file to the FirebaseStorage")
+                completion(.failure(FirebaseUploaderError.uploadFileFailure(error.localizedDescription)))
                 return
             }
             
