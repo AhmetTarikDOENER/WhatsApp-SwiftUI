@@ -15,6 +15,8 @@ struct TextInputAreaView: View {
         HStack(alignment: .bottom, spacing: 4) {
             imagePickerButton()
                 .padding(3)
+                .disabled(isRecording)
+                .grayscale(isRecording ? 0.7 : 0)
             audioRecorderButton()
             
             if isRecording {

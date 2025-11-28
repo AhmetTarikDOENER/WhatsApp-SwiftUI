@@ -114,7 +114,8 @@ final class ChatroomViewModel: ObservableObject {
     private func onPhotoPickerSelection() {
         $photoPickerItems.sink { [weak self] photoItems in
             guard let self else { return }
-            self.mediaAttachments.removeAll()
+            let audioRecordings = mediaAttachments.filter { $0.type == .audio(.stubURL, .stubTimeInterval) }
+            self.mediaAttachments = audioRecordings
             Task { await self.parsePhotoPickerItems(photoItems) }
         }.store(in: &subscriptions)
     }
