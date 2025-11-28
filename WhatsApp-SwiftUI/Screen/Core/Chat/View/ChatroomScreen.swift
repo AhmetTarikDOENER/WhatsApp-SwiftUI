@@ -55,9 +55,12 @@ struct ChatroomScreen: View {
                 Divider()
             }
             
-            TextInputAreaView(textMessage: $viewModel.textMessage) { action in
-                viewModel.handleTextInputArea(action)
-            }
+            TextInputAreaView(
+                textMessage: $viewModel.textMessage,
+                isRecording: $viewModel.isRecording,
+                elapsedTime: $viewModel.elapsedTime) { action in
+                    viewModel.handleTextInputArea(action)
+                }
         }
     }
 }

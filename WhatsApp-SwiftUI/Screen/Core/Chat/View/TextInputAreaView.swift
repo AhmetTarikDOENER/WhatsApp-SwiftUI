@@ -2,8 +2,10 @@ import SwiftUI
 
 struct TextInputAreaView: View {
     
+    //  MARK: - Properties
     @Binding var textMessage: String
-    @State private var isRecording = false
+    @Binding var isRecording: Bool
+    @Binding var elapsedTime: TimeInterval
     @State private var isPulsing = false
     let actionHandler: (_ action: UserAction) -> Void
     
@@ -30,6 +32,15 @@ struct TextInputAreaView: View {
         .padding(.top, 12)
         .background(.whatsAppWhite)
         .animation(.spring, value: isRecording)
+        .onChange(of: isRecording) { oldValue, isRecording in
+            if isRecording {
+                withAnimation(.easeInOut(duration: 1.35).repeatForever()) {
+                    isPulsing = true
+                }
+            } else {
+                isPulsing = false
+            }
+        }
     }
     
     //  MARK: - Private
@@ -45,10 +56,6 @@ struct TextInputAreaView: View {
     private func audioRecorderButton() -> some View {
         Button {
             actionHandler(.recordAudio)
-            isRecording.toggle()
-            withAnimation(.easeInOut(duration: 1.35).repeatForever()) {
-                isPulsing.toggle()
-            }
         } label: {
             Image(systemName: isRecording ? "square.fill" : "mic.fill")
                 .fontWeight(.heavy)
@@ -105,7 +112,7 @@ struct TextInputAreaView: View {
             
             Spacer()
             
-            Text("00:30")
+            Text(elapsedTime.formatElapsedTime)
                 .font(.callout)
                 .fontWeight(.semibold)
         }
@@ -131,7 +138,11 @@ extension TextInputAreaView {
 }
 
 #Preview {
-    TextInputAreaView(textMessage: .constant("")) { _ in
+    TextInputAreaView(
+        textMessage: .constant(""),
+        isRecording: .constant(false),
+        elapsedTime: .constant(0)
+    ) { action in
         
     }
 }

@@ -13,6 +13,8 @@ final class ChatroomViewModel: ObservableObject {
     @Published var photoPickerItems: [PhotosPickerItem] = []
     @Published var mediaAttachments: [MediaAttachments] = []
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
+    @Published var isRecording = false
+    @Published var elapsedTime: TimeInterval = 0
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
@@ -26,12 +28,14 @@ final class ChatroomViewModel: ObservableObject {
         self.channel = channel
         listenAuthstate()
         onPhotoPickerSelection()
+        setupAudioRecorderListener()
     }
     
     deinit {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
         currentUser = nil
+        audioRecorderService.tearDown()
     }
     
     //  MARK: - Internal & Private
@@ -153,7 +157,7 @@ final class ChatroomViewModel: ObservableObject {
         case .remove(let attachment):
             remove(attachment)
             guard let fileURL = attachment.fileURL else { return }
-            if attachment.type == .audio(.stubURL, 0) {
+            if attachment.type == .audio(.stubURL, .stubTimeInterval) {
                 audioRecorderService.deleteRecording(at: fileURL)
             }
         }
@@ -164,5 +168,17 @@ final class ChatroomViewModel: ObservableObject {
         mediaAttachments.remove(at: attachmentIndex)
         guard let photoPickerIndex = photoPickerItems.firstIndex(where: { $0.itemIdentifier == attachment.id }) else { return }
         photoPickerItems.remove(at: photoPickerIndex)
+    }
+    
+    private func setupAudioRecorderListener() {
+        audioRecorderService.$isRecording.receive(on: DispatchQueue.main)
+            .sink { [weak self] isRecording in
+                self?.isRecording = isRecording
+            }.store(in: &subscriptions)
+        
+        audioRecorderService.$elapsedTime.receive(on: DispatchQueue.main)
+            .sink { [weak self] elapsedTime in
+                self?.elapsedTime = elapsedTime
+            }.store(in: &subscriptions)
     }
 }
