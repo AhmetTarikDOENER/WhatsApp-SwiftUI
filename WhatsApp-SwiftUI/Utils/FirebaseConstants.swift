@@ -1,5 +1,6 @@
 import Firebase
 import FirebaseStorage
+import FirebaseDatabase
 
 enum FirebaseConstants {
     
@@ -10,4 +11,6 @@ enum FirebaseConstants {
     static let MessagesReference = databaseReference.child("channel-messages")
     static let UserChannelsReference = databaseReference.child("user-channels")
     static let UserDirectChannels = databaseReference.child("user-direct-channels")
+    
+    static let StorageRefenrence = Storage.storage().reference()
 }
