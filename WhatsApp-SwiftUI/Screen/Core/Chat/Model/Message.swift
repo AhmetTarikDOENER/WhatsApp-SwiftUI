@@ -73,4 +73,6 @@ extension String {
     static let timestamp = "timestamp"
     static let ownerUid = "ownerUid"
     static let text = "text"
+    static let thumbnailWidth = "thumbnailWidth"
+    static let thumbnailHeight = "thumbnailHeight"
 }

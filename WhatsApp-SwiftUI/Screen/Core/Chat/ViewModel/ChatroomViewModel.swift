@@ -43,8 +43,55 @@ final class ChatroomViewModel: ObservableObject {
     //  MARK: - Internal & Private
     func sendMessage() {
         guard let currentUser else { return }
-        MessageService.sendTextMessage(to: channel, from: currentUser, textMessage) { [weak self] in
-            self?.textMessage = ""
+        if mediaAttachments.isEmpty {
+            MessageService.sendTextMessage(to: channel, from: currentUser, textMessage) { [weak self] in
+                self?.textMessage = ""
+            }
+        } else {
+            sendMultipleMediaMessages(textMessage, attachments: mediaAttachments)
+        }
+    }
+    
+    private func sendMultipleMediaMessages(_ text: String, attachments: [MediaAttachments]) {
+        mediaAttachments.forEach { attachment in
+            switch attachment.type {
+            case .photo: sendPhotoMessage(text: text, attachment)
+            case .video: break
+            case .audio: break
+            }
+        }
+    }
+    
+    private func sendPhotoMessage(text: String, _ attachment: MediaAttachments) {
+        uploadImageToStorageBucket(attachment) { [weak self] imageURL in
+            guard let self, let currentUser else { return }
+            let uploadParemeters = MediaMessageUploadParameters(
+                channel: channel,
+                text: text,
+                type: .photo,
+                attachment: attachment,
+                sender: currentUser
+            )
+            
+            MessageService.sendMediaMessage(to: channel, parameters: uploadParemeters) {
+                
+            }
+        }
+    }
+    
+    private func uploadImageToStorageBucket(
+        _ attachment: MediaAttachments,
+        completion: @escaping(_ imageURL: URL) -> Void
+    ) {
+        FirebaseUploader.uploadImage(attachment.thumbnail, for: .photoMessage) { result in
+            switch result {
+            case .success(let imageURL):
+                completion(imageURL)
+            case .failure(let error):
+                print("❌ ChatroomViewModel -> Failed to upload image to the Storage Bucket: \(error.localizedDescription)")
+            }
+        } progressHandler: { progress in
+            print("Image uploading progress: \(progress)")
         }
     }
     
