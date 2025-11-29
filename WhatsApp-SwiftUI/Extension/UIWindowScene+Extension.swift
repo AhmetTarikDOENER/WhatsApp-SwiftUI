@@ -7,7 +7,7 @@ extension UIWindowScene {
             .first { $0 is UIWindowScene } as? UIWindowScene
     }
     
-    var screenWidth: CGFloat { UIScreen.main.bounds.width }
+    var screenWidth: CGFloat { UIWindowScene.currentWindowScene?.screen.bounds.width ?? 0 }
     
-    var screenHeight: CGFloat { UIScreen.main.bounds.height }
+    var screenHeight: CGFloat { UIWindowScene.currentWindowScene?.screen.bounds.height ?? 0 }
 }

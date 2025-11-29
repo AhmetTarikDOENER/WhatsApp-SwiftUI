@@ -15,6 +15,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
     @Published var isRecording = false
     @Published var elapsedTime: TimeInterval = 0
+    @Published var scrollToBottomRequest: (scroll: Bool, isAnimated: Bool) = (false, false)
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
@@ -82,10 +83,15 @@ final class ChatroomViewModel: ObservableObject {
                 sender: currentUser
             )
             
-            MessageService.sendMediaMessage(to: channel, parameters: uploadParemeters) {
-                
+            MessageService.sendMediaMessage(to: channel, parameters: uploadParemeters) { [weak self] in
+                self?.scrollToBottom(isAnimated: true)
             }
         }
+    }
+    
+    private func scrollToBottom(isAnimated: Bool) {
+        scrollToBottomRequest.scroll = true
+        scrollToBottomRequest.isAnimated = isAnimated
     }
     
     private func uploadImageToStorageBucket(

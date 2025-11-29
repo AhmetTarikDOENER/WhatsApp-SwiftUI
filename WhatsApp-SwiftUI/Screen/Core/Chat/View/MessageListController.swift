@@ -74,6 +74,24 @@ final class MessageListController: UIViewController {
             .sink { [weak self] _ in
                 self?.tableView.reloadData()
             }.store(in: &subscriptions)
+        
+        viewModel.$scrollToBottomRequest
+            .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
+            .sink { [weak self] scrollRequest in
+                if scrollRequest.scroll {
+                    self?.tableView.scrollToLastRow(at: .bottom, animated: scrollRequest.isAnimated)
+                }
+            }.store(in: &subscriptions)
+    }
+}
+
+private extension UITableView {
+    func scrollToLastRow(at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        guard numberOfRows(inSection: numberOfSections - 1) > 0 else { return }
+        let lastSectionIndex = numberOfSections - 1
+        let lastRowIndex = numberOfRows(inSection: lastSectionIndex) - 1
+        let lastRowIndexPath = IndexPath(row: lastRowIndex, section: lastSectionIndex)
+        scrollToRow(at: lastRowIndexPath, at: scrollPosition, animated: animated)
     }
 }
 
