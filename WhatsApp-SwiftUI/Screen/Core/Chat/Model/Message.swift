@@ -9,6 +9,7 @@ struct Message: Identifiable {
     let timestamp: Date
     let isGroupChat: Bool
     var sender: UserItem?
+    let thumbnailURL: String?
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -35,7 +36,8 @@ extension Message {
         type: .text,
         senderUid: "1",
         timestamp: Date(),
-        isGroupChat: true
+        isGroupChat: true,
+        thumbnailURL: nil
     )
     
     static let receivedPlaceholder = Message(
@@ -44,14 +46,15 @@ extension Message {
         type: .text,
         senderUid: "2",
         timestamp: Date(),
-        isGroupChat: false
+        isGroupChat: false,
+        thumbnailURL: nil
     )
     
     static let stubMessages: [Message] = [
-        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3", timestamp: Date(), isGroupChat: true),
-        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4", timestamp: Date(), isGroupChat: false),
-        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5", timestamp: Date(), isGroupChat: false),
-        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6", timestamp: Date(), isGroupChat: true)
+        .init(id: UUID().uuidString, text: "Hey Tim!", type: .text, senderUid: "3", timestamp: Date(), isGroupChat: true, thumbnailURL: nil),
+        .init(id: UUID().uuidString, text: "Did you see this photo?", type: .photo, senderUid: "4", timestamp: Date(), isGroupChat: false, thumbnailURL: nil),
+        .init(id: UUID().uuidString, text: "Play out this video", type: .video, senderUid: "5", timestamp: Date(), isGroupChat: false, thumbnailURL: nil),
+        .init(id: UUID().uuidString, text: "Listen to this immediately", type: .audio, senderUid: "6", timestamp: Date(), isGroupChat: true, thumbnailURL: nil)
     ]
 }
 
@@ -65,6 +68,7 @@ extension Message {
         let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
         self.isGroupChat = isGroupChat
+        self.thumbnailURL = dictionary[.thumbnailUrl] as? String ?? nil
     }
 }
 

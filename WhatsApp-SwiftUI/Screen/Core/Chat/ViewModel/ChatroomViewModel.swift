@@ -70,6 +70,7 @@ final class ChatroomViewModel: ObservableObject {
                 text: text,
                 type: .photo,
                 attachment: attachment,
+                thumbnailURL: imageURL.absoluteString,
                 sender: currentUser
             )
             
