@@ -7,9 +7,10 @@ struct TextInputAreaView: View {
     @Binding var isRecording: Bool
     @Binding var elapsedTime: TimeInterval
     @State private var isPulsing = false
+    var disableSendButton: Bool
     let actionHandler: (_ action: UserAction) -> Void
     
-    private var disableSendButton: Bool { textMessage.isEmptyOrWhitespace || isRecording }
+    private var isSendButtonDisabled: Bool { disableSendButton || isRecording }
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -143,7 +144,8 @@ extension TextInputAreaView {
     TextInputAreaView(
         textMessage: .constant(""),
         isRecording: .constant(false),
-        elapsedTime: .constant(0)
+        elapsedTime: .constant(0),
+        disableSendButton: false
     ) { action in
         
     }

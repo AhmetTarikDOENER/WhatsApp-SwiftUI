@@ -23,6 +23,8 @@ final class ChatroomViewModel: ObservableObject {
     
     var showPhotoPickerPreview: Bool { !mediaAttachments.isEmpty || !photoPickerItems.isEmpty }
     
+    var disableSendButton: Bool { mediaAttachments.isEmpty && textMessage.isEmptyOrWhitespace }
+    
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {
         self.channel = channel
