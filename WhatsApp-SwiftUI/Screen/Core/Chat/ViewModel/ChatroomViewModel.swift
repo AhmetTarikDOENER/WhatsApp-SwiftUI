@@ -49,7 +49,15 @@ final class ChatroomViewModel: ObservableObject {
             }
         } else {
             sendMultipleMediaMessages(textMessage, attachments: mediaAttachments)
+            clearTextInputAreaAndRemoveItems()
         }
+    }
+    
+    private func clearTextInputAreaAndRemoveItems() {
+        mediaAttachments.removeAll()
+        photoPickerItems.removeAll()
+        textMessage = ""
+        UIApplication.dismissKeyboard()
     }
     
     private func sendMultipleMediaMessages(_ text: String, attachments: [MediaAttachments]) {
