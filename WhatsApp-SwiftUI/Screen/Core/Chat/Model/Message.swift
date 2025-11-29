@@ -68,7 +68,7 @@ extension Message {
         let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
         self.isGroupChat = isGroupChat
-        self.thumbnailURL = dictionary[.thumbnailUrl] as? String ?? nil
+        self.thumbnailURL = dictionary[.thumbnailURL] as? String ?? nil
     }
 }
 

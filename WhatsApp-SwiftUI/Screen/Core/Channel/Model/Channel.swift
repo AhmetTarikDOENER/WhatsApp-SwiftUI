@@ -11,7 +11,7 @@ struct Channel: Identifiable, Hashable {
     var adminUids: [String]
     var membersUids: [String]
     var members: [UserItem]
-    private var thumbnailUrl: String?
+    private var thumbnailURL: String?
     let createdBy: String
     
     var isGroupChat: Bool { membersCount > 2 }
@@ -49,10 +49,10 @@ struct Channel: Identifiable, Hashable {
     
     var creatorName: String { members.first { $0.uid == createdBy }?.username ?? "Someone" }
     
-    var circularProfileImageUrl: String? {
-        if let thumbnailUrl = thumbnailUrl { return thumbnailUrl }
+    var circularProfileImageURL: String? {
+        if let thumbnailUrl = thumbnailURL { return thumbnailUrl }
         
-        if isGroupChat == false { return membersExcludingMe.first?.profileImageUrl }
+        if isGroupChat == false { return membersExcludingMe.first?.profileImageURL }
         
         return nil
     }
@@ -74,7 +74,7 @@ extension Channel {
         
         self.membersCount = dictionary[.membersCount] as? Int ?? 0
         self.adminUids = dictionary[.adminUids] as? [String] ?? []
-        self.thumbnailUrl = dictionary[.thumbnailUrl] as? String? ?? nil
+        self.thumbnailURL = dictionary[.thumbnailURL] as? String? ?? nil
         self.membersUids = dictionary[.membersUids] as? [String] ?? []
         self.members = dictionary[.members] as? [UserItem] ?? []
         self.createdBy = dictionary[.createdBy] as? String ?? ""
@@ -92,7 +92,7 @@ extension Channel {
         adminUids: [],
         membersUids: [],
         members: [],
-        thumbnailUrl: nil,
+        thumbnailURL: nil,
         createdBy: ""
     )
 }
@@ -106,7 +106,7 @@ extension String {
     static let membersCount = "membersCount"
     static let adminUids = "adminUids"
     static let membersUids = "membersUids"
-    static let thumbnailUrl = "thumbnailUrl"
+    static let thumbnailURL = "thumbnailURL"
     static let members = "members"
     static let createdBy = "createdBy"
     static let lastMessageType = "lastMessageType"

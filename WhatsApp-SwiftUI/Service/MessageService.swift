@@ -70,7 +70,7 @@ struct MessageService {
             .ownerUid: parameters.senderUID
         ]
         
-        messageDictionary[.thumbnailUrl] = parameters.thumbnailURL ?? nil
+        messageDictionary[.thumbnailURL] = parameters.thumbnailURL ?? nil
         messageDictionary[.thumbnailWidth] = parameters.thumbnailWidth ?? nil
         messageDictionary[.thumbnailHeight] = parameters.thumbnailHeight ?? nil
         
@@ -87,7 +87,7 @@ struct MediaMessageUploadParameters {
     let type: MessageType
     let attachment: MediaAttachments
     var thumbnailURL: String?
-    var videoUrl: String?
+    var videoURL: String?
     let sender: UserItem
     var audioURL: String?
     var audioDuration: TimeInterval?

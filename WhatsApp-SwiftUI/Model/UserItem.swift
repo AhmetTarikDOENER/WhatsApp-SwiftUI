@@ -4,7 +4,7 @@ struct UserItem: Identifiable, Hashable, Decodable {
     let username: String
     let email: String
     var bio: String? = nil
-    var profileImageUrl: String? = nil
+    var profileImageURL: String? = nil
     
     var id: String { uid }
     var bioUnwrapped: String { bio ?? "Hey there! I am using WhatsApp" }
@@ -17,7 +17,7 @@ extension UserItem {
         self.username = dictionary[.username] as? String ?? ""
         self.email = dictionary[.email] as? String ?? ""
         self.bio = dictionary[.bio] as? String? ?? nil
-        self.profileImageUrl = dictionary[.profilImageUrl] as? String? ?? nil
+        self.profileImageURL = dictionary[.profilImageUrl] as? String? ?? nil
     }
     
     static let placeholder = UserItem(uid: "1", username: "timcook", email: "apple@apple.com")
@@ -39,5 +39,5 @@ extension String {
     static let username = "username"
     static let email = "email"
     static let bio = "bio"
-    static let profilImageUrl = "profilImageUrl"
+    static let profilImageUrl = "profilImageURL"
 }

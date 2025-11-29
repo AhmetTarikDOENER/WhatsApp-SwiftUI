@@ -4,20 +4,20 @@ import Kingfisher
 struct CircularProfileImageView: View {
     
     //  MARK: - Properties
-    let profileImageUrl: String?
+    let profileImageURL: String?
     let size: ImageSize
     let fallbackImage: FallbackImage
     
     //  MARK: - Init
-    init(_ profileImageUrl: String? = nil, size: ImageSize) {
-        self.profileImageUrl = profileImageUrl
+    init(_ profileImageURL: String? = nil, size: ImageSize) {
+        self.profileImageURL = profileImageURL
         self.size = size
         self.fallbackImage = .directChatIcon
     }
     
     var body: some View {
-        if let profileImageUrl {
-            KFImage(URL(string: profileImageUrl))
+        if let profileImageURL {
+            KFImage(URL(string: profileImageURL))
                 .resizable()
                 .placeholder { ProgressView() }
                 .scaledToFill()
@@ -76,7 +76,7 @@ extension CircularProfileImageView {
 //  MARK: - CircularProfileImageView+Init
 extension CircularProfileImageView {
     init(_ channel: Channel, size: ImageSize) {
-        self.profileImageUrl = channel.circularProfileImageUrl
+        self.profileImageURL = channel.circularProfileImageURL
         self.size = size
         self.fallbackImage = FallbackImage(for: channel.membersCount)
     }

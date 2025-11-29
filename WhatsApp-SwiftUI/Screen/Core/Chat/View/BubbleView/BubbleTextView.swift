@@ -8,7 +8,7 @@ struct BubbleTextView: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
             if message.showGroupChatPartnerProfileImage {
-                CircularProfileImageView(message.sender?.profileImageUrl, size: .mini)
+                CircularProfileImageView(message.sender?.profileImageURL, size: .mini)
             }
             
             if message.direction == .outgoing {
