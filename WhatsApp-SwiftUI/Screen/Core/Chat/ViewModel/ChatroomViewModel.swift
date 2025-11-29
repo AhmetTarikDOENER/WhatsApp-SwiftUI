@@ -251,7 +251,7 @@ final class ChatroomViewModel: ObservableObject {
         videoPlayerState.show = false
     }
     
-    private func showMediaPlayer(_ fileURL: URL) {
+    func showMediaPlayer(_ fileURL: URL) {
         videoPlayerState.show = true
         videoPlayerState.player = AVPlayer(url: fileURL)
     }

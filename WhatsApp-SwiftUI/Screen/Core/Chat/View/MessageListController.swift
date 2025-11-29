@@ -136,6 +136,18 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        UIApplication.dismissKeyboard()
+        let message = viewModel.messages[indexPath.row]
+        switch message.type {
+        case .video:
+            guard let videoURLString = message.videoURL,
+                  let videoURL = URL(string: videoURLString) else { return }
+            viewModel.showMediaPlayer(videoURL)
+        default: break
+        }
+    }
 }
 
 #Preview {
