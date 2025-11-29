@@ -65,7 +65,7 @@ final class ChatroomViewModel: ObservableObject {
         mediaAttachments.forEach { attachment in
             switch attachment.type {
             case .photo: sendPhotoMessage(text: text, attachment)
-            case .video: break
+            case .video: sendVideoMessage(text: text, attachment)
             case .audio: break
             }
         }
@@ -89,6 +89,30 @@ final class ChatroomViewModel: ObservableObject {
         }
     }
     
+    private func sendVideoMessage(text: String, _ attachment: MediaAttachments) {
+        /// Uploads the video file to the Storage
+        uploadFileToStorageBucket(for: .videoMessage, attachment) { [weak self] videoURL in
+            /// Uploads the video thumbnail
+            self?.uploadImageToStorageBucket(attachment) { [weak self] thumbnailURL in
+                guard let self, let currentUser else { return }
+                
+                let uploadParameters = MediaMessageUploadParameters(
+                    channel: self.channel,
+                    text: text,
+                    type: .video,
+                    attachment: attachment,
+                    thumbnailURL: thumbnailURL.absoluteString,
+                    videoURL: videoURL.absoluteString,
+                    sender: currentUser,
+                )
+                /// Saves the metadata and urls to the db
+                MessageService.sendMediaMessage(to: channel, parameters: uploadParameters) { [weak self] in
+                    
+                }
+            }
+        }
+    }
+    
     private func scrollToBottom(isAnimated: Bool) {
         scrollToBottomRequest.scroll = true
         scrollToBottomRequest.isAnimated = isAnimated
@@ -107,6 +131,24 @@ final class ChatroomViewModel: ObservableObject {
             }
         } progressHandler: { progress in
             print("Image uploading progress: \(progress)")
+        }
+    }
+    
+    private func uploadFileToStorageBucket(
+        for uploadType: FirebaseUploader.UploadType,
+        _ attachment: MediaAttachments,
+        completion: @escaping(_ fileURL: URL) -> Void
+    ) {
+        guard let fileURLToUpload = attachment.fileURL else { return }
+        FirebaseUploader.uploadFile(for: uploadType, fileURL: fileURLToUpload) { result in
+            switch result {
+            case .success(let fileURL):
+                completion(fileURL)
+            case .failure(let error):
+                print("❌ ChatroomViewModel -> Failed to upload file to the Storage Bucket: \(error.localizedDescription)")
+            }
+        } progressHandler: { progress in
+            print("File uploading progress: \(progress)")
         }
     }
     

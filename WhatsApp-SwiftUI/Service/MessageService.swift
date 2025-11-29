@@ -74,6 +74,8 @@ struct MessageService {
         messageDictionary[.thumbnailWidth] = parameters.thumbnailWidth ?? nil
         messageDictionary[.thumbnailHeight] = parameters.thumbnailHeight ?? nil
         
+        messageDictionary[.videoURL] = parameters.videoURL ?? nil
+        
         FirebaseConstants.ChannelsReference.child(channel.id).updateChildValues(channelDictionary)
         FirebaseConstants.MessagesReference.child(channel.id).child(messageId).setValue(messageDictionary)
         
