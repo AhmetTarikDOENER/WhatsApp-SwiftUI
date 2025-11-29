@@ -10,6 +10,8 @@ struct Message: Identifiable {
     let isGroupChat: Bool
     var sender: UserItem?
     let thumbnailURL: String?
+    var thumbnailHeight: CGFloat?
+    var thumbnailWidth: CGFloat?
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -26,6 +28,19 @@ struct Message: Identifiable {
     var leadingPadding: CGFloat { direction == .received ? 0 :  horizontalPadding }
     
     var trailingPadding: CGFloat { direction == .received ? horizontalPadding : 0 }
+    
+    var imageSize: CGSize {
+        let thumbnailWidth = thumbnailWidth ?? 0
+        let thumbnailHeight = thumbnailHeight ?? 0
+        let imageHeight = CGFloat(thumbnailHeight / thumbnailWidth * imageWidth)
+        
+        return CGSize(width: imageWidth, height: imageHeight)
+    }
+    
+    var imageWidth: CGFloat {
+        let imageWidth = (UIWindowScene.currentWindowScene?.screenWidth ?? 0) / 1.5
+        return imageWidth
+    }
 }
 
 //  MARK: - Stub Message
@@ -69,6 +84,8 @@ extension Message {
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
         self.isGroupChat = isGroupChat
         self.thumbnailURL = dictionary[.thumbnailURL] as? String ?? nil
+        self.thumbnailWidth = dictionary[.thumbnailWidth] as? CGFloat ?? 0
+        self.thumbnailHeight = dictionary[.thumbnailHeight] as? CGFloat ?? 0
     }
 }
 
