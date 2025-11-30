@@ -6,7 +6,7 @@ final class AudioMessagePlayer: ObservableObject {
     //  MARK: - Properties
     private var player: AVPlayer?
     private(set) var currentAudioURL: URL?
-    @Published private(set) var playerItem: AVPlayerItem?
+    private var playerItem: AVPlayerItem?
     @Published private(set) var playbackState = PlaybackState.stopped
     @Published private(set) var currentTime = CMTime.zero
     private var currentTimeObserver: Any?
@@ -20,6 +20,7 @@ final class AudioMessagePlayer: ObservableObject {
             resumePlaying()
         } else {
             /// Plays an audio message
+            stopAudioPlayer()
             currentAudioURL = url
             let playerItem = AVPlayerItem(url: url)
             self.playerItem = playerItem

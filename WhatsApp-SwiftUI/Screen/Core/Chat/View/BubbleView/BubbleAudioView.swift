@@ -5,12 +5,23 @@ struct BubbleAudioView: View {
     
     //  MARK: - Properties
     @State private var sliderValue = 0.0
-    @State private var sliderRange: ClosedRange<Double> = 0...20
+    @State private var sliderRange: ClosedRange<Double>
     @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
     @State private var playbackTime = "00:00"
     @State private var isDraggingSlider = false
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
-    let message: Message
+    private let message: Message
+    
+    private var isCurrentAudioMessage: Bool {
+        audioMessagePlayer.currentAudioURL?.absoluteString == message.audioURL
+    }
+    
+    //  MARK: - Init
+    init(message: Message) {
+        self.message = message
+        let audioDuration = message.audioDuration ?? 0
+        self._sliderRange = .init(wrappedValue: 0...audioDuration)
+    }
     
     var body: some View {
         VStack(alignment: message.horizontalAlignment, spacing: 4) {
@@ -19,7 +30,7 @@ struct BubbleAudioView: View {
                 
                 Slider(value: $sliderValue, in: sliderRange) { isEditingChange in
                     isDraggingSlider = isEditingChange
-                    if !isEditingChange {
+                    if !isEditingChange && isCurrentAudioMessage {
                         audioMessagePlayer.seek(to: sliderValue)
                     }
                 }
@@ -58,11 +69,6 @@ struct BubbleAudioView: View {
         .onReceive(audioMessagePlayer.$currentTime) { currentTime in
             guard audioMessagePlayer.currentAudioURL?.absoluteString == message.audioURL else { return }
             observeCurrentPlayerTime(currentTime)
-        }
-        .onReceive(audioMessagePlayer.$playerItem) { playerItem in
-            guard audioMessagePlayer.currentAudioURL?.absoluteString == message.audioURL else { return }
-            guard let audioDuration = message.audioDuration else { return }
-            sliderRange = 0...audioDuration
         }
     }
     
