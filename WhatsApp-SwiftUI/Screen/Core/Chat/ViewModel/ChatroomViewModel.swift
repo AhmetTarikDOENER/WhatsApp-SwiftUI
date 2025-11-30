@@ -193,7 +193,7 @@ final class ChatroomViewModel: ObservableObject {
     private func getMessages() {
         MessageService.getMessages(for: channel) { [weak self] messages in
             self?.messages = messages
-            print(messages.map({ $0.text }))
+            self?.scrollToBottom(isAnimated: false)
         }
     }
     
