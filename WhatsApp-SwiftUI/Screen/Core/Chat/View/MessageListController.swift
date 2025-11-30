@@ -131,7 +131,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         let message = viewModel.messages[indexPath.item]
         let isNewDay = viewModel.isNewDayToShowRelativeTimestamp(for: message, at: indexPath.item)
         cell.contentConfiguration = UIHostingConfiguration {
-            BubbleView(message: message, channel: viewModel.channel, isNewDay: isNewDay)
+            BubbleView(message: message, channel: viewModel.channel, isNewDay: isNewDay, showSenderName: true)
         }
         
         return cell

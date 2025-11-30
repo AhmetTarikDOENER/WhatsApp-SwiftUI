@@ -38,7 +38,9 @@ struct MessageService {
             var messages: [Message] = []
             dictionary.forEach { key, value in
                 let messageDictionary = value as? [String: Any] ?? [:]
-                let message = Message(id: key, dictionary: messageDictionary, isGroupChat: channel.isGroupChat)
+                var message = Message(id: key, dictionary: messageDictionary, isGroupChat: channel.isGroupChat)
+                let messageSender = channel.members.first { $0.uid == message.senderUid }
+                message.sender = messageSender
                 messages.append(message)
                 if messages.count == snapshot.childrenCount {
                     messages.sort { $0.timestamp < $1.timestamp }
