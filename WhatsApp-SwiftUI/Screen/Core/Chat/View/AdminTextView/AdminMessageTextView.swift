@@ -13,6 +13,7 @@ struct AdminMessageTextView: View {
                 textView("\(channel.creatorName) added you.")
             }
         }
+        .frame(maxWidth: .infinity)
     }
     
     private func textView(_ text: String) -> some View {

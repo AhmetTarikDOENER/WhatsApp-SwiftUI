@@ -10,10 +10,12 @@ struct BubbleView: View {
         VStack(alignment: .leading, spacing: 0) {
             if isNewDay {
                 newDayTimestampTextView()
+                    .padding()
             }
             
             makeDynamicBubbleView()
         }
+        .frame(maxWidth: .infinity)
     }
     
     @ViewBuilder
@@ -28,7 +30,11 @@ struct BubbleView: View {
         case .admin(let adminType):
             switch adminType {
             case .channelCreation:
+                newDayTimestampTextView()
+                
                 ChannelCreationTextView()
+                    .padding()
+                
                 if channel.isGroupChat {
                     AdminMessageTextView(channel: channel)
                 }
