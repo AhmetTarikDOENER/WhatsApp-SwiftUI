@@ -5,6 +5,7 @@ struct ChatroomScreen: View {
     
     //  MARK: - Properties
     @StateObject private var viewModel: ChatroomViewModel
+    @StateObject private var audioMessagePlayer = AudioMessagePlayer()
     let channel: Channel
     
     //  MARK: - Init
@@ -40,6 +41,7 @@ struct ChatroomScreen: View {
                 }
             }
             .animation(.easeInOut, value: viewModel.showPhotoPickerPreview)
+            .environmentObject(audioMessagePlayer)
     }
     
     //  MARK: - Private

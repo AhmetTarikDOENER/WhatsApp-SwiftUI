@@ -2,10 +2,11 @@ import SwiftUI
 
 struct BubbleAudioView: View {
     
-    let message: Message
-    
+    //  MARK: - Properties
     @State private var sliderValue = 0.0
     @State private var sliderRange: ClosedRange<Double> = 0...20
+    @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
+    let message: Message
     
     var body: some View {
         VStack(alignment: message.horizontalAlignment, spacing: 4) {
@@ -42,7 +43,7 @@ struct BubbleAudioView: View {
     //  MARK: - Private
     private func playButton() -> some View {
         Button {
-            
+            handlePlayAudio()
         } label: {
             Image(systemName: "play.fill")
                 .padding(10)
@@ -66,6 +67,15 @@ struct BubbleAudioView: View {
                     .foregroundStyle(Color(.systemBlue))
             }
         }
+    }
+}
+
+//  MARK: - BubbleAudioView
+extension BubbleAudioView {
+    private func handlePlayAudio() {
+        guard let audioURLString = message.audioURL,
+              let audioURL = URL(string: audioURLString) else { return }
+        audioMessagePlayer.playAudio(from: audioURL)
     }
 }
 

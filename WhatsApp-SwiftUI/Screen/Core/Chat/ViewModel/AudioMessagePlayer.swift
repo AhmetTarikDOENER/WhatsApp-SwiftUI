@@ -46,7 +46,6 @@ final class AudioMessagePlayer: ObservableObject {
     private func observeCurrentPlayerTime() {
         currentTimeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { [weak self] time in
             self?.currentTime = time
-            print("observeCurrentPlayerTime: \(time)")
         }
     }
     
@@ -56,7 +55,6 @@ final class AudioMessagePlayer: ObservableObject {
             object: player?.currentItem,
             queue: .main) { [weak self] _ in
                 self?.stopAudioPlayer()
-                print("observeEndOfPlayback")
             }
     }
     
@@ -78,7 +76,6 @@ final class AudioMessagePlayer: ObservableObject {
         guard let currentTimeObserver else { return }
         player?.removeTimeObserver(currentTimeObserver)
         self.currentTimeObserver = nil
-        print("removeObservers fired")
     }
     
     private func tearDown() {
