@@ -5,7 +5,7 @@ final class AudioMessagePlayer: ObservableObject {
     
     //  MARK: - Properties
     private var player: AVPlayer?
-    private var currentAudioURL: URL?
+    private(set) var currentAudioURL: URL?
     @Published private(set) var playerItem: AVPlayerItem?
     @Published private(set) var playbackState = PlaybackState.stopped
     @Published private(set) var currentTime = CMTime.zero
@@ -89,5 +89,9 @@ final class AudioMessagePlayer: ObservableObject {
 extension AudioMessagePlayer {
     enum PlaybackState {
         case stopped, playing, paused
+        
+        var icon: String {
+            return self == .playing ? "pause.fill" : "play.fill"
+        }
     }
 }
