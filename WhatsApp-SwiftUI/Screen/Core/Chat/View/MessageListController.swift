@@ -130,24 +130,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         cell.backgroundColor = .clear
         let message = viewModel.messages[indexPath.item]
         cell.contentConfiguration = UIHostingConfiguration {
-            switch message.type {
-            case .text:
-                BubbleTextView(message: message)
-            case .photo, .video:
-                BubbleImageView(message: message)
-            case .audio:
-                BubbleAudioView(message: message)
-            case .admin(let adminType):
-                switch adminType {
-                case .channelCreation:
-                    ChannelCreationTextView()
-                    if viewModel.channel.isGroupChat {
-                        AdminMessageTextView(channel: viewModel.channel)
-                    }
-                default:
-                    Text("Unknown")
-                }
-            }
+            BubbleView(message: message, channel: viewModel.channel, isNewDay: true)
         }
         
         return cell
