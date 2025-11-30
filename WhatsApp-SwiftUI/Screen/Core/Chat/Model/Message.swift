@@ -46,6 +46,16 @@ struct Message: Identifiable {
     }
     
     var audioDurationString: String { return audioDuration?.formatElapsedTime ?? "00:00" }
+    
+    var isSentByCurrentUser: Bool { senderUid == Auth.auth().currentUser?.uid ?? "" }
+    
+    func isSentBySameUser(for message: Message) -> Bool {
+        if let userA = message.sender, let userB = self.sender {
+            return userA == userB
+        } else {
+            return false
+        }
+    }
 }
 
 //  MARK: - Stub Message
