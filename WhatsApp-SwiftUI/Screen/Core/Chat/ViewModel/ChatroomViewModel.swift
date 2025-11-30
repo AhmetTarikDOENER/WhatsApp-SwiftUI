@@ -61,12 +61,17 @@ final class ChatroomViewModel: ObservableObject {
         UIApplication.dismissKeyboard()
     }
     
+    private func scrollToBottom(isAnimated: Bool) {
+        scrollToBottomRequest.scroll = true
+        scrollToBottomRequest.isAnimated = isAnimated
+    }
+    
     private func sendMultipleMediaMessages(_ text: String, attachments: [MediaAttachments]) {
         mediaAttachments.forEach { attachment in
             switch attachment.type {
             case .photo: sendPhotoMessage(text: text, attachment)
             case .video: sendVideoMessage(text: text, attachment)
-            case .audio: break
+            case .audio: sendAudioMessage(text: text, attachment)
             }
         }
     }
@@ -107,17 +112,32 @@ final class ChatroomViewModel: ObservableObject {
                 )
                 /// Saves the metadata and urls to the db
                 MessageService.sendMediaMessage(to: channel, parameters: uploadParameters) { [weak self] in
-                    
+                    self?.scrollToBottom(isAnimated: true)
                 }
             }
         }
     }
     
-    private func scrollToBottom(isAnimated: Bool) {
-        scrollToBottomRequest.scroll = true
-        scrollToBottomRequest.isAnimated = isAnimated
+    private func sendAudioMessage(text: String, _ attachment: MediaAttachments) {
+        guard let audioDuration = attachment.audioDuration, let currentUser else { return }
+        uploadFileToStorageBucket(for: .audioMessage, attachment) { [weak self] fileURL in
+            guard let self else { return }
+            let uploadParameters = MediaMessageUploadParameters(
+                channel: self.channel,
+                text: text,
+                type: .audio,
+                attachment: attachment,
+                sender: currentUser,
+                audioURL: fileURL.absoluteString,
+                audioDuration: audioDuration
+            )
+            
+            MessageService.sendMediaMessage(to: self.channel, parameters: uploadParameters) { [weak self] in
+                self?.scrollToBottom(isAnimated: true)
+            }
+        }
     }
-    
+
     private func uploadImageToStorageBucket(
         _ attachment: MediaAttachments,
         completion: @escaping(_ imageURL: URL) -> Void
