@@ -16,8 +16,12 @@ struct BubbleAudioView: View {
             HStack {
                 playButton()
                 
-                Slider(value: $sliderValue, in: sliderRange)
-                    .tint(.gray)
+                Slider(value: $sliderValue, in: sliderRange) { onEditingChange in
+                    if !onEditingChange {
+                        audioMessagePlayer.seek(to: sliderValue)
+                    }
+                }
+                .tint(.gray)
                 
                 if playbackState == .stopped {
                     Text(message.audioDurationString)
