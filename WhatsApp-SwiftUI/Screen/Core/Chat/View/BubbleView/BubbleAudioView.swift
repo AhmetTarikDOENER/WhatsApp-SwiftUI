@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct BubbleAudioView: View {
     
@@ -6,6 +7,7 @@ struct BubbleAudioView: View {
     @State private var sliderValue = 0.0
     @State private var sliderRange: ClosedRange<Double> = 0...20
     @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
+    @State private var playbackTime = "00:00"
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
     let message: Message
     
@@ -41,6 +43,13 @@ struct BubbleAudioView: View {
         .padding(.trailing, message.direction == .received ? 100 : 5)
         .onReceive(audioMessagePlayer.$playbackState) { playbackState in
             observePlaybackState(playbackState)
+        }
+        .onReceive(audioMessagePlayer.$currentTime) { currentTime in
+            observeCurrentPlayerTime(currentTime)
+        }
+        .onReceive(audioMessagePlayer.$playerItem) { playerItem in
+            guard let audioDuration = message.audioDuration else { return }
+            sliderRange = 0...audioDuration
         }
     }
     
@@ -93,6 +102,11 @@ extension BubbleAudioView {
         } else {
             playbackState = state
         }
+    }
+    
+    private func observeCurrentPlayerTime(_ currentTime: CMTime) {
+        playbackTime = currentTime.seconds.formatElapsedTime
+        sliderValue = currentTime.seconds
     }
 }
 

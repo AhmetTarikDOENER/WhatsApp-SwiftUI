@@ -6,9 +6,9 @@ final class AudioMessagePlayer: ObservableObject {
     //  MARK: - Properties
     private var player: AVPlayer?
     private var currentAudioURL: URL?
-    private var playerItem: AVPlayerItem?
+    @Published private(set) var playerItem: AVPlayerItem?
     @Published private(set) var playbackState = PlaybackState.stopped
-    private var currentTime = CMTime.zero
+    @Published private(set) var currentTime = CMTime.zero
     private var currentTimeObserver: Any?
     
     //  MARK: - Deinit
