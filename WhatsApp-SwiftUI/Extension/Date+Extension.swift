@@ -2,15 +2,15 @@ import Foundation
 
 extension Date {
     var dayOrTimeRepresentation: String {
-        let calender = Calendar.current
+        let calendar = Calendar.current
         let dateFormatter = DateFormatter()
         
-        if calender.isDateInToday(self) {
+        if calendar.isDateInToday(self) {
             dateFormatter.dateFormat = "h:mm a"
             let formattedDate = dateFormatter.string(from: self)
             
             return formattedDate
-        } else if calender.isDateInYesterday(self) {
+        } else if calendar.isDateInYesterday(self) {
             return "Yesterday"
         } else {
             dateFormatter.dateFormat = "MM/dd/yy"
@@ -35,10 +35,10 @@ extension Date {
     }
     
     var relativeDateString: String {
-        let calender = Calendar.current
-        if calender.isDateInToday(self) {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(self) {
             return "Today"
-        } else if calender.isDateInYesterday(self) {
+        } else if calendar.isDateInYesterday(self) {
             return "Yesterday"
         } else if isCurrentWeek {
             return toString(format: "EEEE") /// Wednesday
