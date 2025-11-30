@@ -12,7 +12,7 @@ final class AudioMessagePlayer: ObservableObject {
     private var currentTimeObserver: Any?
     
     //  MARK: - Deinit
-    deinit { removeObservers() }
+    deinit { tearDown() }
     
     func playAudio(from url: URL) {
         if let currentAudioURL, currentAudioURL == url {

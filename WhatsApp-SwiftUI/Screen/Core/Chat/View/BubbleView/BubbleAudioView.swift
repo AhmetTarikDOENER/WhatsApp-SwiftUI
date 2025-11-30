@@ -115,12 +115,14 @@ extension BubbleAudioView {
     }
     
     private func observePlaybackState(_ state: AudioMessagePlayer.PlaybackState) {
-        if state == .stopped {
+        switch state {
+        case .stopped:
             playbackState = .stopped
             sliderValue = 0
-        } else {
-            guard audioMessagePlayer.currentAudioURL?.absoluteString == message.audioURL else { return }
-            playbackState = state
+        case .playing, .paused:
+            if isCurrentAudioMessage {
+                playbackState = state
+            }
         }
     }
     
