@@ -19,8 +19,13 @@ struct BubbleAudioView: View {
                 Slider(value: $sliderValue, in: sliderRange)
                     .tint(.gray)
                 
-                Text("02:23")
-                    .foregroundStyle(.gray)
+                if playbackState == .stopped {
+                    Text(message.audioDurationString)
+                        .foregroundStyle(.gray)
+                } else {
+                    Text(playbackTime)
+                        .foregroundStyle(.gray)
+                }
             }
             .padding(10)
             .background(.gray.opacity(0.1))

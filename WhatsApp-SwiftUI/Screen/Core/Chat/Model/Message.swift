@@ -44,6 +44,8 @@ struct Message: Identifiable {
         let imageWidth = (UIWindowScene.currentWindowScene?.screenWidth ?? 0) / 1.5
         return imageWidth
     }
+    
+    var audioDurationString: String { return audioDuration?.formatElapsedTime ?? "00:00" }
 }
 
 //  MARK: - Stub Message
