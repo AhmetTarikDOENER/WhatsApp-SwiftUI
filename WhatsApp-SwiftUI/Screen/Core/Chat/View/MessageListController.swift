@@ -33,8 +33,16 @@ final class MessageListController: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        collectionView.refreshControl = pullToRefresh
         
         return collectionView
+    }()
+    
+    private lazy var pullToRefresh: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pulledToRefresh), for: .valueChanged)
+        
+        return refreshControl
     }()
     
     private let backgroundImageView: UIImageView = {
@@ -97,6 +105,10 @@ final class MessageListController: UIViewController {
                     self?.messageCollectionView.scrollToLastItem(at: .bottom, animated: scrollRequest.isAnimated)
                 }
             }.store(in: &subscriptions)
+    }
+    
+    @objc private func pulledToRefresh() {
+        messageCollectionView.refreshControl?.endRefreshing()
     }
 }
 
