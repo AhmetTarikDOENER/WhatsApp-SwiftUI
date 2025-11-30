@@ -87,7 +87,7 @@ struct BubbleAudioView: View {
     
     private func timestampTextView() -> some View {
         HStack {
-            Text("05:06 PM")
+            Text(message.timestamp.timeRepresentation)
                 .font(.system(size: 13))
                 .foregroundStyle(.gray)
             
