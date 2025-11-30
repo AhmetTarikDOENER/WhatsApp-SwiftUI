@@ -308,4 +308,11 @@ final class ChatroomViewModel: ObservableObject {
                 self?.elapsedTime = elapsedTime
             }.store(in: &subscriptions)
     }
+    
+    func isNewDayToShowRelativeTimestamp(for message: Message, at index: Int) -> Bool {
+        let priorIndex = max(0, (index - 1))
+        let priorMessage = messages[priorIndex]
+        
+        return !message.timestamp.isSameDay(as: priorMessage.timestamp)
+    }
 }

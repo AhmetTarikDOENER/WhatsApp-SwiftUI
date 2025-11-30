@@ -129,8 +129,9 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = .clear
         let message = viewModel.messages[indexPath.item]
+        let isNewDay = viewModel.isNewDayToShowRelativeTimestamp(for: message, at: indexPath.item)
         cell.contentConfiguration = UIHostingConfiguration {
-            BubbleView(message: message, channel: viewModel.channel, isNewDay: true)
+            BubbleView(message: message, channel: viewModel.channel, isNewDay: isNewDay)
         }
         
         return cell

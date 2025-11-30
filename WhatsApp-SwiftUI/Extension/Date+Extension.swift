@@ -56,4 +56,10 @@ extension Date {
     private var isCurrentYear: Bool {
         Calendar.current.isDate(self, equalTo: Date(), toGranularity: .year)
     }
+    
+    func isSameDay(as otherDate: Date) -> Bool {
+        let calender = Calendar.current
+        
+        return calender.isDate(self, inSameDayAs: otherDate)
+    }
 }
