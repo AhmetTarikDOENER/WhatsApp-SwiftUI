@@ -5,6 +5,7 @@ struct BubbleAudioView: View {
     //  MARK: - Properties
     @State private var sliderValue = 0.0
     @State private var sliderRange: ClosedRange<Double> = 0...20
+    @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
     let message: Message
     
@@ -38,6 +39,9 @@ struct BubbleAudioView: View {
         .frame(maxWidth: .infinity, alignment: message.alignment)
         .padding(.leading, message.direction == .received ? 5 : 100)
         .padding(.trailing, message.direction == .received ? 100 : 5)
+        .onReceive(audioMessagePlayer.$playbackState) { playbackState in
+            observePlaybackState(playbackState)
+        }
     }
     
     //  MARK: - Private
@@ -73,9 +77,22 @@ struct BubbleAudioView: View {
 //  MARK: - BubbleAudioView
 extension BubbleAudioView {
     private func handlePlayAudio() {
-        guard let audioURLString = message.audioURL,
-              let audioURL = URL(string: audioURLString) else { return }
-        audioMessagePlayer.playAudio(from: audioURL)
+        if playbackState == .stopped || playbackState == .paused {
+            guard let audioURLString = message.audioURL,
+                  let audioURL = URL(string: audioURLString) else { return }
+            audioMessagePlayer.playAudio(from: audioURL)
+        } else {
+            audioMessagePlayer.pauseAudio()
+        }
+    }
+    
+    private func observePlaybackState(_ state: AudioMessagePlayer.PlaybackState) {
+        if state == .stopped {
+            playbackState = .stopped
+            sliderValue = 0
+        } else {
+            playbackState = state
+        }
     }
 }
 
