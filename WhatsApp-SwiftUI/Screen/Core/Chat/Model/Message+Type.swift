@@ -18,7 +18,7 @@ enum MessageDirection {
 }
 
 //  MARK: - MessageType
-enum MessageType {
+enum MessageType: Hashable {
     case admin(_ adminMessageType: AdminMessageType), text, photo, video, audio
     
     init?(_ stringValue: String) {

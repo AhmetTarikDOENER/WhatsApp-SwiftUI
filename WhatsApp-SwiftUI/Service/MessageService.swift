@@ -12,7 +12,8 @@ struct MessageService {
         let timestamp = Date().timeIntervalSince1970
         let channelDictionary: [String: Any] = [
             .lastMessage: textMessage,
-            .lastMessageTimestamp: timestamp
+            .lastMessageTimestamp: timestamp,
+            .lastMessageType: MessageType.text.title
         ]
         
         let messageDictionary: [String: Any] = [

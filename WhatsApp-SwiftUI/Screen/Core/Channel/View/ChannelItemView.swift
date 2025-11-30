@@ -30,7 +30,7 @@ struct ChannelItemView: View {
     }
     
     private func lastMessagePreview() -> some View {
-        Text(channel.lastMessage)
+        Text(channel.messagePreview)
             .font(.system(size: 16))
             .lineLimit(2)
             .foregroundStyle(.gray)

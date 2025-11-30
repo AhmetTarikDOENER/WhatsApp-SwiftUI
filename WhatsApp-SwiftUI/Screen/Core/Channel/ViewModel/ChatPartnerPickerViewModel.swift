@@ -122,6 +122,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         var channelDictionary: [String: Any] = [
             .id: channelId,
             .lastMessage: newChannelBroadcast,
+            .lastMessageType: newChannelBroadcast,
             .creationDate: timestamp,
             .lastMessageTimestamp: timestamp,
             .membersUids: membersUids,

@@ -4,7 +4,7 @@ import FirebaseAuth
 struct Channel: Identifiable, Hashable {
     var id: String
     var name: String?
-    var lastMessage: String
+    private var lastMessage: String
     var creationDate: Date
     var lastMessageTimestamp: Date
     var membersCount: Int
@@ -13,6 +13,7 @@ struct Channel: Identifiable, Hashable {
     var members: [UserItem]
     private var thumbnailURL: String?
     let createdBy: String
+    let lastMessageType: MessageType
     
     var isGroupChat: Bool { membersCount > 2 }
     
@@ -58,6 +59,16 @@ struct Channel: Identifiable, Hashable {
     }
     
     var allMembersFetched: Bool { members.count == membersCount }
+    
+    var messagePreview: String {
+        switch lastMessageType {
+        case .admin: return "Be the first who send a message to this newly created group"
+        case .text: return lastMessage
+        case .photo: return "Photo Message"
+        case .video: return "Video Message"
+        case .audio: return "Audio Message"
+        }
+    }
 }
 
 extension Channel {
@@ -78,6 +89,8 @@ extension Channel {
         self.membersUids = dictionary[.membersUids] as? [String] ?? []
         self.members = dictionary[.members] as? [UserItem] ?? []
         self.createdBy = dictionary[.createdBy] as? String ?? ""
+        let messageTypeValue = dictionary[.lastMessageType] as? String ?? "text"
+        self.lastMessageType = MessageType(messageTypeValue) ?? .text
     }
 }
 
@@ -93,7 +106,8 @@ extension Channel {
         membersUids: [],
         members: [],
         thumbnailURL: nil,
-        createdBy: ""
+        createdBy: "",
+        lastMessageType: .text
     )
 }
 
