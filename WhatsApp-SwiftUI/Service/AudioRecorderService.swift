@@ -34,6 +34,8 @@ final class AudioRecorderService {
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         
+        generateHapticFeedback()
+        
         do {
             audioRecorder = try AVAudioRecorder(url: audioFileURL, settings: settings)
             audioRecorder?.record()
@@ -53,6 +55,8 @@ final class AudioRecorderService {
         isRecording = false
         timer?.cancel()
         elapsedTime = 0
+        
+        generateHapticFeedback()
         
         let session = AVAudioSession.sharedInstance()
         do {
@@ -95,5 +99,11 @@ final class AudioRecorderService {
         } catch {
             print("❌ AudioRecorderService -> Failed to delete file")
         }
+    }
+    
+    private func generateHapticFeedback() {
+        let systemSoundID = SystemSoundID(1118)
+        AudioServicesPlaySystemSound(systemSoundID)
+        Haptics.impact(on: .medium)
     }
 }
