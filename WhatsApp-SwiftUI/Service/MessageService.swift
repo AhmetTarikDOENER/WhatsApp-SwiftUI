@@ -95,7 +95,17 @@ struct MessageService {
         pageSize: UInt,
         completion: @escaping (MessageNode) -> Void
     ) {
-        let query = FirebaseConstants.MessagesReference.child(channel.id).queryLimited(toLast: pageSize)
+        let query: DatabaseQuery
+        
+        if lastCursor == nil {
+            query = FirebaseConstants.MessagesReference.child(channel.id).queryLimited(toLast: pageSize)
+        } else {
+            query = FirebaseConstants.MessagesReference.child(channel.id)
+                .queryOrderedByKey()
+                .queryEnding(atValue: lastCursor)
+                .queryLimited(toFirst: pageSize)
+        }
+        
         query.observeSingleEvent(of: .value) { snapshot in
             guard let first = snapshot.children.allObjects.first as? DataSnapshot,
                   let allObjects = snapshot.children.allObjects as? [DataSnapshot]  else { return }
