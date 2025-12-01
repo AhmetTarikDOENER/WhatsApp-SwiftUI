@@ -19,6 +19,7 @@ final class ChatroomViewModel: ObservableObject {
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
+    private var lastCursor: String?
     
     private let audioRecorderService = AudioRecorderService()
     
@@ -191,8 +192,9 @@ final class ChatroomViewModel: ObservableObject {
     }
     
     private func getMessages() {
-        MessageService.getMessages(for: channel) { [weak self] messages in
-            self?.messages = messages
+        MessageService.getPaginatedMessages(for: channel, lastCursor: nil, pageSize: 7) { [weak self] messageNode in
+            self?.messages.append(contentsOf: messageNode.messages)
+            self?.lastCursor = messageNode.lastCursor
             self?.scrollToBottom(isAnimated: false)
         }
     }
