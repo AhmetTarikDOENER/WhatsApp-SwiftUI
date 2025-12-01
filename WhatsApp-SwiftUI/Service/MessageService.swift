@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseDatabase
 
 struct MessageService {
     
@@ -87,8 +88,45 @@ struct MessageService {
         
         completion()
     }
+    
+    static func getPaginatedMessages(
+        for channel: Channel,
+        lastCursor: String?,
+        pageSize: UInt,
+        completion: @escaping (MessageNode) -> Void
+    ) {
+        let query = FirebaseConstants.MessagesReference.child(channel.id).queryLimited(toLast: pageSize)
+        query.observeSingleEvent(of: .value) { snapshot in
+            guard let first = snapshot.children.allObjects.first as? DataSnapshot,
+                  let allObjects = snapshot.children.allObjects as? [DataSnapshot]  else { return }
+            
+            var messages: [Message] = allObjects.compactMap { messageSnapshot in
+                let messageDictionary = messageSnapshot.value as? [String: Any] ?? [:]
+                var message = Message(
+                    id: messageSnapshot.key,
+                    dictionary: messageDictionary,
+                    isGroupChat: channel.isGroupChat
+                )
+                
+                let messageSender = channel.members.first { $0.uid == message.senderUid }
+                message.sender = messageSender
+                
+                return message
+            }
+            messages.sort { $0.timestamp < $1.timestamp }
+            
+            if messages.count == snapshot.childrenCount {
+                let messageNode = MessageNode(messages: messages, lastCursor: first.key)
+                completion(messageNode)
+            }
+        } withCancel: { error in
+            print("❌ MessageService -> Failed to get paginated messages: \(error.localizedDescription)")
+            completion(.emptyNode)
+        }
+    }
 }
 
+//  MARK: - MediaMessageUploadParameters
 struct MediaMessageUploadParameters {
     let channel: Channel
     let text: String
@@ -111,4 +149,12 @@ struct MediaMessageUploadParameters {
         guard type == .photo || type == .video else { return nil }
         return attachment.thumbnail.size.height
     }
+}
+
+//  MARK: - MessageNode
+struct MessageNode {
+    var messages: [Message]
+    var lastCursor: String?
+    
+    static let emptyNode = MessageNode(messages: [], lastCursor: nil)
 }
