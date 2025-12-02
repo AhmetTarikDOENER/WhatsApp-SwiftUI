@@ -109,6 +109,7 @@ final class MessageListController: UIViewController {
     
     @objc private func pulledToRefresh() {
         messageCollectionView.refreshControl?.endRefreshing()
+        viewModel.getMoreMessages()
     }
 }
 

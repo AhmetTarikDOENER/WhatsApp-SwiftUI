@@ -193,10 +193,14 @@ final class ChatroomViewModel: ObservableObject {
     
     private func getMessages() {
         MessageService.getPaginatedMessages(for: channel, lastCursor: nil, pageSize: 7) { [weak self] messageNode in
-            self?.messages.append(contentsOf: messageNode.messages)
+            self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
             self?.scrollToBottom(isAnimated: false)
         }
+    }
+    
+    func getMoreMessages() {
+        
     }
     
     private func getAllChannelMembers() {
