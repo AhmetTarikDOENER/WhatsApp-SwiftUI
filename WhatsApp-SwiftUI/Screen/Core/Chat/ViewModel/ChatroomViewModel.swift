@@ -16,6 +16,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var isRecording = false
     @Published var elapsedTime: TimeInterval = 0
     @Published var scrollToBottomRequest: (scroll: Bool, isAnimated: Bool) = (false, false)
+    @Published var isPaginating = false
     private var currentUser: UserItem?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
@@ -191,16 +192,14 @@ final class ChatroomViewModel: ObservableObject {
             }.store(in: &subscriptions)
     }
     
-    private func getMessages() {
+    func getMessages() {
+        isPaginating = lastCursor != nil
         MessageService.getPaginatedMessages(for: channel, lastCursor: nil, pageSize: 7) { [weak self] messageNode in
             self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
             self?.scrollToBottom(isAnimated: false)
+            self?.isPaginating = false
         }
-    }
-    
-    func getMoreMessages() {
-        
     }
     
     private func getAllChannelMembers() {
