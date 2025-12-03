@@ -29,6 +29,8 @@ final class ChatroomViewModel: ObservableObject {
     
     var disableSendButton: Bool { mediaAttachments.isEmpty && textMessage.isEmptyOrWhitespace }
     
+    var isPaginatable: Bool { lastCursor != firstMessage?.id }
+    
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {
         self.channel = channel
@@ -184,7 +186,7 @@ final class ChatroomViewModel: ObservableObject {
                     self.currentUser = loggedInUser
                     
                     if self.channel.allMembersFetched {
-                        self.getMessages()
+                        self.getPaginatedMessages()
                     } else {
                         self.getAllChannelMembers()
                     }
@@ -193,9 +195,18 @@ final class ChatroomViewModel: ObservableObject {
             }.store(in: &subscriptions)
     }
     
-    func getMessages() {
+    func paginateMoreMessages() {
+        guard isPaginatable else {
+            isPaginating = false
+            return
+        }
+        
+        getPaginatedMessages()
+    }
+    
+    private func getPaginatedMessages() {
         isPaginating = lastCursor != nil
-        MessageService.getPaginatedMessages(for: channel, lastCursor: nil, pageSize: 7) { [weak self] messageNode in
+        MessageService.getPaginatedMessages(for: channel, lastCursor: lastCursor, pageSize: 7) { [weak self] messageNode in
             if self?.lastCursor == nil { self?.getFirstMessage() }
             self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
@@ -218,7 +229,7 @@ final class ChatroomViewModel: ObservableObject {
         UserService.getUsers(with: memberUidsToFetch) { [weak self] userNode in
             guard let self else { return }
             self.channel.members.append(contentsOf: userNode.users)
-            self.getMessages()
+            self.getPaginatedMessages()
         }
     }
     

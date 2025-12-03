@@ -146,7 +146,7 @@ final class MessageListController: UIViewController {
     
     @objc private func pulledToRefresh() {
         lastScrollPositionID = viewModel.messages.first?.id
-        viewModel.getMessages()
+        viewModel.paginateMoreMessages()
     }
 }
 
@@ -200,11 +200,9 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y <= 0 {
-            pullDownIndicatorButton.alpha = 1
-            print("CollectionView is at top: \(scrollView.contentOffset.y)")
+            pullDownIndicatorButton.alpha = viewModel.isPaginatable ? 1 : 0
         } else {
             pullDownIndicatorButton.alpha = 0
-            print("CollectionView is not at top: \(scrollView.contentOffset.y)")
         }
     }
 }
