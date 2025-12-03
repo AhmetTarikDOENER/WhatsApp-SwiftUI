@@ -135,6 +135,23 @@ struct MessageService {
             completion(.emptyNode)
         }
     }
+    
+    static func getTheFirstMessage(of channel: Channel, completion: @escaping(Message) -> Void) {
+        FirebaseConstants.MessagesReference.child(channel.id)
+            .queryLimited(toFirst: 1)
+            .observeSingleEvent(of: .value) { snapshot in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                dictionary.forEach { key, value in
+                    guard let messageDictionary = snapshot.value as? [String: Any] else { return }
+                    var firstMessage = Message(id: key, dictionary: messageDictionary, isGroupChat: channel.isGroupChat)
+                    let messageSender = channel.members.first { $0.uid == firstMessage.senderUid }
+                    firstMessage.sender = messageSender
+                    completion(firstMessage)
+                }
+            } withCancel: { error in
+                print("❌ MessageService -> Failed to get the first message: \(error.localizedDescription)")
+            }
+    }
 }
 
 //  MARK: - MediaMessageUploadParameters

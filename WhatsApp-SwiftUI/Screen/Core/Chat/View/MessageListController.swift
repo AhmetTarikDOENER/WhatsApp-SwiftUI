@@ -69,6 +69,7 @@ final class MessageListController: UIViewController {
                 NSAttributedString.Key.font: font])
         )
         let button = UIButton(configuration: buttonConfiguration)
+        button.alpha = 0
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -199,8 +200,10 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y <= 0 {
+            pullDownIndicatorButton.alpha = 1
             print("CollectionView is at top: \(scrollView.contentOffset.y)")
         } else {
+            pullDownIndicatorButton.alpha = 0
             print("CollectionView is not at top: \(scrollView.contentOffset.y)")
         }
     }

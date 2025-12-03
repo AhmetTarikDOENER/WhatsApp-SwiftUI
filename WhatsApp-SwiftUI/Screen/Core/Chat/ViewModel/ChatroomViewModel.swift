@@ -21,6 +21,7 @@ final class ChatroomViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
     private var lastCursor: String?
+    private var firstMessage: Message?
     
     private let audioRecorderService = AudioRecorderService()
     
@@ -195,10 +196,17 @@ final class ChatroomViewModel: ObservableObject {
     func getMessages() {
         isPaginating = lastCursor != nil
         MessageService.getPaginatedMessages(for: channel, lastCursor: nil, pageSize: 7) { [weak self] messageNode in
+            if self?.lastCursor == nil { self?.getFirstMessage() }
             self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
             self?.scrollToBottom(isAnimated: false)
             self?.isPaginating = false
+        }
+    }
+    
+    private func getFirstMessage() {
+        MessageService.getTheFirstMessage(of: channel) { [weak self] firstMessage in
+            self?.firstMessage = firstMessage
         }
     }
     
