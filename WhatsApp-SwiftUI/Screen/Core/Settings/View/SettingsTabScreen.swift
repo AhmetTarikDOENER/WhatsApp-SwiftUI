@@ -55,16 +55,17 @@ extension SettingsTabScreen {
 //  MARK: - SettingsHeaderView
 private struct SettingsHeaderView: View {
     
+    //  MARK: - Property
     @ObservedObject private var viewModel: SettingsTabScreenViewModel
     
+    //  MARK: - Init
     init(viewModel: SettingsTabScreenViewModel) {
         self.viewModel = viewModel
     }
     
     var body: some View {
         HStack {
-            Circle()
-                .frame(width: 50, height: 50)
+            profileImageView()
             
             userInfoTextView()
         }
@@ -74,6 +75,7 @@ private struct SettingsHeaderView: View {
         }
     }
     
+    //  MARK: - Private
     private func userInfoTextView() -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -95,6 +97,19 @@ private struct SettingsHeaderView: View {
                 .font(.callout)
         }
         .lineLimit(1)
+    }
+    
+    @ViewBuilder
+    private func profileImageView() -> some View {
+        if let profilePhoto = viewModel.profilePhoto {
+            Image(uiImage: profilePhoto.thumbnail)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 55, height: 55)
+                .clipShape(Circle())
+        } else {
+            CircularProfileImageView(nil, size: .custom(55))
+        }
     }
 }
 
