@@ -1,13 +1,15 @@
 import SwiftUI
+import PhotosUI
 
 struct SettingsTabScreen: View {
     
     @State private var searchText = ""
+    @StateObject private var viewModel = SettingsTabScreenViewModel()
     
     var body: some View {
         NavigationStack {
             List {
-                SettingsHeaderView()
+                SettingsHeaderView(viewModel: viewModel)
                 
                 Section {
                     SettingsItemView(settingsItem: .broadcastList)
@@ -52,6 +54,13 @@ extension SettingsTabScreen {
 
 //  MARK: - SettingsHeaderView
 private struct SettingsHeaderView: View {
+    
+    @ObservedObject private var viewModel: SettingsTabScreenViewModel
+    
+    init(viewModel: SettingsTabScreenViewModel) {
+        self.viewModel = viewModel
+    }
+    
     var body: some View {
         HStack {
             Circle()
@@ -60,7 +69,9 @@ private struct SettingsHeaderView: View {
             userInfoTextView()
         }
         
-        SettingsItemView(settingsItem: .avatar)
+        PhotosPicker(selection: $viewModel.selectedPhotoPickerItem) {
+            SettingsItemView(settingsItem: .avatar)
+        }
     }
     
     private func userInfoTextView() -> some View {
