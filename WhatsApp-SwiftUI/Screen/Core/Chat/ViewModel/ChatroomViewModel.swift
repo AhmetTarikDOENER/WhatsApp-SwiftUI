@@ -48,21 +48,25 @@ final class ChatroomViewModel: ObservableObject {
     
     //  MARK: - Internal & Private
     func sendMessage() {
-        guard let currentUser else { return }
         if mediaAttachments.isEmpty {
-            MessageService.sendTextMessage(to: channel, from: currentUser, textMessage) { [weak self] in
-                self?.textMessage = ""
-            }
+            sendTextMessage(text: textMessage)
         } else {
             sendMultipleMediaMessages(textMessage, attachments: mediaAttachments)
             clearTextInputAreaAndRemoveItems()
         }
     }
     
+    private func sendTextMessage(text: String) {
+        guard let currentUser else { return }
+        MessageService.sendTextMessage(to: channel, from: currentUser, text) { [weak self] in
+            self?.textMessage = ""
+        }
+    }
+    
     private func clearTextInputAreaAndRemoveItems() {
+        textMessage = ""
         mediaAttachments.removeAll()
         photoPickerItems.removeAll()
-        textMessage = ""
         UIApplication.dismissKeyboard()
     }
     
@@ -140,6 +144,10 @@ final class ChatroomViewModel: ObservableObject {
             
             MessageService.sendMediaMessage(to: self.channel, parameters: uploadParameters) { [weak self] in
                 self?.scrollToBottom(isAnimated: true)
+            }
+            
+            if !text.isEmptyOrWhitespace {
+                self.sendTextMessage(text: text)
             }
         }
     }
