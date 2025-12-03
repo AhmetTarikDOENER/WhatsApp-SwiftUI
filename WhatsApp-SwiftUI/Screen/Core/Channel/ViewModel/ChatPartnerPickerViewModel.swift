@@ -180,12 +180,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     }
     
     func createDirectChannel(_ chatPartner: UserItem, completion: @escaping (_ newChannel: Channel) -> Void) {
-        selectedChatPartners.append(chatPartner)
+        if selectedChatPartners.isEmpty {
+            selectedChatPartners.append(chatPartner)
+        }
+        
         Task {
             /// If direct channel already exists, get the channel
             if let channelId = await existingDirectChannel(with: chatPartner.uid) {
                 let snapshot = try await FirebaseConstants.ChannelsReference.child(channelId).getData()
-                var channelDictionary = snapshot.value as! [String: Any]
+                let channelDictionary = snapshot.value as! [String: Any]
                 var directChannel = Channel(channelDictionary)
                 directChannel.members = selectedChatPartners
                 if let currentUser {
