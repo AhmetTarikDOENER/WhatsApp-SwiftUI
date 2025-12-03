@@ -152,6 +152,17 @@ struct MessageService {
                 print("❌ MessageService -> Failed to get the first message: \(error.localizedDescription)")
             }
     }
+    
+    static func observeForNewMessages(of channel: Channel, completion: @escaping (Message) -> Void) {
+        FirebaseConstants.MessagesReference.child(channel.id)
+            .observe(.childAdded) { snapshot in
+                guard let messageDictionary = snapshot.value as? [String: Any] else { return }
+                var newMessage = Message(id: snapshot.key, dictionary: messageDictionary, isGroupChat: channel.isGroupChat)
+                let messageSender = channel.members.first { $0.uid == newMessage.senderUid }
+                newMessage.sender = messageSender
+                completion(newMessage)
+            }
+    }
 }
 
 //  MARK: - MediaMessageUploadParameters

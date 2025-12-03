@@ -186,7 +186,7 @@ final class ChatroomViewModel: ObservableObject {
                     self.currentUser = loggedInUser
                     
                     if self.channel.allMembersFetched {
-                        self.getPaginatedMessages()
+                        self.getHistoricalMessages()
                     } else {
                         self.getAllChannelMembers()
                     }
@@ -201,13 +201,23 @@ final class ChatroomViewModel: ObservableObject {
             return
         }
         
-        getPaginatedMessages()
+        getHistoricalMessages()
     }
     
-    private func getPaginatedMessages() {
+    private func observeForNewMessages() {
+        MessageService.observeForNewMessages(of: channel) { [weak self] newMessage in
+            self?.messages.append(newMessage)
+            self?.scrollToBottom(isAnimated: false)
+        }
+    }
+    
+    private func getHistoricalMessages() {
         isPaginating = lastCursor != nil
         MessageService.getPaginatedMessages(for: channel, lastCursor: lastCursor, pageSize: 7) { [weak self] messageNode in
-            if self?.lastCursor == nil { self?.getFirstMessage() }
+            if self?.lastCursor == nil {
+                self?.getFirstMessage()
+                self?.observeForNewMessages()
+            }
             self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
             self?.scrollToBottom(isAnimated: false)
@@ -229,7 +239,7 @@ final class ChatroomViewModel: ObservableObject {
         UserService.getUsers(with: memberUidsToFetch) { [weak self] userNode in
             guard let self else { return }
             self.channel.members.append(contentsOf: userNode.users)
-            self.getPaginatedMessages()
+            self.getHistoricalMessages()
         }
     }
     
