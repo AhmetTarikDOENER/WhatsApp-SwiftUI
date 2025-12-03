@@ -89,7 +89,7 @@ struct MessageService {
         completion()
     }
     
-    static func getPaginatedMessages(
+    static func getHistoricalMessages(
         for channel: Channel,
         lastCursor: String?,
         pageSize: UInt,
@@ -155,6 +155,7 @@ struct MessageService {
     
     static func observeForNewMessages(of channel: Channel, completion: @escaping (Message) -> Void) {
         FirebaseConstants.MessagesReference.child(channel.id)
+            .queryLimited(toLast: 1)
             .observe(.childAdded) { snapshot in
                 guard let messageDictionary = snapshot.value as? [String: Any] else { return }
                 var newMessage = Message(id: snapshot.key, dictionary: messageDictionary, isGroupChat: channel.isGroupChat)

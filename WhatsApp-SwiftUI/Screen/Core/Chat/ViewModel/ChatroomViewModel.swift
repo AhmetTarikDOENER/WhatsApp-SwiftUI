@@ -213,10 +213,10 @@ final class ChatroomViewModel: ObservableObject {
     
     private func getHistoricalMessages() {
         isPaginating = lastCursor != nil
-        MessageService.getPaginatedMessages(for: channel, lastCursor: lastCursor, pageSize: 7) { [weak self] messageNode in
+        MessageService.getHistoricalMessages(for: channel, lastCursor: lastCursor, pageSize: 7) { [weak self] messageNode in
             if self?.lastCursor == nil {
                 self?.getFirstMessage()
-                self?.observeForNewMessages()
+//                self?.observeForNewMessages()
             }
             self?.messages.insert(contentsOf: messageNode.messages, at: 0)
             self?.lastCursor = messageNode.lastCursor
