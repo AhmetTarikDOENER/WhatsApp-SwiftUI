@@ -5,11 +5,16 @@ struct SettingsTabScreen: View {
     
     @State private var searchText = ""
     @StateObject private var viewModel = SettingsTabScreenViewModel()
+    private let currentUser: UserItem
+    
+    init(_ currentUser: UserItem) {
+        self.currentUser = currentUser
+    }
     
     var body: some View {
         NavigationStack {
             List {
-                SettingsHeaderView(viewModel: viewModel)
+                SettingsHeaderView(viewModel: viewModel, currentUser)
                 
                 Section {
                     SettingsItemView(settingsItem: .broadcastList)
@@ -57,10 +62,12 @@ private struct SettingsHeaderView: View {
     
     //  MARK: - Property
     @ObservedObject private var viewModel: SettingsTabScreenViewModel
+    private let currentUser: UserItem
     
     //  MARK: - Init
-    init(viewModel: SettingsTabScreenViewModel) {
+    init(viewModel: SettingsTabScreenViewModel, _ currentUser: UserItem) {
         self.viewModel = viewModel
+        self.currentUser = currentUser
     }
     
     var body: some View {
@@ -70,7 +77,10 @@ private struct SettingsHeaderView: View {
             userInfoTextView()
         }
         
-        PhotosPicker(selection: $viewModel.selectedPhotoPickerItem) {
+        PhotosPicker(
+            selection: $viewModel.selectedPhotoPickerItem,
+            matching: .not(.videos)
+        ) {
             SettingsItemView(settingsItem: .avatar)
         }
     }
@@ -79,7 +89,7 @@ private struct SettingsHeaderView: View {
     private func userInfoTextView() -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Tim Cook")
+                Text(currentUser.username)
                     .font(.title2)
                 
                 Spacer()
@@ -92,7 +102,7 @@ private struct SettingsHeaderView: View {
                     .clipShape(Circle())
             }
             
-            Text("Hey there! I am using WhatsApp")
+            Text(currentUser.bioUnwrapped)
                 .foregroundStyle(.gray)
                 .font(.callout)
         }
@@ -114,5 +124,5 @@ private struct SettingsHeaderView: View {
 }
 
 #Preview {
-    SettingsTabScreen()
+    SettingsTabScreen(.placeholder)
 }
