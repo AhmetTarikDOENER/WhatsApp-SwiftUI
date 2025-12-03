@@ -72,11 +72,12 @@ final class ChatroomViewModel: ObservableObject {
     }
     
     private func sendMultipleMediaMessages(_ text: String, attachments: [MediaAttachments]) {
-        mediaAttachments.forEach { attachment in
+        for (index, attachment) in attachments.enumerated() {
+            let textMessage = index == 0 ? text : ""
             switch attachment.type {
-            case .photo: sendPhotoMessage(text: text, attachment)
-            case .video: sendVideoMessage(text: text, attachment)
-            case .audio: sendAudioMessage(text: text, attachment)
+            case .photo: sendPhotoMessage(text: textMessage, attachment)
+            case .video: sendVideoMessage(text: textMessage, attachment)
+            case .audio: sendAudioMessage(text: textMessage, attachment)
             }
         }
     }
