@@ -196,6 +196,14 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         default: break
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y <= 0 {
+            print("CollectionView is at top: \(scrollView.contentOffset.y)")
+        } else {
+            print("CollectionView is not at top: \(scrollView.contentOffset.y)")
+        }
+    }
 }
 
 #Preview {
