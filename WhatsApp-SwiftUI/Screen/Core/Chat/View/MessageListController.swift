@@ -53,6 +53,27 @@ final class MessageListController: UIViewController {
         return imageView
     }()
     
+    private let pullDownIndicatorButton: UIButton = {
+        var buttonConfiguration = UIButton.Configuration.filled()
+        var imageConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .black)
+        let image = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: imageConfiguration)
+        buttonConfiguration.image = image
+        buttonConfiguration.baseBackgroundColor = .bubbleGreen
+        buttonConfiguration.baseForegroundColor = .whatsAppBlack
+        buttonConfiguration.imagePadding = 4
+        buttonConfiguration.cornerStyle = .capsule
+        let font = UIFont.systemFont(ofSize: 12, weight: .black)
+        buttonConfiguration.attributedTitle = AttributedString(
+            "Pull Down",
+            attributes: AttributeContainer([
+                NSAttributedString.Key.font: font])
+        )
+        let button = UIButton(configuration: buttonConfiguration)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     //  MARK: - Init & Deinit
     init(_ viewModel: ChatroomViewModel) {
         self.viewModel = viewModel
@@ -78,7 +99,7 @@ final class MessageListController: UIViewController {
     
     //  MARK: - Private
     private func setupViews() {
-        view.addSubviews(backgroundImageView, messageCollectionView)
+        view.addSubviews(backgroundImageView, messageCollectionView, pullDownIndicatorButton)
         
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -88,7 +109,9 @@ final class MessageListController: UIViewController {
             messageCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
             messageCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             messageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            messageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            messageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            pullDownIndicatorButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            pullDownIndicatorButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
