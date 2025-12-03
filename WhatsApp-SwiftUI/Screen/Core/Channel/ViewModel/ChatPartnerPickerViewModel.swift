@@ -43,7 +43,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         !users.isEmpty
     }
     
-    private var isDirectChannel: Bool {
+    var isDirectChannel: Bool {
         selectedChatPartners.count == 1
     }
     
