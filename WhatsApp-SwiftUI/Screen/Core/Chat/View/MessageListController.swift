@@ -204,9 +204,17 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         guard let window = UIWindowScene.currentWindowScene?.keyWindow else { return }
         window.addSubviews(blurredEffectView, highlightedView)
         highlightedView.addSubview(snapshotView)
-        blurredEffectView.frame = window.frame
-        highlightedView.center.y = window.center.y
-        snapshotView.frame = highlightedView.bounds
+        
+        UIView.animate(
+            withDuration: 0.6,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 1,
+            options: .curveEaseIn) { [weak self] in
+                blurredEffectView.frame = window.frame
+                highlightedView.center.y = window.center.y
+                snapshotView.frame = highlightedView.bounds
+            }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
