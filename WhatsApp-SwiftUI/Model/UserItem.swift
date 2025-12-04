@@ -17,7 +17,7 @@ extension UserItem {
         self.username = dictionary[.username] as? String ?? ""
         self.email = dictionary[.email] as? String ?? ""
         self.bio = dictionary[.bio] as? String? ?? nil
-        self.profileImageURL = dictionary[.profilImageUrl] as? String? ?? nil
+        self.profileImageURL = dictionary[.profileImageUrl] as? String? ?? nil
     }
     
     static let placeholder = UserItem(uid: "1", username: "timcook", email: "apple@apple.com")
@@ -39,5 +39,5 @@ extension String {
     static let username = "username"
     static let email = "email"
     static let bio = "bio"
-    static let profilImageUrl = "profilImageURL"
+    static let profileImageUrl = "profileImageURL"
 }
