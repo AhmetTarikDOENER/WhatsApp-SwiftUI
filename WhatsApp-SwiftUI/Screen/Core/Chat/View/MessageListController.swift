@@ -9,6 +9,7 @@ final class MessageListController: UIViewController {
     private let viewModel: ChatroomViewModel
     private var subscriptions = Set<AnyCancellable>()
     private var lastScrollPositionID: String?
+    private var startingFrame: CGRect?
     
     private let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -187,15 +188,21 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        UIApplication.dismissKeyboard()
-        let message = viewModel.messages[indexPath.row]
-        switch message.type {
-        case .video:
-            guard let videoURLString = message.videoURL,
-                  let videoURL = URL(string: videoURLString) else { return }
-            viewModel.showMediaPlayer(videoURL)
-        default: break
-        }
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
+        selectedCell.backgroundColor = .red.withAlphaComponent(0.34)
+        /// Store selected cell's frame into startingFrame property
+        startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
+        /// Create a view from the stored frame
+        let highlightedView = UIView(frame: startingFrame ?? .zero)
+        highlightedView.backgroundColor = .systemCyan
+        /// Create blurred view
+        let blurredEffect = UIBlurEffect(style: .regular)
+        let blurredEffectView = UIVisualEffectView(effect: blurredEffect)
+        
+        /// Get the current window
+        guard let window = UIWindowScene.currentWindowScene?.keyWindow else { return }
+        window.addSubview(blurredEffectView)
+        blurredEffectView.frame = window.frame
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

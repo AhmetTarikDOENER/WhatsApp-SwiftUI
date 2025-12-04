@@ -31,12 +31,18 @@ final class ChatroomViewModel: ObservableObject {
     
     var isPaginatable: Bool { lastCursor != firstMessage?.id }
     
+    private var isDebugModeEnabled: Bool { ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" }
+    
     //  MARK: - Init & Deinit
     init(_ channel: Channel) {
         self.channel = channel
         listenAuthstate()
         onPhotoPickerSelection()
         setupAudioRecorderListener()
+        
+        if isDebugModeEnabled {
+            messages = Message.stubMessages
+        }
     }
     
     deinit {
