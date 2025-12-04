@@ -30,7 +30,7 @@ final class SettingsTabScreenViewModel: ObservableObject {
     
     private var currentUser: UserItem
     
-    var disableSaveButton: Bool { profilePhoto == nil }
+    var disableSaveButton: Bool { profilePhoto == nil || showProgressHUD }
     
     //  MARK: - Init & Deinit
     init(_ currentUser: UserItem) {
@@ -84,6 +84,8 @@ final class SettingsTabScreenViewModel: ObservableObject {
         FirebaseConstants.UserReference.child(currentUid).child(.profileImageUrl).setValue(imageURL.absoluteString)
         showProgressHUD = false
         progressHUDView.dismiss()
+        currentUser.profileImageURL = imageURL.absoluteString
+        AuthenticationService.shared.authState.send(.loggedIn(currentUser))
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             self.showSuccessHUD = true
             self.profilePhoto = nil
@@ -94,12 +96,14 @@ final class SettingsTabScreenViewModel: ObservableObject {
     func updateUserProfileInformations() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var dictionary: [String: Any] = [.bio: bio]
-        
+        currentUser.bio = bio
         if !username.isEmptyOrWhitespace {
             dictionary[.username] = username
+            currentUser.username = username
         }
         
         FirebaseConstants.UserReference.child(currentUid).updateChildValues(dictionary)
         showSuccessHUD = true
+        AuthenticationService.shared.authState.send(.loggedIn(currentUser))
     }
 }

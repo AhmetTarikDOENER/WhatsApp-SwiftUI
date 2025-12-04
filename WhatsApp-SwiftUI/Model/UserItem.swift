@@ -1,7 +1,7 @@
 //  MARK: - UserItem
 struct UserItem: Identifiable, Hashable, Decodable {
     let uid: String
-    let username: String
+    var username: String
     let email: String
     var bio: String? = nil
     var profileImageURL: String? = nil

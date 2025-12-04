@@ -92,7 +92,7 @@ final class AuthenticationService: AuthenticationProtocol {
     private func fetchCurrentUserInfo() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         FirebaseConstants.UserReference.child(currentUid)
-            .observe(.value) { [weak self] snapshot in
+            .observeSingleEvent(of: .value) { [weak self] snapshot in
                 guard let userDictionary = snapshot.value as? [String: Any] else { return }
                 let loggedInUser = UserItem(dictionary: userDictionary)
                 self?.authState.send(.loggedIn(loggedInUser))
