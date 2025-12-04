@@ -12,6 +12,7 @@ final class MessageListController: UIViewController {
     private var startingFrame: CGRect?
     private var blurredEffectView: UIVisualEffectView?
     private var highlightedView: UIView?
+    private var highlightedCell: UICollectionViewCell?
     
     private let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -198,7 +199,6 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         /// Assign the view from the stored frame
         highlightedView = UIView(frame: startingFrame ?? .zero)
         guard let highlightedView else { return }
-        highlightedView.backgroundColor = .systemCyan
         highlightedView.isUserInteractionEnabled = false
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissContextMenu))
@@ -211,19 +211,23 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         blurredEffectView.contentView.addGestureRecognizer(tapGesture)
         blurredEffectView.alpha = 0
         
+        highlightedCell = selectedCell
+        highlightedCell?.alpha = 0
+        
         /// Get the current window
         guard let window = UIWindowScene.currentWindowScene?.keyWindow else { return }
         window.addSubviews(blurredEffectView, highlightedView)
         highlightedView.addSubview(snapshotView)
         
+        blurredEffectView.frame = window.frame
+
         UIView.animate(
             withDuration: 0.6,
             delay: 0,
             usingSpringWithDamping: 0.7,
             initialSpringVelocity: 1,
-            options: .curveEaseIn) { [weak self] in
+            options: .curveEaseIn) {
                 blurredEffectView.alpha = 1
-                blurredEffectView.frame = window.frame
                 highlightedView.center.y = window.center.y
                 snapshotView.frame = highlightedView.bounds
             }
@@ -249,8 +253,12 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
                 highlightedView?.frame = startingFrame ?? .zero
                 blurredEffectView?.alpha = 0
             } completion: { [weak self] _ in
+                self?.highlightedCell?.alpha = 1
                 self?.blurredEffectView?.removeFromSuperview()
                 self?.highlightedView?.removeFromSuperview()
+                self?.highlightedCell = nil
+                self?.blurredEffectView = nil
+                self?.highlightedView = nil
             }
     }
 }
