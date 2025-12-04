@@ -41,6 +41,8 @@ struct SettingsTabScreen: View {
                 leadingNavigationBarItem()
                 trailingNavigationBarItem()
             }
+            .alert(isPresent: $viewModel.showProgressHUD, view: viewModel.progressHUDView)
+            .alert(isPresent: $viewModel.showSuccessHUD, view: viewModel.successHUDView)
         }
     }
 }

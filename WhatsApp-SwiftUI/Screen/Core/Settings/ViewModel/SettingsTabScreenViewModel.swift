@@ -3,6 +3,7 @@ import PhotosUI
 import SwiftUI
 import Combine
 import FirebaseAuth
+import AlertKit
 
 @MainActor
 final class SettingsTabScreenViewModel: ObservableObject {
@@ -10,7 +11,19 @@ final class SettingsTabScreenViewModel: ObservableObject {
     //  MARK: - Properties
     @Published var selectedPhotoPickerItem: PhotosPickerItem?
     @Published var profilePhoto: MediaAttachments?
+    @Published var showProgressHUD = false
+    @Published var showSuccessHUD = false
     private var subscription: AnyCancellable?
+    private(set) var progressHUDView = AlertAppleMusic17View(
+        title: "Uploading Profile Photo...",
+        subtitle: "Please wait a moment to complete the upload.",
+        icon: .spinnerSmall
+    )
+    private(set) var successHUDView = AlertAppleMusic17View(
+        title: "Profile Photo Uploaded Successfully!",
+        subtitle: nil,
+        icon: .done
+    )
     
     var disableSaveButton: Bool { profilePhoto == nil }
     
@@ -45,6 +58,7 @@ final class SettingsTabScreenViewModel: ObservableObject {
     
     func saveProfilePhoto() {
         guard let profilePhoto = profilePhoto?.thumbnail else { return }
+        showProgressHUD = true
         FirebaseUploader.uploadImage(profilePhoto, for: .profile) { [weak self] result in
             switch result {
             case .success(let profilePhotoURL):
@@ -60,7 +74,12 @@ final class SettingsTabScreenViewModel: ObservableObject {
     private func onUploadSuccess(_ imageURL: URL) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         FirebaseConstants.UserReference.child(currentUid).child(.profileImageUrl).setValue(imageURL.absoluteString)
-        profilePhoto = nil
-        selectedPhotoPickerItem = nil
+        showProgressHUD = false
+        progressHUDView.dismiss()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.showSuccessHUD = true
+            self.profilePhoto = nil
+            self.selectedPhotoPickerItem = nil
+        }
     }
 }
