@@ -18,6 +18,9 @@ struct SettingsHeaderView: View {
             profileImageView()
             
             userInfoTextView()
+                .onTapGesture {
+                    viewModel.isUserInfoEditorPresented = true
+                }
         }
         
         PhotosPicker(
@@ -67,5 +70,5 @@ struct SettingsHeaderView: View {
 }
 
 #Preview {
-    SettingsHeaderView(viewModel: .init(), .placeholder)
+    SettingsHeaderView(viewModel: .init(.placeholder), .placeholder)
 }

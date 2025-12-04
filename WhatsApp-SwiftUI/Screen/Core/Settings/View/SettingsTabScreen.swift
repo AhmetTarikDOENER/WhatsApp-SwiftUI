@@ -4,11 +4,12 @@ import PhotosUI
 struct SettingsTabScreen: View {
     
     @State private var searchText = ""
-    @StateObject private var viewModel = SettingsTabScreenViewModel()
+    @StateObject private var viewModel: SettingsTabScreenViewModel
     private let currentUser: UserItem
     
     init(_ currentUser: UserItem) {
         self.currentUser = currentUser
+        self._viewModel = StateObject(wrappedValue: SettingsTabScreenViewModel(currentUser))
     }
     
     var body: some View {
@@ -43,6 +44,20 @@ struct SettingsTabScreen: View {
             }
             .alert(isPresent: $viewModel.showProgressHUD, view: viewModel.progressHUDView)
             .alert(isPresent: $viewModel.showSuccessHUD, view: viewModel.successHUDView)
+            .alert(
+                "Update Your Username and Bio",
+                isPresented: $viewModel.isUserInfoEditorPresented
+            ) {
+                TextField("Username", text: $viewModel.username)
+                
+                TextField("Bio", text: $viewModel.bio)
+                
+                Button("Update") { viewModel.updateUserProfileInformations() }
+                
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Enter your new username and bio")
+            }
         }
     }
 }

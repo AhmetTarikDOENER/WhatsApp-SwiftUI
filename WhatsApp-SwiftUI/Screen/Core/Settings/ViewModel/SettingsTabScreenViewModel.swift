@@ -13,6 +13,9 @@ final class SettingsTabScreenViewModel: ObservableObject {
     @Published var profilePhoto: MediaAttachments?
     @Published var showProgressHUD = false
     @Published var showSuccessHUD = false
+    @Published var isUserInfoEditorPresented = false
+    @Published var username = ""
+    @Published var bio = ""
     private var subscription: AnyCancellable?
     private(set) var progressHUDView = AlertAppleMusic17View(
         title: "Uploading Profile Photo...",
@@ -25,10 +28,15 @@ final class SettingsTabScreenViewModel: ObservableObject {
         icon: .done
     )
     
+    private var currentUser: UserItem
+    
     var disableSaveButton: Bool { profilePhoto == nil }
     
     //  MARK: - Init & Deinit
-    init() {
+    init(_ currentUser: UserItem) {
+        self.currentUser = currentUser
+        self.username = currentUser.username
+        self.bio = currentUser.bio ?? ""
         onPhotoPickerSelection()
     }
     
@@ -81,5 +89,17 @@ final class SettingsTabScreenViewModel: ObservableObject {
             self.profilePhoto = nil
             self.selectedPhotoPickerItem = nil
         }
+    }
+    
+    func updateUserProfileInformations() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        var dictionary: [String: Any] = [.bio: bio]
+        
+        if !username.isEmptyOrWhitespace {
+            dictionary[.username] = username
+        }
+        
+        FirebaseConstants.UserReference.child(currentUid).updateChildValues(dictionary)
+        showSuccessHUD = true
     }
 }
