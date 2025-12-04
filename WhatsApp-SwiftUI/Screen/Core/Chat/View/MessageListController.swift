@@ -189,9 +189,10 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
-        selectedCell.backgroundColor = .red.withAlphaComponent(0.34)
         /// Store selected cell's frame into startingFrame property
         startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
+        /// Take a snapshot of the selected cell and turns into a view to animate it later.
+        guard let snapshotView = selectedCell.snapshotView(afterScreenUpdates: false) else { return }
         /// Create a view from the stored frame
         let highlightedView = UIView(frame: startingFrame ?? .zero)
         highlightedView.backgroundColor = .systemCyan
@@ -201,8 +202,11 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         
         /// Get the current window
         guard let window = UIWindowScene.currentWindowScene?.keyWindow else { return }
-        window.addSubview(blurredEffectView)
+        window.addSubviews(blurredEffectView, highlightedView)
+        highlightedView.addSubview(snapshotView)
         blurredEffectView.frame = window.frame
+        highlightedView.center.y = window.center.y
+        snapshotView.frame = highlightedView.bounds
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
