@@ -10,6 +10,8 @@ final class MessageListController: UIViewController {
     private var subscriptions = Set<AnyCancellable>()
     private var lastScrollPositionID: String?
     private var startingFrame: CGRect?
+    private var blurredEffectView: UIVisualEffectView?
+    private var highlightedView: UIView?
     
     private let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -193,12 +195,21 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
         /// Take a snapshot of the selected cell and turns into a view to animate it later.
         guard let snapshotView = selectedCell.snapshotView(afterScreenUpdates: false) else { return }
-        /// Create a view from the stored frame
-        let highlightedView = UIView(frame: startingFrame ?? .zero)
+        /// Assign the view from the stored frame
+        highlightedView = UIView(frame: startingFrame ?? .zero)
+        guard let highlightedView else { return }
         highlightedView.backgroundColor = .systemCyan
+        highlightedView.isUserInteractionEnabled = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissContextMenu))
+
         /// Create blurred view
         let blurredEffect = UIBlurEffect(style: .regular)
-        let blurredEffectView = UIVisualEffectView(effect: blurredEffect)
+        blurredEffectView = UIVisualEffectView(effect: blurredEffect)
+        guard let blurredEffectView else { return }
+        blurredEffectView.contentView.isUserInteractionEnabled = true
+        blurredEffectView.contentView.addGestureRecognizer(tapGesture)
+        blurredEffectView.alpha = 0
         
         /// Get the current window
         guard let window = UIWindowScene.currentWindowScene?.keyWindow else { return }
@@ -211,6 +222,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
             usingSpringWithDamping: 0.7,
             initialSpringVelocity: 1,
             options: .curveEaseIn) { [weak self] in
+                blurredEffectView.alpha = 1
                 blurredEffectView.frame = window.frame
                 highlightedView.center.y = window.center.y
                 snapshotView.frame = highlightedView.bounds
@@ -223,6 +235,23 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         } else {
             pullDownIndicatorButton.alpha = 0
         }
+    }
+    
+    @objc
+    private func dismissContextMenu() {
+        UIView.animate(
+            withDuration: 0.6,
+            delay: 0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 1,
+            options: .curveEaseOut) { [weak self] in
+                guard let self else { return }
+                highlightedView?.frame = startingFrame ?? .zero
+                blurredEffectView?.alpha = 0
+            } completion: { [weak self] _ in
+                self?.blurredEffectView?.removeFromSuperview()
+                self?.highlightedView?.removeFromSuperview()
+            }
     }
 }
 
