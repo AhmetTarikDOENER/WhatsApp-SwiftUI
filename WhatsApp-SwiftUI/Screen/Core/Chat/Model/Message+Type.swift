@@ -95,3 +95,19 @@ enum Reaction: Int {
         }
     }
 }
+
+//  MARK: - ContextMenuAction
+enum ContextMenuAction: String, CaseIterable, Identifiable {
+    case reply, forward, copy, delete
+    
+    var id: String { rawValue }
+    
+    var systemImageName: String {
+        switch self {
+        case .reply: return "arrowshape.turn.up.left"
+        case .forward: return "paperplane"
+        case .copy: return "doc.on.doc"
+        case .delete: return "trash"
+        }
+    }
+}
