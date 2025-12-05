@@ -221,6 +221,9 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         
         blurredEffectView.frame = window.frame
 
+        let message = viewModel.messages[indexPath.item]
+        attachContextMenuAndReaction(to: message, in: window)
+        
         UIView.animate(
             withDuration: 0.6,
             delay: 0,
@@ -261,9 +264,20 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
                 self?.highlightedView = nil
             }
     }
+    
+    private func attachContextMenuAndReaction(to message: Message, in window: UIWindow) {
+        guard let highlightedView, let startingFrame else { return }
+        
+        let reactionPickerView = ReactionPickerView(message: message)
+        let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
+        reactionHostViewController.view.backgroundColor = .red
+        reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(reactionHostViewController.view)
+    }
 }
 
 #Preview {
     MessageListView(.init(.placeholder))
         .ignoresSafeArea()
+        .environmentObject(AudioMessagePlayer())
 }
