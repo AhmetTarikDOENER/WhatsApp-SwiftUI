@@ -254,7 +254,7 @@ private extension MessageListController {
     }
     
     private func attachContextMenuAndReaction(to message: Message, in window: UIWindow, _ isNewDay: Bool) {
-        guard let highlightedView else { return }
+        guard let highlightedView, let startingFrame else { return }
         
         let reactionPickerView = ReactionPickerView(message: message)
         let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
@@ -262,17 +262,28 @@ private extension MessageListController {
         reactionHostViewController.view.backgroundColor = .clear
         window.addSubview(reactionHostViewController.view)
         
-        let topPadding: CGFloat = isNewDay ? 45 : 5
-        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: topPadding).isActive = true
+        let isShrinking = shouldShrinkCell(startingFrame.height)
+        
+        var reactionPadding: CGFloat = isNewDay ? 45 : 5
+        if isShrinking {
+            reactionPadding += (startingFrame.height / 4)
+        }
+        
+        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: reactionPadding).isActive = true
         reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
         reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
+        
+        var menuActionPadding: CGFloat = 0
+        if isShrinking {
+            menuActionPadding -= (startingFrame.height / 3.6)
+        }
         
         let contextMenuView = ContextMenuView(message: message)
         let contextMenuViewController = UIHostingController(rootView: contextMenuView)
         contextMenuViewController.view.backgroundColor = .clear
         contextMenuViewController.view.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(contextMenuViewController.view)
-        contextMenuViewController.view.topAnchor.constraint(equalTo: highlightedView.bottomAnchor).isActive = true
+        contextMenuViewController.view.topAnchor.constraint(equalTo: highlightedView.bottomAnchor, constant: menuActionPadding).isActive = true
         contextMenuViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
         contextMenuViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
         
