@@ -55,6 +55,14 @@ enum MessageType: Hashable {
         case .audio: return "mic.fill"
         }
     }
+    
+    var isAdminMessage: Bool {
+        if case .admin = self {
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 extension MessageType: Equatable {

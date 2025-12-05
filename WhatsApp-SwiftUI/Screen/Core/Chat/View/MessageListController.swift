@@ -188,13 +188,21 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         return cell
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModel.messages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         UIApplication.dismissKeyboard()
+        let message = viewModel.messages[indexPath.item]
+        switch message.type {
+        case .video:
+            guard let videoURLString = message.videoURL,
+                  let videoURL = URL(string: videoURLString) else { return }
+            viewModel.showMediaPlayer(videoURL)
+        default:
+            break
+        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -204,6 +212,20 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
             pullDownIndicatorButton.alpha = 0
         }
     }
+}
+
+//  MARK: - CALayer
+extension CALayer {
+    func applyShadow(color: UIColor, opacity: Float, x: CGFloat, y: CGFloat, radius: CGFloat) {
+        shadowColor = color.cgColor
+        shadowOpacity = opacity
+        shadowOffset = CGSize(width: x, height: y)
+        shadowRadius = radius
+    }
+}
+
+//  MARK: - MessageListController
+private extension MessageListController {
     
     @objc
     private func dismissMessageReactionView() {
@@ -230,15 +252,17 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
             }
     }
     
-    private func attachContextMenuAndReaction(to message: Message, in window: UIWindow) {
-        guard let highlightedView, let startingFrame else { return }
+    private func attachContextMenuAndReaction(to message: Message, in window: UIWindow, _ isNewDay: Bool) {
+        guard let highlightedView else { return }
         
         let reactionPickerView = ReactionPickerView(message: message)
         let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
         reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         reactionHostViewController.view.backgroundColor = .clear
         window.addSubview(reactionHostViewController.view)
-        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: -2).isActive = true
+        
+        let topPadding: CGFloat = isNewDay ? 45 : 5
+        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: topPadding).isActive = true
         reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
         reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
         
@@ -254,20 +278,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         self.reactionHostingViewController = reactionHostViewController
         self.contextMenuHostingViewController = contextMenuViewController
     }
-}
-
-//  MARK: - CALayer
-extension CALayer {
-    func applyShadow(color: UIColor, opacity: Float, x: CGFloat, y: CGFloat, radius: CGFloat) {
-        shadowColor = color.cgColor
-        shadowOpacity = opacity
-        shadowOffset = CGSize(width: x, height: y)
-        shadowRadius = radius
-    }
-}
-
-//  MARK: - MessageListController
-private extension MessageListController {
+    
     private func setupLongPressGestureRecognizer() {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(showMessageReactionView))
         longPressGesture.minimumPressDuration = 0.4
@@ -279,7 +290,10 @@ private extension MessageListController {
         
         let point = gesture.location(in: messageCollectionView)
         guard let indexPath = messageCollectionView.indexPathForItem(at: point) else { return }
-        
+
+        let message = viewModel.messages[indexPath.item]
+        guard message.type.isAdminMessage == false else { return }
+
         guard let selectedCell = messageCollectionView.cellForItem(at: indexPath) else { return }
         /// Store selected cell's frame into startingFrame property
         startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
@@ -310,8 +324,8 @@ private extension MessageListController {
         
         blurredEffectView.frame = window.frame
 
-        let message = viewModel.messages[indexPath.item]
-        attachContextMenuAndReaction(to: message, in: window)
+        let isNewDay = viewModel.isNewDayToShowRelativeTimestamp(for: message, at: indexPath.item)
+        attachContextMenuAndReaction(to: message, in: window, isNewDay)
         
         UIView.animate(
             withDuration: 0.6,
