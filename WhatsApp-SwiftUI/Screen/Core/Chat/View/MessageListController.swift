@@ -102,6 +102,7 @@ final class MessageListController: UIViewController {
         view.backgroundColor = .clear
         setupViews()
         setupMessageListeners()
+        setupLongPressGestureRecognizer()
     }
     
     //  MARK: - Private
@@ -193,7 +194,93 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
+        UIApplication.dismissKeyboard()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y <= 0 {
+            pullDownIndicatorButton.alpha = viewModel.isPaginatable ? 1 : 0
+        } else {
+            pullDownIndicatorButton.alpha = 0
+        }
+    }
+    
+    @objc
+    private func dismissMessageReactionView() {
+        UIView.animate(
+            withDuration: 0.6,
+            delay: 0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 1,
+            options: .curveEaseOut) { [weak self] in
+                guard let self else { return }
+                highlightedView?.frame = startingFrame ?? .zero
+                blurredEffectView?.alpha = 0
+                reactionHostingViewController?.view.removeFromSuperview()
+                contextMenuHostingViewController?.view.removeFromSuperview()
+            } completion: { [weak self] _ in
+                self?.highlightedCell?.alpha = 1
+                self?.blurredEffectView?.removeFromSuperview()
+                self?.highlightedView?.removeFromSuperview()
+                self?.highlightedCell = nil
+                self?.blurredEffectView = nil
+                self?.highlightedView = nil
+                self?.contextMenuHostingViewController = nil
+                self?.reactionHostingViewController = nil
+            }
+    }
+    
+    private func attachContextMenuAndReaction(to message: Message, in window: UIWindow) {
+        guard let highlightedView, let startingFrame else { return }
+        
+        let reactionPickerView = ReactionPickerView(message: message)
+        let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
+        reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        reactionHostViewController.view.backgroundColor = .clear
+        window.addSubview(reactionHostViewController.view)
+        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: -2).isActive = true
+        reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
+        reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
+        
+        let contextMenuView = ContextMenuView(message: message)
+        let contextMenuViewController = UIHostingController(rootView: contextMenuView)
+        contextMenuViewController.view.backgroundColor = .clear
+        contextMenuViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(contextMenuViewController.view)
+        contextMenuViewController.view.topAnchor.constraint(equalTo: highlightedView.bottomAnchor).isActive = true
+        contextMenuViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
+        contextMenuViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
+        
+        self.reactionHostingViewController = reactionHostViewController
+        self.contextMenuHostingViewController = contextMenuViewController
+    }
+}
+
+//  MARK: - CALayer
+extension CALayer {
+    func applyShadow(color: UIColor, opacity: Float, x: CGFloat, y: CGFloat, radius: CGFloat) {
+        shadowColor = color.cgColor
+        shadowOpacity = opacity
+        shadowOffset = CGSize(width: x, height: y)
+        shadowRadius = radius
+    }
+}
+
+//  MARK: - MessageListController
+private extension MessageListController {
+    private func setupLongPressGestureRecognizer() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(showMessageReactionView))
+        longPressGesture.minimumPressDuration = 0.4
+        messageCollectionView.addGestureRecognizer(longPressGesture)
+    }
+    
+    @objc private func showMessageReactionView(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        
+        let point = gesture.location(in: messageCollectionView)
+        guard let indexPath = messageCollectionView.indexPathForItem(at: point) else { return }
+        
+        guard let selectedCell = messageCollectionView.cellForItem(at: indexPath) else { return }
         /// Store selected cell's frame into startingFrame property
         startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
         /// Take a snapshot of the selected cell and turns into a view to animate it later.
@@ -237,72 +324,6 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
                 snapshotView.frame = highlightedView.bounds
                 snapshotView.layer.applyShadow(color: .gray, opacity: 0.2, x: 0, y: 10, radius: 4)
             }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y <= 0 {
-            pullDownIndicatorButton.alpha = viewModel.isPaginatable ? 1 : 0
-        } else {
-            pullDownIndicatorButton.alpha = 0
-        }
-    }
-    
-    @objc
-    private func dismissMessageReactionView() {
-        UIView.animate(
-            withDuration: 0.6,
-            delay: 0,
-            usingSpringWithDamping: 0.8,
-            initialSpringVelocity: 1,
-            options: .curveEaseOut) { [weak self] in
-                guard let self else { return }
-                highlightedView?.frame = startingFrame ?? .zero
-                blurredEffectView?.alpha = 0
-                reactionHostingViewController?.view.removeFromSuperview()
-                contextMenuHostingViewController?.view.removeFromSuperview()
-            } completion: { [weak self] _ in
-                self?.highlightedCell?.alpha = 1
-                self?.blurredEffectView?.removeFromSuperview()
-                self?.highlightedView?.removeFromSuperview()
-                self?.highlightedCell = nil
-                self?.blurredEffectView = nil
-                self?.highlightedView = nil
-            }
-    }
-    
-    private func attachContextMenuAndReaction(to message: Message, in window: UIWindow) {
-        guard let highlightedView, let startingFrame else { return }
-        
-        let reactionPickerView = ReactionPickerView(message: message)
-        let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
-        reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        reactionHostViewController.view.backgroundColor = .clear
-        window.addSubview(reactionHostViewController.view)
-        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: -2).isActive = true
-        reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
-        reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
-        
-        let contextMenuView = ContextMenuView(message: message)
-        let contextMenuViewController = UIHostingController(rootView: contextMenuView)
-        contextMenuViewController.view.backgroundColor = .clear
-        contextMenuViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        window.addSubview(contextMenuViewController.view)
-        contextMenuViewController.view.topAnchor.constraint(equalTo: highlightedView.bottomAnchor).isActive = true
-        contextMenuViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
-        contextMenuViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
-        
-        self.reactionHostingViewController = reactionHostViewController
-        self.contextMenuHostingViewController = contextMenuViewController
-    }
-}
-
-//  MARK: - CALayer
-extension CALayer {
-    func applyShadow(color: UIColor, opacity: Float, x: CGFloat, y: CGFloat, radius: CGFloat) {
-        shadowColor = color.cgColor
-        shadowOpacity = opacity
-        shadowOffset = CGSize(width: x, height: y)
-        shadowRadius = radius
     }
 }
 
