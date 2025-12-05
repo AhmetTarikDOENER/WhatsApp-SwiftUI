@@ -258,6 +258,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
                 highlightedView?.frame = startingFrame ?? .zero
                 blurredEffectView?.alpha = 0
                 reactionHostingViewController?.view.removeFromSuperview()
+                contextMenuHostingViewController?.view.removeFromSuperview()
             } completion: { [weak self] _ in
                 self?.highlightedCell?.alpha = 1
                 self?.blurredEffectView?.removeFromSuperview()
@@ -276,11 +277,21 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         reactionHostViewController.view.backgroundColor = .clear
         window.addSubview(reactionHostViewController.view)
-        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: 5).isActive = true
+        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: -2).isActive = true
         reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
         reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
         
+        let contextMenuView = ContextMenuView(message: message)
+        let contextMenuViewController = UIHostingController(rootView: contextMenuView)
+        contextMenuViewController.view.backgroundColor = .clear
+        contextMenuViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(contextMenuViewController.view)
+        contextMenuViewController.view.topAnchor.constraint(equalTo: highlightedView.bottomAnchor).isActive = true
+        contextMenuViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
+        contextMenuViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
+        
         self.reactionHostingViewController = reactionHostViewController
+        self.contextMenuHostingViewController = contextMenuViewController
     }
 }
 
