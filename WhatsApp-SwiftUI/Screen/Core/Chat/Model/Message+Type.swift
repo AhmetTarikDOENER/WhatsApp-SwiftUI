@@ -72,3 +72,26 @@ extension MessageType: Equatable {
         }
     }
 }
+
+//  MARK: - Reactions
+enum Reaction: Int {
+    case like
+    case heart
+    case laugh
+    case shocked
+    case sad
+    case pray
+    case more
+    
+    var emoji: String {
+        switch self {
+        case .like: return "👍"
+        case .heart: return "♥️"
+        case .laugh: return "😀"
+        case .shocked: return "😮"
+        case .sad: return "☹️"
+        case .pray: return "🙏"
+        case .more: return "➕"
+        }
+    }
+}
