@@ -13,6 +13,8 @@ final class MessageListController: UIViewController {
     private var blurredEffectView: UIVisualEffectView?
     private var highlightedView: UIView?
     private var highlightedCell: UICollectionViewCell?
+    private var reactionHostingViewController: UIViewController?
+    private var contextMenuHostingViewController: UIViewController?
     
     private let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -201,7 +203,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         guard let highlightedView else { return }
         highlightedView.isUserInteractionEnabled = false
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissContextMenu))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissMessageReactionView))
 
         /// Create blurred view
         let blurredEffect = UIBlurEffect(style: .regular)
@@ -245,7 +247,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     @objc
-    private func dismissContextMenu() {
+    private func dismissMessageReactionView() {
         UIView.animate(
             withDuration: 0.6,
             delay: 0,
@@ -255,6 +257,7 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
                 guard let self else { return }
                 highlightedView?.frame = startingFrame ?? .zero
                 blurredEffectView?.alpha = 0
+                reactionHostingViewController?.view.removeFromSuperview()
             } completion: { [weak self] _ in
                 self?.highlightedCell?.alpha = 1
                 self?.blurredEffectView?.removeFromSuperview()
@@ -270,9 +273,14 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         
         let reactionPickerView = ReactionPickerView(message: message)
         let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
-        reactionHostViewController.view.backgroundColor = .red
         reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        reactionHostViewController.view.backgroundColor = .clear
         window.addSubview(reactionHostViewController.view)
+        reactionHostViewController.view.bottomAnchor.constraint(equalTo: highlightedView.topAnchor, constant: 5).isActive = true
+        reactionHostViewController.view.leadingAnchor.constraint(equalTo: highlightedView.leadingAnchor, constant: 20).isActive = message.direction == .received
+        reactionHostViewController.view.trailingAnchor.constraint(equalTo: highlightedView.trailingAnchor, constant: -20).isActive = message.direction == .outgoing
+        
+        self.reactionHostingViewController = reactionHostViewController
     }
 }
 
