@@ -328,6 +328,8 @@ private extension MessageListController {
         let isNewDay = viewModel.isNewDayToShowRelativeTimestamp(for: message, at: indexPath.item)
         attachContextMenuAndReaction(to: message, in: window, isNewDay)
         
+        let isShrinking = shouldShrinkCell(startingFrame?.height ?? 0)
+        
         UIView.animate(
             withDuration: 0.6,
             delay: 0,
@@ -339,10 +341,19 @@ private extension MessageListController {
                 snapshotView.frame = highlightedView.bounds
                 snapshotView.layer.applyShadow(color: .gray, opacity: 0.2, x: 0, y: 10, radius: 4)
                 
-                let xTranslation: CGFloat = message.direction == .received ? -80 : 80
-                let translation = CGAffineTransform(translationX: xTranslation, y: 1)
-                highlightedView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5).concatenating(translation)
+                if isShrinking {
+                    let xTranslation: CGFloat = message.direction == .received ? -80 : 80
+                    let translation = CGAffineTransform(translationX: xTranslation, y: 1)
+                    highlightedView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5).concatenating(translation)
+                }
             }
+    }
+    
+    private func shouldShrinkCell(_ cellHeight: CGFloat) -> Bool {
+        let screenHeight = (UIWindowScene.currentWindowScene?.screenHeight ?? 0) / 1.2
+        let spacingForContextMenu = screenHeight - cellHeight
+        
+        return spacingForContextMenu < 190
     }
 }
 
