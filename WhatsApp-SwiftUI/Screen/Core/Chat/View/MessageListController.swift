@@ -231,10 +231,11 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
             delay: 0,
             usingSpringWithDamping: 0.7,
             initialSpringVelocity: 1,
-            options: .curveEaseIn) {
+            options: .curveEaseIn) { [weak self] in
                 blurredEffectView.alpha = 1
-                highlightedView.center.y = window.center.y
+                highlightedView.center.y = window.center.y - 70
                 snapshotView.frame = highlightedView.bounds
+                snapshotView.layer.applyShadow(color: .gray, opacity: 0.2, x: 0, y: 10, radius: 4)
             }
     }
     
@@ -292,6 +293,16 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
         
         self.reactionHostingViewController = reactionHostViewController
         self.contextMenuHostingViewController = contextMenuViewController
+    }
+}
+
+//  MARK: - CALayer
+extension CALayer {
+    func applyShadow(color: UIColor, opacity: Float, x: CGFloat, y: CGFloat, radius: CGFloat) {
+        shadowColor = color.cgColor
+        shadowOpacity = opacity
+        shadowOffset = CGSize(width: x, height: y)
+        shadowRadius = radius
     }
 }
 
