@@ -165,6 +165,31 @@ struct MessageService {
                 completion(newMessage)
             }
     }
+    
+    static func increaseCountViaTransaction(at reference: DatabaseReference, completion: ((Int) -> Void)? = nil) {
+        reference.runTransactionBlock { currentData in
+            if var count = currentData.value as? Int {
+                count += 1
+                currentData.value = count
+            } else {
+                currentData.value = 1
+            }
+            
+            completion?(currentData.value as? Int ?? 0)
+            
+            return TransactionResult.success(withValue: currentData)
+        }
+    }
+    
+    static func addReaction(
+        reaction: Reaction,
+        to message: Message,
+        in channel: Channel,
+        from currentUser: UserItem,
+        completion: @escaping (_ emojiCount: Int) -> Void
+    ) {
+        
+    }
 }
 
 //  MARK: - MediaMessageUploadParameters
