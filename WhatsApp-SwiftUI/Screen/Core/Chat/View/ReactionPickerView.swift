@@ -26,8 +26,7 @@ struct ReactionPickerView: View {
     var body: some View {
         HStack(spacing: 8) {
             ForEach(Array(emojiStates.enumerated()), id: \.offset) { index, item in
-                Text(item.reaction.emoji)
-                    .font(.system(size: 30))
+                reactionButton(item, at: index)
             }
         }
         .padding(.horizontal, 12)
@@ -51,6 +50,28 @@ struct ReactionPickerView: View {
                     .scaleEffect(animateBackground ? 1 : 0, anchor: message.menuAnchor)
                     .opacity(animateBackground ? 1 : 0)
             }
+    }
+    
+    private func reactionButton(_ reaction: EmojiReaction, at index: Int) -> some View {
+        Button {
+            
+        } label: {
+            buttonLabel(reaction, at: index)
+        }
+    }
+    
+    @ViewBuilder
+    private func buttonLabel(_ reaction: EmojiReaction, at index: Int) -> some View {
+        if reaction.reaction == .more {
+            Image(systemName: "plus")
+                .bold()
+                .padding(4)
+                .background(Color(.systemGray5))
+                .clipShape(Circle())
+                .foregroundStyle(.gray)
+        } else {
+            Text(reaction.reaction.emoji)
+        }
     }
 }
 
