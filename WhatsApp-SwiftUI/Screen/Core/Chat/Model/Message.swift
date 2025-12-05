@@ -49,6 +49,8 @@ struct Message: Identifiable {
     
     var isSentByCurrentUser: Bool { senderUid == Auth.auth().currentUser?.uid ?? "" }
     
+    var menuAnchor: UnitPoint { direction == .received ? .leading : .trailing }
+    
     func isSentBySameUser(for message: Message) -> Bool {
         if let userA = message.sender, let userB = self.sender {
             return userA == userB
