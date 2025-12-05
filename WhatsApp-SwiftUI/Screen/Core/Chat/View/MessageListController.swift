@@ -236,6 +236,7 @@ private extension MessageListController {
             initialSpringVelocity: 1,
             options: .curveEaseOut) { [weak self] in
                 guard let self else { return }
+                highlightedView?.transform = .identity
                 highlightedView?.frame = startingFrame ?? .zero
                 blurredEffectView?.alpha = 0
                 reactionHostingViewController?.view.removeFromSuperview()
@@ -337,6 +338,10 @@ private extension MessageListController {
                 highlightedView.center.y = window.center.y - 70
                 snapshotView.frame = highlightedView.bounds
                 snapshotView.layer.applyShadow(color: .gray, opacity: 0.2, x: 0, y: 10, radius: 4)
+                
+                let xTranslation: CGFloat = message.direction == .received ? -80 : 80
+                let translation = CGAffineTransform(translationX: xTranslation, y: 1)
+                highlightedView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5).concatenating(translation)
             }
     }
 }
