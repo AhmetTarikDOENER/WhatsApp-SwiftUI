@@ -258,6 +258,7 @@ private extension MessageListController {
         
         let reactionPickerView = ReactionPickerView(message: message) { [weak self] reaction in
             self?.dismissMessageReactionView()
+            self?.viewModel.addReaction(reaction, to: message)
         }
         
         let reactionHostViewController = UIHostingController(rootView: reactionPickerView)

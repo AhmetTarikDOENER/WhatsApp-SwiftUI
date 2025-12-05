@@ -188,7 +188,17 @@ struct MessageService {
         from currentUser: UserItem,
         completion: @escaping (_ emojiCount: Int) -> Void
     ) {
-        
+        let reactionsReference = FirebaseConstants.MessagesReference.child(channel.id).child(message.id).child("reactions").child(reaction.emoji)
+        /// Increase emoji reaction count
+        increaseCountViaTransaction(at: reactionsReference) { newEmojiCount in
+            /// Add current user's emoji to the related db node
+            FirebaseConstants.MessagesReference.child(channel.id).child(message.id)
+                .child("user_reactions")
+                .child(currentUser.uid)
+                .setValue(reaction.emoji)
+            
+            completion(newEmojiCount)
+        }
     }
 }
 

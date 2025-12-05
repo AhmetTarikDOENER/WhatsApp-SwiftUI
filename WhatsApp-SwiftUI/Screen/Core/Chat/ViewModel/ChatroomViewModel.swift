@@ -377,4 +377,11 @@ final class ChatroomViewModel: ObservableObject {
             return !message.isSentByCurrentUser && !message.isSentBySameUser(for: priorMessage)
         }
     }
+    
+    func addReaction(_ reaction: Reaction, to message: Message) {
+        guard let currentUser else { return }
+        MessageService.addReaction(reaction: reaction, to: message, in: channel, from: currentUser) { emojiCount in
+            print(emojiCount)
+        }
+    }
 }
