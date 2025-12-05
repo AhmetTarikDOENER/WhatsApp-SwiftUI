@@ -256,7 +256,10 @@ private extension MessageListController {
     private func attachContextMenuAndReaction(to message: Message, in window: UIWindow, _ isNewDay: Bool) {
         guard let highlightedView, let startingFrame else { return }
         
-        let reactionPickerView = ReactionPickerView(message: message)
+        let reactionPickerView = ReactionPickerView(message: message) { [weak self] reaction in
+            self?.dismissMessageReactionView()
+        }
+        
         let reactionHostViewController = UIHostingController(rootView: reactionPickerView)
         reactionHostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         reactionHostViewController.view.backgroundColor = .clear

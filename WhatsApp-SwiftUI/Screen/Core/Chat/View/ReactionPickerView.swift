@@ -22,6 +22,8 @@ struct ReactionPickerView: View {
     ]
     
     let message: Message
+    let onTapHandler: (_ selectedEmoji: Reaction) -> Void
+    
     private var animation: Animation {
         Animation.spring(
             response: 0.55,
@@ -61,7 +63,8 @@ struct ReactionPickerView: View {
     
     private func reactionButton(_ reaction: EmojiReaction, at index: Int) -> some View {
         Button {
-            
+            guard reaction.reaction != .more else { return }
+            onTapHandler(reaction.reaction)
         } label: {
             buttonLabel(reaction, at: index)
                 .scaleEffect(emojiStates[index].isAnimating ? 1 : 0.01)
@@ -103,9 +106,8 @@ struct ReactionPickerView: View {
 #Preview {
     ZStack {
         Rectangle().fill(.thinMaterial)
-        VStack {
-            ReactionPickerView(message: .receivedPlaceholder)
-            ReactionPickerView(message: .sentPlaceholder)
+        ReactionPickerView(message: .receivedPlaceholder) { emoji in
+            
         }
     }
 }
