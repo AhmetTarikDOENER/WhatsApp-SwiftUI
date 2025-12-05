@@ -22,6 +22,13 @@ struct ReactionPickerView: View {
     ]
     
     let message: Message
+    private var animation: Animation {
+        Animation.spring(
+            response: 0.55,
+            dampingFraction: 0.6,
+            blendDuration: 0.05
+        ).speed(3.5)
+    }
     
     var body: some View {
         HStack(spacing: 8) {
@@ -57,6 +64,13 @@ struct ReactionPickerView: View {
             
         } label: {
             buttonLabel(reaction, at: index)
+                .scaleEffect(emojiStates[index].isAnimating ? 1 : 0.01)
+                .opacity(reaction.opacity)
+                .onAppear {
+                    withAnimation(animation.delay(0.05 * Double(index))) {
+                        emojiStates[index].isAnimating = true
+                    }
+                }
         }
     }
     
