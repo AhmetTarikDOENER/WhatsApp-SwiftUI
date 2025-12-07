@@ -2,8 +2,14 @@ import SwiftUI
 
 struct MessageReactionView: View {
     
-    let emojis = ["🥰","😜","🥳","😎"]
+    //  MARK: - Properties
     let message: Message
+    
+    private var emojis: [String] { message.reactions.map { $0.key } }
+    private var emojiCount: Int {
+        let count = message.reactions.map { $0.value }
+        return count.reduce(0, +)
+    }
     
     var body: some View {
         if message.hasReactions {
@@ -13,8 +19,10 @@ struct MessageReactionView: View {
                         .fontWeight(.semibold)
                 }
                 
-                Text("4")
-                    .fontWeight(.semibold)
+                if emojiCount > 2 {
+                    Text("\(emojiCount)")
+                        .fontWeight(.semibold)
+                }
             }
             .font(.footnote)
             .padding(4)
