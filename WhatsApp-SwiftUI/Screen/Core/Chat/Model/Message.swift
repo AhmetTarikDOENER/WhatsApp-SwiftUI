@@ -1,6 +1,10 @@
 import SwiftUI
 import FirebaseAuth
 
+typealias userID = String
+typealias emoji = String
+typealias emojiCount = Int
+
 struct Message: Identifiable {
     let id: String
     let text: String
@@ -15,6 +19,8 @@ struct Message: Identifiable {
     var videoURL: String?
     var audioURL: String?
     var audioDuration: TimeInterval?
+    var reactions: [emoji: emojiCount] = [:]
+    var userReactions: [userID: emoji] = [:]
     
     var direction: MessageDirection { senderUid == Auth.auth().currentUser?.uid ? .outgoing : .received }
     
@@ -60,6 +66,8 @@ struct Message: Identifiable {
     }
     
     var reactionAnchor: Alignment { direction == .outgoing ? .bottomTrailing : .bottomLeading }
+    
+    var hasReactions: Bool { !reactions.isEmpty }
 }
 
 //  MARK: - Stub Message
@@ -108,6 +116,8 @@ extension Message {
         self.videoURL = dictionary[.videoURL] as? String? ?? nil
         self.audioURL = dictionary[.audioURL] as? String? ?? nil
         self.audioDuration = dictionary[.audioDuration] as? TimeInterval? ?? nil
+        self.reactions = dictionary[.reactions] as? [emoji: emojiCount] ?? [:]
+        self.userReactions = dictionary[.userReactions] as? [userID: emoji] ?? [:]
     }
 }
 
@@ -121,4 +131,6 @@ extension String {
     static let videoURL = "videoURL"
     static let audioURL = "audioURL"
     static let audioDuration = "audioDuration"
+    static let reactions = "reactions"
+    static let userReactions = "userReactions"
 }
