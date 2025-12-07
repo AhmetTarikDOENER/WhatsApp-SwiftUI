@@ -68,6 +68,16 @@ struct Message: Identifiable {
     var reactionAnchor: Alignment { direction == .outgoing ? .bottomTrailing : .bottomLeading }
     
     var hasReactions: Bool { !reactions.isEmpty }
+    
+    var hasCurrentUserReacted: Bool {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return false }
+        return userReactions.contains { $0.key == currentUid }
+    }
+    
+    var currentUserReaction: String? {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
+        return userReactions[currentUid]
+    }
 }
 
 //  MARK: - Stub Message
