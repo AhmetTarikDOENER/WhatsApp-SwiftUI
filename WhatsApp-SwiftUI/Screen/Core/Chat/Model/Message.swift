@@ -58,6 +58,8 @@ struct Message: Identifiable {
             return false
         }
     }
+    
+    var reactionAnchor: Alignment { direction == .outgoing ? .bottomTrailing : .bottomLeading }
 }
 
 //  MARK: - Stub Message

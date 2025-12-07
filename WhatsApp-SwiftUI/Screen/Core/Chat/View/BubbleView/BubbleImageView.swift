@@ -6,29 +6,35 @@ struct BubbleImageView: View {
     let message: Message
     
     var body: some View {
-        HStack {
+        HStack(alignment: .bottom, spacing: 4) {
             if message.direction == .outgoing { Spacer() }
             
-            HStack {
-                if message.direction == .outgoing { shareButton() }
-                
-                messageImageView()
-                    .shadow(
-                        color: Color(.systemGray3).opacity(0.1),
-                        radius: 5,
-                        x: 0,
-                        y: 20
-                    )
-                    .overlay {
-                        playButton()
-                            .opacity(message.type == .video ? 1 : 0)
-                    }
-                
-                if message.direction == .received { shareButton() }
+            if message.showGroupChatPartnerProfileImage {
+                CircularProfileImageView(message.sender?.profileImageURL, size: .mini)
+                    .offset(y: 6)
             }
+            
+            messageImageView()
+                .shadow(
+                    color: Color(.systemGray3).opacity(0.1),
+                    radius: 5,
+                    x: 0,
+                    y: 20
+                )
+                .overlay {
+                    playButton()
+                        .opacity(message.type == .video ? 1 : 0)
+                }
+                .overlay(alignment: message.reactionAnchor) {
+                    MessageReactionView(message: message)
+                        .padding(.bottom, -18)
+                }
             
             if message.direction == .received { Spacer() }
         }
+        .frame(maxWidth: .infinity, alignment: message.alignment)
+        .padding(.leading, message.leadingPadding)
+        .padding(.trailing, message.trailingPadding)
     }
     
     //  MARK: - Private

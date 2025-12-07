@@ -91,6 +91,8 @@ struct ReactionPickerView: View {
                 .foregroundStyle(.gray)
         } else {
             Text(reaction.reaction.emoji)
+                .font(.system(size: 25))
+                .background(indicateSelectedEmoji(reaction.reaction))
         }
     }
     
@@ -100,6 +102,13 @@ struct ReactionPickerView: View {
         } else {
             return index
         }
+    }
+    
+    private func indicateSelectedEmoji(_ reaction: Reaction) -> some View {
+        Color(.systemGray5)
+            .frame(width: 45, height: 45)
+            .font(.system(size: 30))
+            .clipShape(Circle())
     }
 }
 

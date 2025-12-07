@@ -34,6 +34,10 @@ struct BubbleTextView: View {
         .frame(maxWidth: .infinity, alignment: message.alignment)
         .padding(.leading, message.leadingPadding)
         .padding(.trailing, message.trailingPadding)
+        .overlay(alignment: message.reactionAnchor) {
+            MessageReactionView(message: message)
+                .offset(x: message.showGroupChatPartnerProfileImage ? 44 : 0, y: 14)
+        }
     }
     
     //  MARK: - Private
