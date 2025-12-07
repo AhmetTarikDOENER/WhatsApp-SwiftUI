@@ -24,7 +24,16 @@ struct BubbleAudioView: View {
     }
     
     var body: some View {
-        VStack(alignment: message.horizontalAlignment, spacing: 4) {
+        HStack(alignment: .bottom, spacing: 5) {
+            if message.showGroupChatPartnerProfileImage {
+                CircularProfileImageView(message.sender?.profileImageURL, size: .mini)
+                    .offset(y: 3)
+            }
+            
+            if message.direction == .outgoing {
+                timestampTextView()
+            }
+            
             HStack {
                 playButton()
                 
@@ -52,7 +61,9 @@ struct BubbleAudioView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .applyTail(message.direction)
             
-            timestampTextView()
+            if message.direction == .received {
+                timestampTextView()
+            }
         }
         .shadow(
             color: Color(.systemGray3).opacity(0.1),
@@ -61,8 +72,12 @@ struct BubbleAudioView: View {
             y: 20
         )
         .frame(maxWidth: .infinity, alignment: message.alignment)
-        .padding(.leading, message.direction == .received ? 5 : 100)
-        .padding(.trailing, message.direction == .received ? 100 : 5)
+        .padding(.leading, message.leadingPadding)
+        .padding(.trailing, message.trailingPadding)
+        .overlay(alignment: message.reactionAnchor) {
+            MessageReactionView(message: message)
+                .offset(x: message.showGroupChatPartnerProfileImage ? 44 : 0, y: 10)
+        }
         .onReceive(audioMessagePlayer.$playbackState) { playbackState in
             observePlaybackState(playbackState)
         }
@@ -145,4 +160,5 @@ extension BubbleAudioView {
         let thumbImage = UIImage(systemName: "circle.fill")
         UISlider.appearance().setThumbImage(thumbImage, for: .normal)
     }
+    .environmentObject(AudioMessagePlayer())
 }
