@@ -65,6 +65,7 @@ struct ReactionPickerView: View {
         Button {
             guard reaction.reaction != .more else { return }
             onTapHandler(reaction.reaction)
+            Haptics.impact(on: .medium)
         } label: {
             buttonLabel(reaction, at: index)
                 .scaleEffect(emojiStates[index].isAnimating ? 1 : 0.01)

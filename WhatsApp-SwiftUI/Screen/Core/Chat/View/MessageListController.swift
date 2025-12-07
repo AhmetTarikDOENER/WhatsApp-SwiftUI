@@ -311,6 +311,9 @@ private extension MessageListController {
         guard message.type.isAdminMessage == false else { return }
 
         guard let selectedCell = messageCollectionView.cellForItem(at: indexPath) else { return }
+        
+        Haptics.impact(on: .medium)
+        
         /// Store selected cell's frame into startingFrame property
         startingFrame = selectedCell.superview?.convert(selectedCell.frame, to: nil)
         /// Take a snapshot of the selected cell and turns into a view to animate it later.
