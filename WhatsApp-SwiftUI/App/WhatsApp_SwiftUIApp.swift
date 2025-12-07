@@ -37,18 +37,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         notificationCenter.requestAuthorization(options: options) { granted, error in
             if let error {
-                print("APNS Auth error: \(error.localizedDescription)")
+                print("❌ APNS -> Apple Push Notification Auth error: \(error.localizedDescription)")
                 return
             }
             
             if granted {
-                print("APNS Auth Granted")
+                DispatchQueue.main.async {
+                    application.registerForRemoteNotifications()
+                }
             } else {
-                print("APNS Auth Failed")
-            }
-            
-            DispatchQueue.main.async {
-                application.registerForRemoteNotifications()
+                print("❌ APNS -> Apple Push Notification is not granted: \(String(describing: error?.localizedDescription))")
             }
         }
     }
@@ -66,7 +64,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate, MessagingDelegate {
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("APNS device token is: \(fcmToken)")
+        print("APNS device token is: \(String(describing: fcmToken))")
     }
 }
 
