@@ -33,9 +33,6 @@ struct MessageReactionView: View {
                     .stroke(message.backgroundColor, lineWidth: 2)
             )
             .shadow(color: message.backgroundColor.opacity(0.3), radius: 4, x: 0, y: 4)
-            .onAppear {
-                print("\(message.reactions.map({ $0.key }))")
-            }
         }
     }
 }
