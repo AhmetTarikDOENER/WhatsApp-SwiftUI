@@ -36,19 +36,21 @@ final class ChannelTabViewModel: ObservableObject {
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             dictionary.forEach { key, value in
                 let channelId = key
-                self?.getChannel(with: channelId)
+                let unreadMessageCount = value as? Int ?? 0
+                self?.getChannel(with: channelId, unreadMessageCount)
             }
         } withCancel: { error in
             print("❌ ChannelTabViewModel -> Failed to get current user's channelIds: \(error.localizedDescription)")
         }
     }
     
-    private func getChannel(with channelId: String) {
+    private func getChannel(with channelId: String, _ unreadMessageCount: Int) {
         FirebaseConstants.ChannelsReference.child(channelId).observe(.value) { [weak self] snapshot in
             guard let channelDictionary = snapshot.value as? [String: Any], let self = self else { return }
             var channel = Channel(channelDictionary)
             self.getChannelMembers(channel) { members in
                 channel.members = members
+                channel.unreadMessageCount = unreadMessageCount
                 channel.members.append(self.currentUser)
                 self.channelDictionary[channelId] = channel
                 self.reloadChannelData()
