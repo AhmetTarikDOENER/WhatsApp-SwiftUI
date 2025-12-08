@@ -69,6 +69,18 @@ struct Channel: Identifiable, Hashable {
         case .audio: return "Audio Message"
         }
     }
+    
+    func getPushNotificationTitle(_ senderName: String) -> String {
+        if let groupName = name {
+            return "\(senderName) in \(groupName)"
+        }
+        
+        if isGroupChat { 
+            return "\(senderName) in a \"Group Chat\""
+        } else {
+            return senderName
+        }
+    }
 }
 
 extension Channel {
