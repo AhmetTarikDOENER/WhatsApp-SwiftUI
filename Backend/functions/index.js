@@ -26,7 +26,7 @@ exports.listenForNewMessages = onValueCreated(
       const messageSenderDictionary = messageSenderSnapshot.val()
       const messageSenderName = messageSenderDictionary["username"]
 
-      getChannelMembers(channelId, message, messageSenderName)
+      await getChannelMembers(channelId, message, messageSenderName)
    }
 )
 
@@ -38,16 +38,45 @@ async function getChannelMembers(channelId, message, senderName) {
    const channelDictionary = channelSnapshot.val()
    const membersUids = channelDictionary["membersUids"]
 
-   for (const userId of membersUids) {
-
+   for (const memberUid of membersUids) {
+      await getUserFcmToken(message, memberUid, senderName)
    }
 }
 
-async function getUserFcmToken(message, userId, senderName) {
+async function getUserFcmToken(message, memberUid, senderName) {
    const userSnapshot = await admin
-      .database().ref("/users/" + userId)
+      .database().ref("/users/" + memberUid)
       .once("value")
 
    const userDictionary = userSnapshot.val()
    const fcmToken = userDictionary["fcmToken"]
+
+   await sendPushNotifications(message, senderName, fcmToken)
+}
+
+async function sendPushNotifications(message, senderName, fcmToken) {
+   const payload = {
+      notification: {
+         title: senderName,
+         body: message
+      },
+
+      apns: {
+         payload: {
+            aps: {
+               sound: "default",
+               badge: 10,
+            }
+         }
+      },
+
+      token: fcmToken,
+   };
+
+   try {
+      await admin.messaging().send(payload);
+      console.info("Successfully sent message: ", message)
+   } catch (err) {
+      console.error("Error sending pnm: ", err)
+   }
 }
