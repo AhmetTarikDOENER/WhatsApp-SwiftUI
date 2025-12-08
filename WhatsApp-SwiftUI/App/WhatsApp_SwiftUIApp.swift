@@ -1,6 +1,7 @@
 import SwiftUI
 import FirebaseCore
 import Firebase
+import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
@@ -64,7 +65,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate, MessagingDelegate {
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("APNS device token is: \(String(describing: fcmToken))")
+        guard let currentUid = Auth.auth().currentUser?.uid, let fcmToken else { return }
+        FirebaseConstants.UserReference.child(currentUid).child(.fcmToken).setValue(fcmToken)
     }
 }
 
