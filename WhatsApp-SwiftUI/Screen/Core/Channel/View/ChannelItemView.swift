@@ -12,6 +12,11 @@ struct ChannelItemView: View {
                 nameAndTimestampView()
                 lastMessagePreview()
             }
+            .overlay(alignment: .bottomTrailing) {
+                if channel.unreadMessageCount > 0 {
+                    unreadMessageCountView(count: channel.unreadMessageCount)
+                }
+            }
         }
     }
     
@@ -42,6 +47,18 @@ struct ChannelItemView: View {
                 .lineLimit(2)
                 .foregroundStyle(.gray)
         }
+    }
+    
+    private func unreadMessageCountView(count: Int) -> some View {
+        Text(count.description)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 2)
+            .background(.badge)
+            .bold()
+            .font(.caption)
+            .clipShape(Capsule())
+        
     }
 }
 
