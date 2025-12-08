@@ -1,13 +1,20 @@
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
+const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
+const { onValueCreated } = require("firebase-functions/v2/database");
+const { event } = require("firebase-functions/v1/analytics");
+const admin = require("firebase-admin");
+admin.initializeApp();
 
-const { initializeApp } = require("firebase-admin/app");
-initializeApp();
+const channelMessagesReference = "/channel-messages/{channelId}/{messageId}"
 
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-exports.helloWorld = onRequest((request, response) => {
-   response.send("First Deployed Functions from Firebase");
-});
+exports.listenForNewMessages = onValueCreated(
+   channelMessagesReference,
+   async (event) => {
+      const data = event.data.val();
+      const channelId = event.params.channelId
+      const message = data["text"]
+      const senderUid = data["ownerUid"]
+      const messageSender = await initializeApp.
+   }
+)
