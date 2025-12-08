@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4543AF8C2EE1E13A00015FE6 /* AlertKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4543AF8B2EE1E13A00015FE6 /* AlertKit */; };
 		4581D3432ED0780200993F13 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4581D3422ED0780200993F13 /* Kingfisher */; };
+		45A84C932EE7458E00F0DC99 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 45A84C922EE7458E00F0DC99 /* FirebaseFunctions */; };
 		45ACB5582EBA123800EA827F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB5572EBA123800EA827F /* FirebaseAuth */; };
 		45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB5592EBA123800EA827F /* FirebaseDatabase */; };
 		45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB55B2EBA123800EA827F /* FirebaseMessaging */; };
@@ -47,6 +48,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */,
+				45A84C932EE7458E00F0DC99 /* FirebaseFunctions in Frameworks */,
 				45ACB55E2EBA123800EA827F /* FirebaseStorage in Frameworks */,
 				4543AF8C2EE1E13A00015FE6 /* AlertKit in Frameworks */,
 				45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */,
@@ -64,6 +66,7 @@
 				4510B7EF2EB75FAF009A5AC1 /* WhatsApp-SwiftUI */,
 				4510B7EE2EB75FAF009A5AC1 /* Products */,
 				45ACB5712EBA254900EA827F /* Secrets.xcconfig.template */,
+				45A84C912EE7458E00F0DC99 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +76,13 @@
 				4510B7ED2EB75FAF009A5AC1 /* WhatsApp-SwiftUI.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		45A84C912EE7458E00F0DC99 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -101,6 +111,7 @@
 				45ACB55D2EBA123800EA827F /* FirebaseStorage */,
 				4581D3422ED0780200993F13 /* Kingfisher */,
 				4543AF8B2EE1E13A00015FE6 /* AlertKit */,
+				45A84C922EE7458E00F0DC99 /* FirebaseFunctions */,
 			);
 			productName = "WhatsApp-SwiftUI";
 			productReference = 4510B7ED2EB75FAF009A5AC1 /* WhatsApp-SwiftUI.app */;
@@ -421,6 +432,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4581D3412ED0780200993F13 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		45A84C922EE7458E00F0DC99 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 		45ACB5572EBA123800EA827F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

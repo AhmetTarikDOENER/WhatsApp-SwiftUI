@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseDatabase
+import FirebaseFunctions
 
 struct MessageService {
     
@@ -206,7 +207,32 @@ struct MessageService {
                 .child(currentUser.uid)
                 .setValue(reaction.emoji)
             
+            let channelNameAtSend = channel.getPushNotificationTitle(currentUser.username)
+            sendMessageReactionNotification(for: message, emoji: reaction.emoji, channelNameAtSend: channelNameAtSend)
+            
             completion(newEmojiCount)
+        }
+    }
+    
+    static func sendMessageReactionNotification(for message: Message, emoji: String, channelNameAtSend: String) {
+        guard let fcmToken = message.sender?.fcmToken else { return }
+        var notificationMessage: String
+        if message.type == .text {
+            notificationMessage = "Reacted \(emoji) to your \(message.text)"
+        } else {
+            notificationMessage = "Reacted \(emoji) to your \(message.type.title) message."
+        }
+        
+        let payload: [String: Any] = [
+            .fcmToken: fcmToken,
+            .channelNameAtSend: channelNameAtSend,
+            .notificationMessage: notificationMessage
+        ]
+        
+        Functions.functions().httpsCallable("sendMessageReactionNotification").call(payload) { result, error in
+            if let error {
+                print("❌ MessageService -> Failed to sendMessageReactionNotification: \(error.localizedDescription)")
+            }
         }
     }
 }

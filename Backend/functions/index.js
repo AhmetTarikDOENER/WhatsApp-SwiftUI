@@ -1,8 +1,8 @@
-const functions = require("firebase-functions");
 const { onRequest } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const { onValueCreated } = require("firebase-functions/v2/database");
 const admin = require("firebase-admin");
+const { https } = require("firebase-functions");
 
 admin.initializeApp();
 
@@ -59,3 +59,15 @@ async function sendPushNotifications(message, senderName, fcmToken) {
       console.error("Error sending pnm: ", err)
    }
 }
+
+
+exports.sendMessageReactionNotification = https.onCall(
+   async (request, response) => {
+      const data = request.data
+      const fcmToken = data.fcmToken
+      const channelNameAtSend = data.channelNameAtSend
+      const notificationMessage = data.notificationMessage
+
+      await sendPushNotifications(notificationMessage, channelNameAtSend, fcmToken)
+   }
+)

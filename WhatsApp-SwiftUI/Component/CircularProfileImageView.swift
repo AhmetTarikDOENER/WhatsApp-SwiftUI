@@ -21,7 +21,7 @@ struct CircularProfileImageView: View {
                 .resizable()
                 .placeholder { ProgressView() }
                 .scaledToFill()
-                .frame(width: 100, height: 100)
+                .frame(width: size.dimension, height: size.dimension)
                 .clipShape(Circle())
         } else {
             placeholderImageView()
