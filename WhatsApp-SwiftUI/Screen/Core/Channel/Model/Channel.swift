@@ -104,7 +104,6 @@ extension Channel {
         self.createdBy = dictionary[.createdBy] as? String ?? ""
         let messageTypeValue = dictionary[.lastMessageType] as? String ?? "text"
         self.lastMessageType = MessageType(messageTypeValue) ?? .text
-        self.unreadMessageCount = dictionary[.unreadMessageCount] as? Int ?? 0
     }
 }
 
@@ -139,5 +138,4 @@ extension String {
     static let createdBy = "createdBy"
     static let lastMessageType = "lastMessageType"
     static let notificationMessage = "notificationMessage"
-    static let unreadMessageCount = "unreadMessageCount"
 }

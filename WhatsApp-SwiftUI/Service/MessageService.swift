@@ -1,6 +1,7 @@
 import Foundation
 import FirebaseDatabase
 import FirebaseFunctions
+import FirebaseAuth
 
 struct MessageService {
     
@@ -249,6 +250,11 @@ struct MessageService {
             
             increaseCountViaTransaction(at: channelUnreadMessageCountRef)
         }
+    }
+    
+    static func resetUnreadMessageCountForMembers(in channel: Channel) {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        FirebaseConstants.UserChannelsReference.child(currentUid).child(channel.id).setValue(0)
     }
 }
 
