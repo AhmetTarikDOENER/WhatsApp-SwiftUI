@@ -32,7 +32,7 @@ final class ChannelTabViewModel: ObservableObject {
     
     func fetchCurrentUserChannels() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        FirebaseConstants.UserChannelsReference.child(currentUid).observe(.value) { [weak self] snapshot in
+        FirebaseConstants.UserChannelsReference.child(currentUid).queryLimited(toLast: 10).observe(.value) { [weak self] snapshot in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             dictionary.forEach { key, value in
                 let channelId = key

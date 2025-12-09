@@ -14,7 +14,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            UpdatesTabScreen()
+            UpdatesTabScreen(currentUser: currentUser)
                 .tabItem {
                     Image(systemName: Tab.updates.icon)
                     Text(Tab.updates.title)

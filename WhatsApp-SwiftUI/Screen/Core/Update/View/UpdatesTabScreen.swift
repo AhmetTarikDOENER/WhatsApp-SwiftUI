@@ -3,6 +3,7 @@ import SwiftUI
 struct UpdatesTabScreen: View {
     
     @State private var searchText = ""
+    let currentUser: UserItem
     
     var body: some View {
         NavigationStack {
@@ -10,10 +11,10 @@ struct UpdatesTabScreen: View {
                 StatusSectionHeaderView()
                     .listRowBackground(Color.clear)
                 
-                StatusSectionView()
+                StatusSectionView(currentUser: currentUser)
                 
                 Section {
-                    RecentUpdatesItemView()
+                    RecentUpdatesItemView(currentUser: currentUser)
                 } header: {
                     Text("Recent Updates")
                 }
@@ -83,13 +84,12 @@ private struct StatusSectionHeaderView: View {
 
 //  MARK: - StatusSection
 private struct StatusSectionView: View {
+
+    let currentUser: UserItem
+
     var body: some View {
         HStack {
-            Circle()
-                .frame(
-                    width: UpdatesTabScreen.Constants.imageDimension,
-                    height: UpdatesTabScreen.Constants.imageDimension
-                )
+            CircularProfileImageView(currentUser.profileImageURL, size: .small)
             
             VStack(alignment: .leading) {
                 Text("My Status")
@@ -136,16 +136,18 @@ private struct StatusSectionView: View {
 
 //  MARK: - RecentUpdatesItemView
 private struct RecentUpdatesItemView: View {
+    
+    let currentUser: UserItem
+    
     var body: some View {
         HStack {
-            Circle()
-                .frame(
-                    width: UpdatesTabScreen.Constants.imageDimension,
-                    height: UpdatesTabScreen.Constants.imageDimension
-                )
+            CircularProfileImageView(
+                currentUser.profileImageURL,
+                size: .small
+            )
             
             VStack(alignment: .leading) {
-                Text("Tim Cook")
+                Text(currentUser.username)
                     .font(.callout)
                     .bold()
                 
@@ -217,5 +219,5 @@ private struct ChannelListItemView: View {
 }
 
 #Preview {
-    UpdatesTabScreen()
+    UpdatesTabScreen(currentUser: .placeholder)
 }
