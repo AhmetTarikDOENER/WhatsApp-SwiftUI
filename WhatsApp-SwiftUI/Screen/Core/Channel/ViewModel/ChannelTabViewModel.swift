@@ -48,13 +48,21 @@ final class ChannelTabViewModel: ObservableObject {
         FirebaseConstants.ChannelsReference.child(channelId).observe(.value) { [weak self] snapshot in
             guard let channelDictionary = snapshot.value as? [String: Any], let self = self else { return }
             var channel = Channel(channelDictionary)
-            self.getChannelMembers(channel) { members in
-                channel.members = members
+            if let inMemoryCachedChannel = self.channelDictionary[channelId], !inMemoryCachedChannel.members.isEmpty {
+                channel.members = inMemoryCachedChannel.members
                 channel.unreadMessageCount = unreadMessageCount
-                channel.members.append(self.currentUser)
                 self.channelDictionary[channelId] = channel
                 self.reloadChannelData()
-                print("⭐️ ChannelTabViewModel -> Appended channel with title: \(channel.title)")
+                print("⭐️ ChannelTabViewModel -> Get channel members from local stored/cached data for inMemoryCachedChannel: \(channel.title)")
+            } else {
+                self.getChannelMembers(channel) { members in
+                    channel.members = members
+                    channel.unreadMessageCount = unreadMessageCount
+                    channel.members.append(self.currentUser)
+                    self.channelDictionary[channelId] = channel
+                    self.reloadChannelData()
+                    print("⭐️ ChannelTabViewModel -> Get channel members from database for channel: \(channel.title)")
+                }
             }
         } withCancel: { error in
             print("❌ ChannelTabViewModel -> Failed to get the channel for id: \(error.localizedDescription)")
