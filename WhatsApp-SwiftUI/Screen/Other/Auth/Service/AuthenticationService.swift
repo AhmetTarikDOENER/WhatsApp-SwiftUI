@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import FirebaseAuth
 import FirebaseDatabase
+import StreamVideo
 
 //  MARK: - AuthState
 enum AuthState {
@@ -45,11 +46,15 @@ final class AuthenticationService: AuthenticationProtocol {
     
     var authState = CurrentValueSubject<AuthState, Never>(.pending)
     
+    @Published var streamVideo: StreamVideo?
+    
     //  MARK: - Internal
     func login(with email: String, and password: String) async throws {
         do {
             let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
-            fetchCurrentUserInfo()
+            fetchCurrentUserInfo { [weak self] currentUser in
+                self?.setupStreamVideo(currentUser)
+            }
             print("✅ AuthenticationService -> Successfully signed in with email: \(authResult.user.email ?? "")")
         } catch {
             print("❌ AuthenticationService -> Failed to sign into the account with email: \(email)")
@@ -61,7 +66,9 @@ final class AuthenticationService: AuthenticationProtocol {
         if Auth.auth().currentUser == nil {
             authState.send(.loggedOut)
         } else {
-            fetchCurrentUserInfo()
+            fetchCurrentUserInfo { [weak self] currentUser in
+                self?.setupStreamVideo(currentUser)
+            }
         }
     }
     
@@ -70,7 +77,7 @@ final class AuthenticationService: AuthenticationProtocol {
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
             let uid = authResult.user.uid
             let newUser = UserItem(uid: uid, username: username, email: email)
-            self.authState.send(.loggedIn(newUser))
+            setupStreamVideo(newUser)
             try await saveUserInfoToDatabase(user: newUser)
         } catch {
             print("❌ AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
@@ -89,13 +96,13 @@ final class AuthenticationService: AuthenticationProtocol {
     }
     
     //  MARK: - Private
-    private func fetchCurrentUserInfo() {
+    private func fetchCurrentUserInfo(completion: @escaping (UserItem) -> Void) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         FirebaseConstants.UserReference.child(currentUid)
-            .observeSingleEvent(of: .value) { [weak self] snapshot in
+            .observeSingleEvent(of: .value) { snapshot in
                 guard let userDictionary = snapshot.value as? [String: Any] else { return }
                 let loggedInUser = UserItem(dictionary: userDictionary)
-                self?.authState.send(.loggedIn(loggedInUser))
+                completion(loggedInUser)
                 print("✅ AuthenticationService -> Successfully fetched current user \(loggedInUser.username) info from database")
             } withCancel: { error in
                 print("❌ AuthenticationService -> Failed to get current user info from database: \(error.localizedDescription)")
@@ -116,5 +123,21 @@ extension AuthenticationService {
             print("❌ AuthenticationService -> Failed to save user info to database: \(error.localizedDescription)")
             throw AuthenticationError.savingUserInfoToDatabaseFailure(error.localizedDescription)
         }
+    }
+}
+
+//  MARK: - AuthenticationService+StreamVideo
+extension AuthenticationService {
+    private func prepareVideoStream(for currentUser: UserItem) {
+        let apiKey = "mmhfdzb5evj2"
+        let user = User(id: "Global_Plot", name: "Martin Scorsese")
+        let token = UserToken(rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")
+        streamVideo = StreamVideo(apiKey: apiKey, user: user, token: token)
+        print("AuthenticationService -> Stream video setup completed with token: \(token)")
+    }
+    
+    private func setupStreamVideo(_ currentUser: UserItem) {
+        prepareVideoStream(for: currentUser)
+        authState.send(.loggedIn(currentUser))
     }
 }

@@ -14,6 +14,8 @@
 		45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB5592EBA123800EA827F /* FirebaseDatabase */; };
 		45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB55B2EBA123800EA827F /* FirebaseMessaging */; };
 		45ACB55E2EBA123800EA827F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACB55D2EBA123800EA827F /* FirebaseStorage */; };
+		45F016002EE88EBC0090F4FB /* StreamVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 45F015FF2EE88EBC0090F4FB /* StreamVideo */; };
+		45F016022EE88EBC0090F4FB /* StreamVideoSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 45F016012EE88EBC0090F4FB /* StreamVideoSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,9 +52,11 @@
 				45ACB55C2EBA123800EA827F /* FirebaseMessaging in Frameworks */,
 				45A84C932EE7458E00F0DC99 /* FirebaseFunctions in Frameworks */,
 				45ACB55E2EBA123800EA827F /* FirebaseStorage in Frameworks */,
+				45F016022EE88EBC0090F4FB /* StreamVideoSwiftUI in Frameworks */,
 				4543AF8C2EE1E13A00015FE6 /* AlertKit in Frameworks */,
 				45ACB55A2EBA123800EA827F /* FirebaseDatabase in Frameworks */,
 				45ACB5582EBA123800EA827F /* FirebaseAuth in Frameworks */,
+				45F016002EE88EBC0090F4FB /* StreamVideo in Frameworks */,
 				4581D3432ED0780200993F13 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,6 +116,8 @@
 				4581D3422ED0780200993F13 /* Kingfisher */,
 				4543AF8B2EE1E13A00015FE6 /* AlertKit */,
 				45A84C922EE7458E00F0DC99 /* FirebaseFunctions */,
+				45F015FF2EE88EBC0090F4FB /* StreamVideo */,
+				45F016012EE88EBC0090F4FB /* StreamVideoSwiftUI */,
 			);
 			productName = "WhatsApp-SwiftUI";
 			productReference = 4510B7ED2EB75FAF009A5AC1 /* WhatsApp-SwiftUI.app */;
@@ -145,6 +151,7 @@
 				45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				4581D3412ED0780200993F13 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				4543AF8A2EE1E13A00015FE6 /* XCRemoteSwiftPackageReference "AlertKit" */,
+				45F015FE2EE88EBC0090F4FB /* XCRemoteSwiftPackageReference "stream-video-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4510B7EE2EB75FAF009A5AC1 /* Products */;
@@ -312,7 +319,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WhatsApp-SwiftUI/Info.plist";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WhatsApp wants to use your microphone to make audio recording and call.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -349,7 +357,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WhatsApp-SwiftUI/Info.plist";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WhatsApp wants to use your microphone to make audio recording and call.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -420,6 +429,14 @@
 				minimumVersion = 12.5.0;
 			};
 		};
+		45F015FE2EE88EBC0090F4FB /* XCRemoteSwiftPackageReference "stream-video-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GetStream/stream-video-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.37.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -457,6 +474,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 45ACB5562EBA123800EA827F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		45F015FF2EE88EBC0090F4FB /* StreamVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45F015FE2EE88EBC0090F4FB /* XCRemoteSwiftPackageReference "stream-video-swift" */;
+			productName = StreamVideo;
+		};
+		45F016012EE88EBC0090F4FB /* StreamVideoSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45F015FE2EE88EBC0090F4FB /* XCRemoteSwiftPackageReference "stream-video-swift" */;
+			productName = StreamVideoSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
