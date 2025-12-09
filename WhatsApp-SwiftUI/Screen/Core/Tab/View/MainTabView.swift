@@ -1,8 +1,10 @@
 import SwiftUI
+import StreamVideoSwiftUI
 
 struct MainTabView: View {
     
     private let currentUser: UserItem
+    @StateObject private var viewModel = CallViewModel()
     
     //  MARK: - Init
     init(_ currentUser: UserItem) {
@@ -40,6 +42,8 @@ struct MainTabView: View {
                     Text(Tab.settings.title)
                 }
         }
+        .modifier(CallModifier(viewModel: viewModel))
+        .environmentObject(viewModel)
     }
     
     //  MARK: - Private
