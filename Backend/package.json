@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "dotenv": "^17.2.3",
-    "stream-chat": "^9.27.0"
-  }
-}
