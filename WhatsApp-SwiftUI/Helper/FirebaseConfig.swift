@@ -16,3 +16,13 @@ struct FirebaseConfig {
     static let projectID = value(for: "FIREBASE_PROJECT_ID")
     static let storageBucket = value(for: "FIREBASE_STORAGE_BUCKET")
 }
+
+enum VideoStreamConfig {
+    static var videoStreamAPIKey: String {
+        guard let value = Bundle.main.object(forInfoDictionaryKey: "VIDEO_STREAM_API_KEY") as? String else {
+            fatalError("VIDEO_STREAM_API_KEY not found in Info.plist")
+        }
+        
+        return value
+    }
+}

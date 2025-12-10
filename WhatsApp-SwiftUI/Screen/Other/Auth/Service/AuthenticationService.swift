@@ -129,7 +129,7 @@ extension AuthenticationService {
 //  MARK: - AuthenticationService+StreamVideo
 extension AuthenticationService {
     private func prepareVideoStream(for currentUser: UserItem) {
-        let apiKey = "mmhfdzb5evj2"
+        let apiKey = VideoStreamConfig.videoStreamAPIKey
         let user = User(id: "Global_Plot", name: "Tarik")
         let token = UserToken(rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3Byb250by5nZXRzdHJlYW0uaW8iLCJzdWIiOiJ1c2VyL0dsb2JhbF9QbG90IiwidXNlcl9pZCI6Ikdsb2JhbF9QbG90IiwidmFsaWRpdHlfaW5fc2Vjb25kcyI6NjA0ODAwLCJpYXQiOjE3NjUzMDA2NDYsImV4cCI6MTc2NTkwNTQ0Nn0.XY3gZBaosnkN7UumY7IM8XjI6e_uyJxd4QQCDwE8CSg")
         streamVideo = StreamVideo(apiKey: apiKey, user: user, token: token)
