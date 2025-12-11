@@ -26,3 +26,8 @@ enum VideoStreamConfig {
         return value
     }
 }
+
+enum GCFunctionsConfig {
+    static let getStreamUserToken = "getStreamUserToken"
+    static let revokeStreamUserToken = "revokeStreamUserToken"
+}

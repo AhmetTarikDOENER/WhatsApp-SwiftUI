@@ -3,6 +3,7 @@ import Combine
 import FirebaseAuth
 import FirebaseDatabase
 import StreamVideo
+import FirebaseFunctions
 
 //  MARK: - AuthState
 enum AuthState {
@@ -18,6 +19,8 @@ protocol AuthenticationProtocol {
     func autoLogin() async
     func createAccount(for username: String, with email: String, and password: String) async throws
     func logOut() async throws
+    func getStreamUserToken(for userId: String) async -> UserToken?
+    func revokeStreamUserToken(for userId: String) async
 }
 
 //  MARK: - AuthenticationError
@@ -47,13 +50,16 @@ final class AuthenticationService: AuthenticationProtocol {
     var authState = CurrentValueSubject<AuthState, Never>(.pending)
     
     @Published var streamVideo: StreamVideo?
+    private lazy var functions = Functions.functions()
     
     //  MARK: - Internal
     func login(with email: String, and password: String) async throws {
         do {
             let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+            let streamToken = await getStreamUserToken(for: authResult.user.uid)
             fetchCurrentUserInfo { [weak self] currentUser in
                 self?.setupStreamVideo(currentUser)
+                print("currentUserStreamToken: \(String(describing: currentUser.streamToken))")
             }
             print("✅ AuthenticationService -> Successfully signed in with email: \(authResult.user.email ?? "")")
         } catch {
@@ -76,8 +82,10 @@ final class AuthenticationService: AuthenticationProtocol {
         do {
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
             let uid = authResult.user.uid
-            let newUser = UserItem(uid: uid, username: username, email: email)
+            var newUser = UserItem(uid: uid, username: username, email: email)
             setupStreamVideo(newUser)
+            let streamToken = await getStreamUserToken(for: authResult.user.uid)
+            newUser.streamToken = streamToken?.rawValue
             try await saveUserInfoToDatabase(user: newUser)
         } catch {
             print("❌ AuthenticationService -> Failed to create user account: \(error.localizedDescription)")
@@ -93,6 +101,24 @@ final class AuthenticationService: AuthenticationProtocol {
         } catch {
             print("❌ AuthenticationService -> Failed to log out  current user: \(error.localizedDescription)")
         }
+    }
+    
+    func getStreamUserToken(for userId: String) async -> UserToken? {
+        do {
+            let getStreamUserToken = try await functions.httpsCallable(GCFunctionsConfig.getStreamUserToken).call()
+            guard let currentUserStreamToken = getStreamUserToken.data as? String else { return nil }
+            let streamToken = UserToken(rawValue: currentUserStreamToken)
+            print("Successfully fired getStreamUserToken function: \(currentUserStreamToken)")
+            streamToken.storeStreamToken(for: userId)
+            return streamToken
+        } catch {
+            print("❌ AuthenticationService -> Failed to get stream user token: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    func revokeStreamUserToken(for userId: String) async {
+        
     }
     
     //  MARK: - Private
@@ -133,11 +159,20 @@ extension AuthenticationService {
         let user = User(id: "Global_Plot", name: "Tarik")
         let token = UserToken(rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3Byb250by5nZXRzdHJlYW0uaW8iLCJzdWIiOiJ1c2VyL0dsb2JhbF9QbG90IiwidXNlcl9pZCI6Ikdsb2JhbF9QbG90IiwidmFsaWRpdHlfaW5fc2Vjb25kcyI6NjA0ODAwLCJpYXQiOjE3NjUzMDA2NDYsImV4cCI6MTc2NTkwNTQ0Nn0.XY3gZBaosnkN7UumY7IM8XjI6e_uyJxd4QQCDwE8CSg")
         streamVideo = StreamVideo(apiKey: apiKey, user: user, token: token)
-        print("AuthenticationService -> Stream video setup completed with token: \(token)")
     }
     
     private func setupStreamVideo(_ currentUser: UserItem) {
         prepareVideoStream(for: currentUser)
         authState.send(.loggedIn(currentUser))
+    }
+}
+
+//  MARK: - UserToken
+private extension UserToken {
+    func storeStreamToken(for userId: String) {
+        FirebaseConstants.UserReference
+            .child(userId)
+            .child(.streamToken)
+            .setValue(self.rawValue)
     }
 }

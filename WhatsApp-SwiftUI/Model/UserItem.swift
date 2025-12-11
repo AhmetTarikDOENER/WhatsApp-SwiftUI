@@ -6,6 +6,7 @@ struct UserItem: Identifiable, Hashable, Decodable {
     var bio: String? = nil
     var profileImageURL: String? = nil
     var fcmToken: String?
+    var streamToken: String?
     
     var id: String { uid }
     var bioUnwrapped: String { bio ?? "Hey there! I am using WhatsApp" }
@@ -20,6 +21,7 @@ extension UserItem {
         self.bio = dictionary[.bio] as? String? ?? nil
         self.profileImageURL = dictionary[.profileImageUrl] as? String? ?? nil
         self.fcmToken = dictionary[.fcmToken] as? String? ?? nil
+        self.streamToken = dictionary[.streamToken] as? String? ?? nil
     }
     
     static let placeholder = UserItem(uid: "1", username: "timcook", email: "apple@apple.com")
@@ -43,4 +45,5 @@ extension String {
     static let bio = "bio"
     static let profileImageUrl = "profileImageURL"
     static let fcmToken = "fcmToken"
+    static let streamToken = "streamToken"
 }
