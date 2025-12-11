@@ -20,7 +20,7 @@ protocol AuthenticationProtocol {
     func createAccount(for username: String, with email: String, and password: String) async throws
     func logOut() async throws
     func getStreamUserToken(for userId: String) async -> UserToken?
-    func revokeStreamUserToken(for userId: String) async
+    func revokeStreamUserToken() async
 }
 
 //  MARK: - AuthenticationError
@@ -58,10 +58,10 @@ final class AuthenticationService: AuthenticationProtocol {
             let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
             let streamToken = await getStreamUserToken(for: authResult.user.uid)
             fetchCurrentUserInfo { [weak self] currentUser in
+                var updatedUser = currentUser
+                updatedUser.streamToken = streamToken?.rawValue
                 self?.setupStreamVideo(currentUser)
-                print("currentUserStreamToken: \(String(describing: currentUser.streamToken))")
             }
-            print("✅ AuthenticationService -> Successfully signed in with email: \(authResult.user.email ?? "")")
         } catch {
             print("❌ AuthenticationService -> Failed to sign into the account with email: \(email)")
             throw AuthenticationError.loginWithEmailFailure(error.localizedDescription)
@@ -95,6 +95,8 @@ final class AuthenticationService: AuthenticationProtocol {
     
     func logOut() async throws {
         do {
+            await revokeStreamUserToken()
+            streamVideo = nil
             try Auth.auth().signOut()
             authState.send(.loggedOut)
             print("✅ AuthenticationService -> Successfully logged out")
@@ -117,10 +119,16 @@ final class AuthenticationService: AuthenticationProtocol {
         }
     }
     
-    func revokeStreamUserToken(for userId: String) async {
-        
+    func revokeStreamUserToken() async {
+        do {
+            guard let currentUid = Auth.auth().currentUser?.uid else { return }
+            _ = try await functions.httpsCallable(GCFunctionsConfig.revokeStreamUserToken).call()
+            try await FirebaseConstants.UserReference.child(currentUid).child(.streamToken).removeValue()
+        } catch {
+            print("❌ AuthenticationService -> Failed to revoke stream user token: \(error.localizedDescription)")
+        }
     }
-    
+
     //  MARK: - Private
     private func fetchCurrentUserInfo(completion: @escaping (UserItem) -> Void) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
@@ -155,10 +163,15 @@ extension AuthenticationService {
 //  MARK: - AuthenticationService+StreamVideo
 extension AuthenticationService {
     private func prepareVideoStream(for currentUser: UserItem) {
+        guard streamVideo == nil else { return }
         let apiKey = VideoStreamConfig.videoStreamAPIKey
-        let user = User(id: "Global_Plot", name: "Tarik")
-        let token = UserToken(rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3Byb250by5nZXRzdHJlYW0uaW8iLCJzdWIiOiJ1c2VyL0dsb2JhbF9QbG90IiwidXNlcl9pZCI6Ikdsb2JhbF9QbG90IiwidmFsaWRpdHlfaW5fc2Vjb25kcyI6NjA0ODAwLCJpYXQiOjE3NjUzMDA2NDYsImV4cCI6MTc2NTkwNTQ0Nn0.XY3gZBaosnkN7UumY7IM8XjI6e_uyJxd4QQCDwE8CSg")
-        streamVideo = StreamVideo(apiKey: apiKey, user: user, token: token)
+        let streamUser = User(
+            id: currentUser.uid,
+            name: currentUser.username,
+            imageURL: URL(string: currentUser.profileImageURL ?? "")
+        )
+        guard let streamToken = currentUser.streamToken else { return }
+        streamVideo = StreamVideo(apiKey: apiKey, user: streamUser, token: UserToken(rawValue: streamToken))
     }
     
     private func setupStreamVideo(_ currentUser: UserItem) {
